@@ -1,8 +1,6 @@
 package com.soprasteria.eventsource;
 
-import jakarta.servlet.Servlet;
 import org.eclipse.jetty.servlet.DefaultServlet;
-import org.eclipse.jetty.servlet.Source;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceFactory;
 
