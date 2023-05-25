@@ -1,7 +1,6 @@
 package com.soprasteria.eventsource;
 
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
@@ -11,7 +10,7 @@ public class ChatServer {
 
     public ChatServer() {
         var handler = new ServletContextHandler();
-        handler.addServlet(new ServletHolder(new PatchedDefaultServlet("/webapp")), "/*");
+        handler.addServlet(new ServletHolder(DevelopmentDefaultServlet.create("/webapp")), "/*");
         server.setHandler(handler);
     }
 

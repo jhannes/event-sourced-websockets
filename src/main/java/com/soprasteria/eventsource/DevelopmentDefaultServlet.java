@@ -8,17 +8,20 @@ import org.eclipse.jetty.util.resource.ResourceFactory;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public class PatchedDefaultServlet extends DefaultServlet {
+public class DevelopmentDefaultServlet extends DefaultServlet {
 
     private final ResourceFactory resourceFactory;
 
-    public PatchedDefaultServlet(String path) {
-        var sourceResource = Resource.newResource(Path.of("src", "main", "resources", path));
+    public DevelopmentDefaultServlet(ResourceFactory resourceFactory) {
+        this.resourceFactory = resourceFactory;
+    }
 
+    public static DefaultServlet create(String path) {
+        var sourceResource = Resource.newResource(Path.of("srcs", "main", "resources", path));
         if (sourceResource.exists()) {
-            this.resourceFactory = new ResourceCollection(sourceResource, Resource.newClassPathResource(path));
+            return new DevelopmentDefaultServlet(new ResourceCollection(sourceResource, Resource.newClassPathResource(path)));
         } else {
-            this.resourceFactory = Resource.newClassPathResource(path);
+            return new DevelopmentDefaultServlet(Resource.newClassPathResource(path));
         }
     }
 

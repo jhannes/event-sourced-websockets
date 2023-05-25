@@ -1,7 +1,7 @@
 TODO:
 
-* [ ] Show web page
-* [ ] Add logging
+* [x] Show web page
+* [x] Add logging
 * [ ] Create docker image with web page (mvn install)
 * [ ] Instant reload web page
 * [ ] React
