@@ -9,6 +9,7 @@ import org.eclipse.jetty.http.HttpContent;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.CachedContentFactory;
 import org.eclipse.jetty.server.ResourceService;
+import org.eclipse.jetty.util.URIUtil;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceCollection;
 import org.eclipse.jetty.util.resource.ResourceFactory;
@@ -23,6 +24,8 @@ public class ContentServlet extends HttpServlet {
     public ContentServlet(HttpContent.ContentFactory contentFactory) {
         this.resourceService = new ResourceService();
         resourceService.setContentFactory(contentFactory);
+        resourceService.setDirAllowed(false);
+        resourceService.setWelcomeFactory(pathInContext -> URIUtil.addPaths(pathInContext, "index.html"));
     }
 
     public ContentServlet(ResourceFactory resourceFactory, boolean useFileMappedBuffer) {
