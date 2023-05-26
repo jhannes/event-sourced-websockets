@@ -12,8 +12,8 @@ TODO:
   * [x] frontend-maven-plugin
 * [ ] Open API display List<ConversationSnapshot> from server
   * [x] Serve openapi spec with swagger-ui
-  * [ ] Generate code from openapi
-  * [ ] Create ConversationController
+  * [x] Generate code from openapi
+  * [x] Create ConversationController
   * [ ] Show conversations in React
 * [ ] Post CommandToServer<CreateConversationDelta> to server
 * [ ] Post CommandToServer<AddMessageToConvesationDelta> to server
