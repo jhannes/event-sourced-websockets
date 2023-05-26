@@ -2,11 +2,17 @@
   "name": "event-sourced-websockets",
   "version": "1.0.0",
   "scripts": {
-    "start": "parcel watch src/main/frontend/index.html --dist-dir target/classes/webapp"
+    "start": "parcel watch src/main/frontend/index.html --dist-dir target/classes/webapp",
+    "build": "npm run build:typescript && npm run build:parcel",
+    "build:typescript": "tsc --noEmit",
+    "build:parcel": "parcel build src/main/frontend/index.html --dist-dir target/classes/webapp"
   },
   "devDependencies": {
+    "@types/react": "^18.2.7",
+    "@types/react-dom": "^18.2.4",
     "parcel": "^2.9.0",
-    "process": "^0.11.10"
+    "process": "^0.11.10",
+    "typescript": "^5.0.4"
   },
   "dependencies": {
     "react": "^18.2.0",
