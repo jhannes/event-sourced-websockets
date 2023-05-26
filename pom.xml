@@ -41,6 +41,56 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>6.2.0</version>
+                <configuration>
+                    <inputSpec>src/main/resources/webapp/api-doc/conversations.yaml</inputSpec>
+                    <modelNameSuffix>Dto</modelNameSuffix>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>openapi-generator-java</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <apiPackage>com.soprasteria.eventsource.generated.api</apiPackage>
+                            <modelPackage>com.soprasteria.eventsource.generated.api</modelPackage>
+                            <generateApis>false</generateApis>
+                            <generatorName>java-annotationfree</generatorName>
+                            <output>target/generated-sources/openapi-java</output>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>openapi-generator-typescript</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <generatorName>typescript-fetch-api</generatorName>
+                            <output>target/generated-sources/openapi-typescript</output>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>io.github.jhannes.openapi</groupId>
+                        <artifactId>openapi-generator-java-annotationfree</artifactId>
+                        <version>0.5.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>io.github.jhannes.openapi</groupId>
+                        <artifactId>openapi-generator-typescript-fetch-api</artifactId>
+                        <version>0.4.5</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+
+            <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
                 <version>1.12.1</version>
