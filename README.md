@@ -9,8 +9,12 @@ TODO:
   * [x] react
   * [x] typescript
   * [x] prettier
-  * [ ] frontend-maven-plugin
+  * [x] frontend-maven-plugin
 * [ ] Open API display List<ConversationSnapshot> from server
+  * [x] Serve openapi spec with swagger-ui
+  * [ ] Generate code from openapi
+  * [ ] Create ConversationController
+  * [ ] Show conversations in React
 * [ ] Post CommandToServer<CreateConversationDelta> to server
 * [ ] Post CommandToServer<AddMessageToConvesationDelta> to server
 * [ ] Listen to web sockets

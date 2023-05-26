@@ -10,6 +10,7 @@ public class ChatServer {
 
     public ChatServer() {
         var handler = new ServletContextHandler();
+        handler.addServlet(new ServletHolder(ContentServlet.webjar("swagger-ui")), "/api-doc/swagger-ui/*");
         handler.addServlet(new ServletHolder(ContentServlet.create("/webapp")), "/*");
         server.setHandler(handler);
     }

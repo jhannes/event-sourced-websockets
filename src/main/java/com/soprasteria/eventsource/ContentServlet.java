@@ -16,6 +16,7 @@ import org.eclipse.jetty.util.resource.ResourceFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Properties;
 
 public class ContentServlet extends HttpServlet {
 
@@ -25,6 +26,7 @@ public class ContentServlet extends HttpServlet {
         this.resourceService = new ResourceService();
         resourceService.setContentFactory(contentFactory);
         resourceService.setDirAllowed(false);
+        resourceService.setPathInfoOnly(true);
         resourceService.setWelcomeFactory(pathInContext -> URIUtil.addPaths(pathInContext, "index.html"));
     }
 
@@ -37,6 +39,26 @@ public class ContentServlet extends HttpServlet {
         if (!resourceService.doGet(request, response)) {
             response.sendError(404);
         }
+    }
+
+    public static HttpServlet webjar(String artifactId) {
+        try {
+            return new ContentServlet(getWebjarResource(artifactId), true);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @SuppressWarnings("resource")
+    private static Resource getWebjarResource(String artifactId) throws IOException {
+        var propertiesResource = Resource.newClassPathResource("META-INF/maven/org.webjars")
+                                         .getResource(artifactId).getResource("/pom.properties");
+        var properties = new Properties();
+        try (var inputStream = propertiesResource.getInputStream()) {
+            properties.load(inputStream);
+        }
+        return Resource.newClassPathResource("META-INF/resources/webjars")
+                .getResource(artifactId).getResource(properties.getProperty("version"));
     }
 
     public static HttpServlet create(String path) {

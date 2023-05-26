@@ -1,0 +1,34 @@
+openapi: 3.0.3
+info:
+  title: Conversations
+  description: Conversations for real time and offline peer-to-peer web chat
+  version: 1.0.0
+servers:
+  - url: '/'
+paths:
+  /api/conversations:
+    get:
+      responses:
+        200:
+          description: Current ongoing conversations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Conversation"
+components:
+  schemas:
+    Conversation:
+      properties:
+        title:
+          type: string
+        summary:
+          type: string
+        messages:
+          additionalProperties:
+            $ref: "#/components/schemas/ConversationMessage"
+    ConversationMessage:
+      properties:
+        text:
+          type: string
