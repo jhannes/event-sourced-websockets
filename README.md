@@ -16,5 +16,8 @@ TODO:
   * [x] Create ConversationController
   * [x] Show conversations in React
 * [ ] Post CommandToServer<CreateConversationDelta> to server
+  * [x] Update API spec to support commands to server
+  * [ ] Send command from client
+  * [ ] Create CommandController and apply delta to conversations
 * [ ] Post CommandToServer<AddMessageToConvesationDelta> to server
 * [ ] Listen to web sockets

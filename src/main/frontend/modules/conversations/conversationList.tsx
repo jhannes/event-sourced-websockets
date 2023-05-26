@@ -1,9 +1,16 @@
 import React from "react";
-import { DefaultApi } from "../../../../../target/generated-sources/openapi-typescript";
+import {
+  ConversationSnapshotDto,
+  DefaultApi,
+} from "../../../../../target/generated-sources/openapi-typescript";
 import { useLoader } from "../../hooks/useLoader";
 
-function Conversation(props: { conversation: any }) {
-  return <div>Conversation: {props.conversation.title}</div>;
+function Conversation({
+  conversation,
+}: {
+  conversation: ConversationSnapshotDto;
+}) {
+  return <div>Conversation: {conversation.info?.title}</div>;
 }
 
 export function ConversationList() {

@@ -16,22 +16,86 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Conversation"
+                  $ref: "#/components/schemas/ConversationSnapshot"
+  /api/commands:
+    post:
+      requestBody:
+        description: A command sent to the server
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommandToServer"
+      responses:
+        200:
+          description: Command was accepted
+        400:
+          description: Command was rejected
 components:
   schemas:
-    Conversation:
+    ConversationSnapshot:
       properties:
         id:
           type: string
           format: uuid
+        info:
+          $ref: "#/components/schemas/ConversationInfo"
+        messages:
+          additionalProperties:
+            $ref: "#/components/schemas/ConversationMessage"
+      required: [ id , info, messages ]
+    ConversationInfo:
+      properties:
         title:
           type: string
         summary:
           type: string
-        messages:
-          additionalProperties:
-            $ref: "#/components/schemas/ConversationMessage"
+      required: [ title ]
     ConversationMessage:
       properties:
         text:
           type: string
+      required: [ text ]
+
+    CommandToServer:
+      properties:
+        id:
+          type: string
+          format: uuid
+        clientTime:
+          type: string
+          format: date-time
+        delta:
+          $ref: "#/components/schemas/Delta"
+      required: [id, clientTime, delta]
+
+    Delta:
+      oneOf:
+        - $ref: "#/components/schemas/CreateConversationDelta"
+        - $ref: "#/components/schemas/AddMessageToConversationDelta"
+      discriminator:
+        propertyName: "delta"
+
+    CreateConversationDelta:
+      properties:
+        delta:
+          enum: [ CreateConversationDelta ]
+        conversationId:
+          type: string
+          format: uuid
+        info:
+          $ref: "#/components/schemas/ConversationInfo"
+      required: [ delta, conversationId, info ]
+    AddMessageToConversationDelta:
+      properties:
+        delta:
+          enum: [ AddMessageToConversationDelta ]
+        conversationId:
+          type: string
+          format: uuid
+        messageId:
+          type: string
+          format: uuid
+        message:
+          $ref: "#/components/schemas/ConversationMessage"
+      required: [ delta, conversationId, messageId, message ]

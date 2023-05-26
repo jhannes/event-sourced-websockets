@@ -1,6 +1,6 @@
 package com.soprasteria.eventsource.api;
 
-import com.soprasteria.eventsource.generated.api.ConversationDto;
+import com.soprasteria.eventsource.generated.api.ConversationSnapshotDto;
 import com.soprasteria.eventsource.generated.api.SampleModelData;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -11,10 +11,16 @@ import java.util.List;
 @Path("/conversations")
 public class ConversationController {
 
+    private final List<ConversationSnapshotDto> conversationDtos;
+
+    public ConversationController() {
+        conversationDtos = new SampleModelData(100).sampleListOfConversationSnapshotDto();
+    }
+
     @GET
     @Produces("application/json")
-    public List<ConversationDto> listConversations() {
-        return new SampleModelData(100).sampleListOfConversationDto();
+    public List<ConversationSnapshotDto> listConversations() {
+        return conversationDtos;
     }
 
 }
