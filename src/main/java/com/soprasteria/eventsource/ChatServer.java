@@ -10,7 +10,7 @@ public class ChatServer {
 
     public ChatServer() {
         var handler = new ServletContextHandler();
-        handler.addServlet(new ServletHolder(DevelopmentDefaultServlet.create("/webapp")), "/*");
+        handler.addServlet(new ServletHolder(ContentServlet.create("/webapp")), "/*");
         server.setHandler(handler);
     }
 
