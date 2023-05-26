@@ -4,6 +4,7 @@ import {
   DefaultApi,
 } from "../../../../../target/generated-sources/openapi-typescript";
 import { useLoader } from "../../hooks/useLoader";
+import { CreateConversation } from "./createConversation";
 
 function Conversation({
   conversation,
@@ -13,8 +14,8 @@ function Conversation({
   return <div>Conversation: {conversation.info?.title}</div>;
 }
 
-export function ConversationList() {
-  const { state, data, error } = useLoader(() =>
+export function ConversationView() {
+  const { state, data, error, reload } = useLoader(() =>
     new DefaultApi().apiConversationsGet()
   );
 
@@ -26,9 +27,22 @@ export function ConversationList() {
   }
 
   return (
+    <>
+      <ConversationList conversations={data} />
+      <CreateConversation onReload={reload} />
+    </>
+  );
+}
+
+export function ConversationList({
+  conversations,
+}: {
+  conversations: ConversationSnapshotDto[];
+}) {
+  return (
     <div>
       <h2>Conversations</h2>
-      {data.map((c) => (
+      {conversations.map((c) => (
         <Conversation key={c.id} conversation={c} />
       ))}
     </div>

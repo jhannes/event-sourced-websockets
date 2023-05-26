@@ -1,7 +1,7 @@
 import React from "react";
 
 import "./application.css";
-import { ConversationList } from "../conversations/conversationList";
+import { ConversationView } from "../conversations/conversationView";
 
 export function Application() {
   return (
@@ -10,7 +10,7 @@ export function Application() {
       <div id="main">
         <nav>Nav</nav>
         <main>
-          <ConversationList />
+          <ConversationView />
         </main>
         <aside>Aside</aside>
       </div>
