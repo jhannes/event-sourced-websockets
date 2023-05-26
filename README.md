@@ -14,7 +14,7 @@ TODO:
   * [x] Serve openapi spec with swagger-ui
   * [x] Generate code from openapi
   * [x] Create ConversationController
-  * [ ] Show conversations in React
+  * [x] Show conversations in React
 * [ ] Post CommandToServer<CreateConversationDelta> to server
 * [ ] Post CommandToServer<AddMessageToConvesationDelta> to server
 * [ ] Listen to web sockets

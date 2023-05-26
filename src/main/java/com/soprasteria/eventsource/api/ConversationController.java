@@ -14,7 +14,7 @@ public class ConversationController {
     @GET
     @Produces("application/json")
     public List<ConversationDto> listConversations() {
-        return new SampleModelData(1).sampleListOfConversationDto();
+        return new SampleModelData(100).sampleListOfConversationDto();
     }
 
 }
