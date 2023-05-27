@@ -1,0 +1,39 @@
+.conversations .scrim {
+  background-color: rgba(8, 8, 8, 50%);
+  position: fixed;
+  inset: 0;
+}
+
+.conversations .conversationTitle {
+  display: flex;
+  flex-direction: row;
+}
+
+.conversations .conversationTitle.editing {
+  position: relative;
+  z-index: 2;
+}
+
+.conversations .conversationTitle input {
+  width: 100%;
+  font-size: 20px;
+  border: none;
+}
+
+.conversations .conversationTitle > :has(input) {
+  flex: 1;
+}
+
+.conversations .conversationSummary {
+}
+
+.conversations .conversationSummary.editing {
+  position: relative;
+  z-index: 2;
+}
+
+.conversations .conversationSummary textarea {
+  width: 100%;
+  border: none;
+  font-family: Arial, serif;
+}

@@ -27,6 +27,7 @@ TODO:
   * [ ] Sort ConversationMessages by createdAt
 * [ ] Post CommandToServer<UpdateConversationDelta> to server
   * [ ] Modal input: Display text input with shim
+  * [ ] Post to server
 * [ ] Listen to web sockets
   * [ ] Client sends offset on connect
   * [ ] Server sends snapshots and latest sequence

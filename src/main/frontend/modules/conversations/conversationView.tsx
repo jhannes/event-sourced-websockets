@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { LoadingView } from "../utils/loadingView";
 import { ErrorView } from "../utils/errorView";
 import { useCurrentConversation } from "./useCurrentConversation";
-import { ConversationMessageDto } from "../../../../../target/generated-sources/openapi-typescript";
+import {
+  ConversationInfoDto,
+  ConversationMessageDto,
+} from "../../../../../target/generated-sources/openapi-typescript";
 import { useSubmitDelta } from "../../hooks/useSubmitDelta";
 import { v4 as uuidv4 } from "uuid";
 
@@ -45,6 +48,72 @@ function AddMessageToConversation({
   );
 }
 
+function ConversationTitle(props: {
+  conversation: ConversationInfoDto;
+  onReload: () => Promise<void>;
+  id: string;
+}) {
+  const [editing, setEditing] = useState(false);
+  return (
+    <>
+      {editing && <div className={"scrim"}></div>}
+      <div className={"conversationTitle" + (editing ? " editing" : "")}>
+        <span>
+          <input
+            autoFocus={true}
+            disabled={!editing}
+            value={props.conversation.title}
+          />
+        </span>
+        {editing && (
+          <>
+            <button type={"reset"} onClick={() => setEditing(false)}>
+              Cancel
+            </button>
+            <button type={"submit"} onClick={() => setEditing(false)}>
+              Save
+            </button>
+          </>
+        )}
+        {!editing && <button onClick={() => setEditing(true)}>🖊</button>}
+      </div>
+    </>
+  );
+}
+
+function ConversationSummary(props: {
+  conversation: ConversationInfoDto;
+  onReload: () => Promise<void>;
+  id: string;
+}) {
+  const [editing, setEditing] = useState(false);
+  return (
+    <>
+      {editing && <div className={"scrim"}></div>}
+      <div className={"conversationSummary" + (editing ? " editing" : "")}>
+        <textarea
+          autoFocus={true}
+          readOnly={!editing}
+          value={props.conversation.summary}
+        />
+        <div>
+          {editing && (
+            <>
+              <button type={"reset"} onClick={() => setEditing(false)}>
+                Cancel
+              </button>
+              <button type={"submit"} onClick={() => setEditing(false)}>
+                Save
+              </button>
+            </>
+          )}
+          {!editing && <button onClick={() => setEditing(true)}>🖊</button>}
+        </div>
+      </div>
+    </>
+  );
+}
+
 export function ConversationView() {
   const { state, error, data, reload } = useCurrentConversation();
 
@@ -53,16 +122,13 @@ export function ConversationView() {
 
   const {
     id,
-    conversation: {
-      info: { title, summary },
-      messages,
-    },
+    conversation: { info, messages },
   } = data;
 
   return (
     <div>
-      <h2>Conversation: {title}</h2>
-      <div>{summary}</div>
+      <ConversationTitle conversation={info} id={id} onReload={reload} />
+      <ConversationSummary conversation={info} id={id} onReload={reload} />
       <div className={"messages"}>
         {Object.keys(messages).map((k) => (
           <ConversationMessage key={k} message={messages[k]} />
