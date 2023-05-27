@@ -2,19 +2,31 @@ import React from "react";
 
 import "./application.css";
 import { ConversationView } from "../conversations/conversationView";
+import { BrowserRouter, Link, NavLink, Route, Routes } from "react-router-dom";
+
+function FrontPage() {
+  return <h1>Front Page</h1>;
+}
 
 export function Application() {
   return (
-    <>
+    <BrowserRouter>
       <header>Hello application with layout</header>
       <div id="main">
-        <nav>Nav</nav>
+        <nav>
+          <NavLink to={"/"}>Front page</NavLink>
+          <NavLink to={"/conversations"}>Conversations</NavLink>
+        </nav>
         <main>
-          <ConversationView />
+          <Routes>
+            <Route path={"/"} element={<FrontPage />} />
+            <Route path={"/conversations/*"} element={<ConversationView />} />
+            <Route path={"/*"} element={<h1>Not Found</h1>} />
+          </Routes>
         </main>
         <aside>Aside</aside>
       </div>
       <footer>Footer</footer>
-    </>
+    </BrowserRouter>
   );
 }

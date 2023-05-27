@@ -15,9 +15,19 @@ TODO:
   * [x] Generate code from openapi
   * [x] Create ConversationController
   * [x] Show conversations in React
-* [ ] Post CommandToServer<CreateConversationDelta> to server
+* [x] Post CommandToServer<CreateConversationDelta> to server
   * [x] Update API spec to support commands to server
   * [x] Send command from client
-  * [ ] Create CommandController and apply delta to conversations
-* [ ] Post CommandToServer<AddMessageToConvesationDelta> to server
+  * [x] Create CommandController and apply delta to conversations
+* [ ] Post CommandToServer<AddMessageToConversationDelta> to server
+  * [x] Add BrowserRouter
+  * [ ] Display ConversationMessages
+  * [ ] Add more interesting test data
+  * [ ] Post AddMessageToConversationDelta from client
 * [ ] Listen to web sockets
+* [ ] Post CommandToServer<UpdateMessageInConversationDelta> to server
+* [ ] Implement authentication
+* [ ] Post CommandToServer<RegisterDeliveryOfConversationMessageDelta>
+* [ ] Post CommandToServer<AddReactionToConversationMessageDelta>
+* [ ] Post CommandToServer<UpdateReactionToConversationMessageDelta>
+* [ ] Post CommandToServer<RemoveReactionToConversationMessageDelta>

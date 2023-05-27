@@ -61,12 +61,24 @@ public class ContentServlet extends HttpServlet {
                 .getResource(artifactId).getResource(properties.getProperty("version"));
     }
 
-    public static HttpServlet create(String path) {
+    public static HttpServlet createWithDefault(String path, String defaultPath) {
         var sourceResource = Resource.newResource(Path.of("src", "main", "resources", path));
         if (sourceResource.exists()) {
-            return new ContentServlet(new ResourceCollection(sourceResource, Resource.newClassPathResource(path)), false);
+            var resourceFactory = new ResourceCollection(sourceResource, Resource.newClassPathResource(path));
+            return new ContentServlet(withDefault(resourceFactory, defaultPath), false);
         } else {
-            return new ContentServlet(Resource.newClassPathResource(path), true);
+            var resourceFactory = Resource.newClassPathResource(path);
+            return new ContentServlet(withDefault(resourceFactory, defaultPath), true);
         }
+    }
+
+    private static ResourceFactory withDefault(ResourceFactory resourceFactory, String defaultPath) {
+        return path -> {
+            var resource = resourceFactory.getResource(path);
+            if (resource.exists()) {
+                return resource;
+            }
+            return resourceFactory.getResource(defaultPath);
+        };
     }
 }
