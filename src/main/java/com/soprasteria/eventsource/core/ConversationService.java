@@ -1,5 +1,6 @@
 package com.soprasteria.eventsource.core;
 
+import com.soprasteria.eventsource.generated.api.AddMessageToConversationDeltaDto;
 import com.soprasteria.eventsource.generated.api.CommandToServerDto;
 import com.soprasteria.eventsource.generated.api.ConversationSnapshotDto;
 import com.soprasteria.eventsource.generated.api.CreateConversationDeltaDto;
@@ -22,6 +23,9 @@ public class ConversationService {
                     .info(createDelta.getInfo())
                     .messages(new HashMap<>())
             );
+        } else if (command.getDelta() instanceof AddMessageToConversationDeltaDto addMessage) {
+            conversations.stream().filter(c -> c.getId().equals(addMessage.getConversationId()))
+                    .forEach(c -> c.getMessages().put(addMessage.getMessageId().toString(), addMessage.getMessage()));
         } else {
             log.error("Unhandled {}", command.getDelta());
         }

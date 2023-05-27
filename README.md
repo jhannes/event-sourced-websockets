@@ -23,8 +23,14 @@ TODO:
   * [x] Add BrowserRouter
   * [x] Display ConversationMessages
   * [x] Add more interesting test data
-  * [ ] Post AddMessageToConversationDelta from client
+  * [x] Post AddMessageToConversationDelta from client
+  * [ ] Sort ConversationMessages by createdAt
+* [ ] Post CommandToServer<UpdateConversationDelta> to server
+  * [ ] Modal input: Display text input with shim
 * [ ] Listen to web sockets
+  * [ ] Client sends offset on connect
+  * [ ] Server sends snapshots and latest sequence
+  * [ ] Server sends new deltas on incoming deltas
 * [ ] Post CommandToServer<UpdateMessageInConversationDelta> to server
 * [ ] Implement authentication
 * [ ] Post CommandToServer<RegisterDeliveryOfConversationMessageDelta>

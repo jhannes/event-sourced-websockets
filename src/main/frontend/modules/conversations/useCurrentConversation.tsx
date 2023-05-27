@@ -6,6 +6,9 @@ export function useCurrentConversation() {
   const { id } = useParams();
   return useLoaderWithSelector(
     () => new DefaultApi().apiConversationsGet(),
-    (conversations) => conversations.find((c) => c.id === id)
+    (conversations) => {
+      const conversation = conversations.find((c) => c.id === id);
+      return id && conversation ? { id, conversation } : undefined;
+    }
   );
 }
