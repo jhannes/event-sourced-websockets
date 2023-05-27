@@ -22,7 +22,7 @@ TODO:
 * [ ] Post CommandToServer<AddMessageToConversationDelta> to server
   * [x] Add BrowserRouter
   * [x] Display ConversationMessages
-  * [ ] Add more interesting test data
+  * [x] Add more interesting test data
   * [ ] Post AddMessageToConversationDelta from client
 * [ ] Listen to web sockets
 * [ ] Post CommandToServer<UpdateMessageInConversationDelta> to server
