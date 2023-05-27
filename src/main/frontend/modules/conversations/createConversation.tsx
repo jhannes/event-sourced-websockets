@@ -61,7 +61,7 @@ export function CreateConversation({ onReload }: { onReload: () => void }) {
             </label>
           </p>
           <p>
-            <button>Submit</button>
+            <button disabled={!info.title}>Submit</button>
           </p>
         </fieldset>
       </form>
