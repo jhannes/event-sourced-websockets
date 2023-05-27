@@ -34,16 +34,23 @@ paths:
 components:
   schemas:
     ConversationSnapshot:
-      properties:
-        id:
-          type: string
-          format: uuid
-        info:
-          $ref: "#/components/schemas/ConversationInfo"
-        messages:
-          additionalProperties:
-            $ref: "#/components/schemas/ConversationMessage"
-      required: [ id , info, messages ]
+      allOf:
+        - $ref: "#/components/schemas/ChangeTracked"
+        - properties:
+            id:
+              type: string
+              format: uuid
+            info:
+              $ref: "#/components/schemas/ConversationInfo"
+            messages:
+              additionalProperties:
+                $ref: "#/components/schemas/ConversationMessageSnapshot"
+          required: [ id , info, messages ]
+    ConversationMessageSnapshot:
+      allOf:
+        - $ref: "#/components/schemas/ChangeTracked"
+        - $ref: "#/components/schemas/ConversationMessage"
+
     ConversationInfo:
       properties:
         title:
@@ -56,6 +63,16 @@ components:
         text:
           type: string
       required: [ text ]
+
+    ChangeTracked:
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [ createdAt, updatedAt ]
 
     CommandToServer:
       properties:

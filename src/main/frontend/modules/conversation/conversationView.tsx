@@ -2,13 +2,26 @@ import React from "react";
 import { LoadingView } from "../utils/loadingView";
 import { ErrorView } from "../utils/errorView";
 import { useCurrentConversation } from "./useCurrentConversation";
-import { ConversationMessageDto } from "../../../../../target/generated-sources/openapi-typescript";
+import { ConversationMessageSnapshotDto } from "../../../../../target/generated-sources/openapi-typescript";
 import { ConversationSummary } from "./conversationSummary";
 import { ConversationTitle } from "./conversationTitle";
 import { AddMessageToConversation } from "./addMessageToConversation";
+import { useDateFormat } from "../../hooks/useDateFormat";
 
-function ConversationMessage({ message }: { message: ConversationMessageDto }) {
-  return <div>Message: {message.text}</div>;
+function ConversationMessage({
+  message,
+}: {
+  message: ConversationMessageSnapshotDto;
+}) {
+  const { formatted, asDate, asTime } = useDateFormat(message.createdAt);
+  return (
+    <div style={{ display: "flex", gap: "0.3em", alignItems: "flex-start" }}>
+      <span style={{ minWidth: "12ch" }} title={`${asDate} ${asTime}`}>
+        {formatted}
+      </span>
+      <span style={{ flex: 1, maxWidth: "80ch" }}>{message.text}</span>
+    </div>
+  );
 }
 
 export function ConversationView() {
@@ -35,9 +48,15 @@ export function ConversationView() {
         onReload={reload}
       />
       <div className={"messages"}>
-        {Object.keys(messages).map((k) => (
-          <ConversationMessage key={k} message={messages[k]} />
-        ))}
+        {Object.keys(messages)
+          .sort((a, b) =>
+            messages[a].createdAt
+              .toString()
+              .localeCompare(messages[b].createdAt.toString())
+          )
+          .map((k) => (
+            <ConversationMessage key={k} message={messages[k]} />
+          ))}
       </div>
       <AddMessageToConversation conversationId={id} onReload={reload} />
     </div>

@@ -2,6 +2,7 @@ package com.soprasteria.eventsource.core;
 
 import com.soprasteria.eventsource.generated.api.AddMessageToConversationDeltaDto;
 import com.soprasteria.eventsource.generated.api.CommandToServerDto;
+import com.soprasteria.eventsource.generated.api.ConversationMessageSnapshotDto;
 import com.soprasteria.eventsource.generated.api.ConversationSnapshotDto;
 import com.soprasteria.eventsource.generated.api.CreateConversationDeltaDto;
 import com.soprasteria.eventsource.generated.api.UpdateConversationDeltaDto;
@@ -19,6 +20,7 @@ public class ConversationService {
     private final List<ConversationSnapshotDto> conversations = new SampleConversationData().sampleListOfConversationSnapshotDto();
 
     public void submitCommand(CommandToServerDto command) {
+        var timestamp = command.getClientTime();
         var delta = command.getDelta();
         MDC.put("delta", delta.getDelta());
         log.debug("Handling command");
@@ -30,7 +32,11 @@ public class ConversationService {
             );
         } else if (delta instanceof AddMessageToConversationDeltaDto addMessage) {
             conversations.stream().filter(c -> c.getId().equals(addMessage.getConversationId()))
-                    .forEach(c -> c.getMessages().put(addMessage.getMessageId().toString(), addMessage.getMessage()));
+                    .forEach(c -> c.getMessages().put(
+                            addMessage.getMessageId().toString(),
+                            addMessage.getMessage().copyTo(new ConversationMessageSnapshotDto())
+                                    .createdAt(timestamp).updatedAt(timestamp)
+                    ));
         } else if (delta instanceof UpdateConversationDeltaDto updateDelta) {
             conversations.stream().filter(c -> c.getId().equals(updateDelta.getConversationId()))
                     .forEach(c -> updateDelta.getInfo().copyTo(c.getInfo()));

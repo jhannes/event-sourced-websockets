@@ -24,7 +24,7 @@ TODO:
   * [x] Display ConversationMessages
   * [x] Add more interesting test data
   * [x] Post AddMessageToConversationDelta from client
-  * [ ] Sort ConversationMessages by createdAt
+  * [x] Sort ConversationMessages by createdAt
 * [x] Post CommandToServer<UpdateConversationDelta> to server
   * [x] Modal input: Display text input with shim
   * [x] Post to server

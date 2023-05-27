@@ -2,6 +2,7 @@ package com.soprasteria.eventsource.core;
 
 import com.soprasteria.eventsource.generated.api.ConversationInfoDto;
 import com.soprasteria.eventsource.generated.api.ConversationMessageDto;
+import com.soprasteria.eventsource.generated.api.ConversationMessageSnapshotDto;
 import com.soprasteria.eventsource.generated.api.ConversationSnapshotDto;
 import com.soprasteria.eventsource.generated.api.SampleModelData;
 
@@ -25,8 +26,13 @@ public class SampleConversationData extends SampleModelData {
 
     @Override
     public ConversationSnapshotDto sampleConversationSnapshotDto() {
-        var messages = sampleMap(() -> sampleConversationMessageDto("messages"), "messages", 10, 15);
+        var messages = sampleMap(() -> sampleConversationMessageSnapshotDto("messages"), "messages", 10, 15);
         return super.sampleConversationSnapshotDto().messages(messages);
+    }
+
+    @Override
+    public ConversationMessageSnapshotDto sampleConversationMessageSnapshotDto() {
+        return super.sampleConversationMessageSnapshotDto().text(randomMessageText());
     }
 
     @Override
