@@ -21,7 +21,7 @@ TODO:
   * [x] Create CommandController and apply delta to conversations
 * [ ] Post CommandToServer<AddMessageToConversationDelta> to server
   * [x] Add BrowserRouter
-  * [ ] Display ConversationMessages
+  * [x] Display ConversationMessages
   * [ ] Add more interesting test data
   * [ ] Post AddMessageToConversationDelta from client
 * [ ] Listen to web sockets

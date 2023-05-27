@@ -5,9 +5,9 @@ type LoadingState<T> =
   | { state: "resolved"; data: T; error: undefined }
   | { state: "rejected"; data: undefined; error: Error };
 
-export function useLoader<T>(
-  loaderFn: () => Promise<T>
-): LoadingState<T> & { reload(): Promise<void> } {
+export type Loader<T> = LoadingState<T> & { reload(): Promise<void> };
+
+export function useLoader<T>(loaderFn: () => Promise<T>): Loader<T> {
   const [loadingState, setLoadingState] = useState<LoadingState<T>>({
     state: "pending",
     data: undefined,

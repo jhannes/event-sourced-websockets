@@ -1,8 +1,8 @@
 import React from "react";
 
 import "./application.css";
-import { ConversationView } from "../conversations/conversationView";
-import { BrowserRouter, Link, NavLink, Route, Routes } from "react-router-dom";
+import { ConversationRoutes } from "../conversations/conversationRoutes";
+import { BrowserRouter, NavLink, Route, Routes } from "react-router-dom";
 
 function FrontPage() {
   return <h1>Front Page</h1>;
@@ -20,7 +20,7 @@ export function Application() {
         <main>
           <Routes>
             <Route path={"/"} element={<FrontPage />} />
-            <Route path={"/conversations/*"} element={<ConversationView />} />
+            <Route path={"/conversations/*"} element={<ConversationRoutes />} />
             <Route path={"/*"} element={<h1>Not Found</h1>} />
           </Routes>
         </main>

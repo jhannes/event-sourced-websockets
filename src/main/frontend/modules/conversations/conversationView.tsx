@@ -1,50 +1,42 @@
 import React from "react";
-import {
-  ConversationSnapshotDto,
-  DefaultApi,
-} from "../../../../../target/generated-sources/openapi-typescript";
-import { useLoader } from "../../hooks/useLoader";
-import { CreateConversation } from "./createConversation";
+import { LoadingView } from "../utils/loadingView";
+import { ErrorView } from "../utils/errorView";
+import { useCurrentConversation } from "./useCurrentConversation";
+import { ConversationMessageDto } from "../../../../../target/generated-sources/openapi-typescript";
 
-function Conversation({
-  conversation,
-}: {
-  conversation: ConversationSnapshotDto;
-}) {
-  return <div>Conversation: {conversation.info?.title}</div>;
+function ConversationMessage({ message }: { message: ConversationMessageDto }) {
+  return <div>Message: {message.text}</div>;
+}
+
+function AddMessageToConversation() {
+  return (
+    <form>
+      <input />
+    </form>
+  );
 }
 
 export function ConversationView() {
-  const { state, data, error, reload } = useLoader(() =>
-    new DefaultApi().apiConversationsGet()
-  );
+  const { state, error, data } = useCurrentConversation();
 
-  if (state === "pending") {
-    return <div>Loading...</div>;
-  }
-  if (state === "rejected") {
-    return <div>Error: {error.toString()}</div>;
-  }
+  if (state === "pending") return <LoadingView />;
+  if (state === "rejected") return <ErrorView error={error} />;
 
-  return (
-    <>
-      <ConversationList conversations={data} />
-      <CreateConversation onReload={reload} />
-    </>
-  );
-}
+  const {
+    info: { title, summary },
+    messages,
+  } = data;
 
-export function ConversationList({
-  conversations,
-}: {
-  conversations: ConversationSnapshotDto[];
-}) {
   return (
     <div>
-      <h2>Conversations</h2>
-      {conversations.map((c) => (
-        <Conversation key={c.id} conversation={c} />
-      ))}
+      <h2>Conversation: {title}</h2>
+      <div>{summary}</div>
+      <div className={"messages"}>
+        {Object.keys(messages).map((k) => (
+          <ConversationMessage key={k} message={messages[k]} />
+        ))}
+      </div>
+      <AddMessageToConversation />
     </div>
   );
 }
