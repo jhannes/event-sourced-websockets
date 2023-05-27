@@ -1,7 +1,7 @@
 import React from "react";
 
 import "./application.css";
-import { ConversationRoutes } from "../conversations/conversationRoutes";
+import { ConversationRoutes } from "../conversationList/conversationRoutes";
 import { BrowserRouter, NavLink, Route, Routes } from "react-router-dom";
 
 function FrontPage() {

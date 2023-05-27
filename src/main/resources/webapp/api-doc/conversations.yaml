@@ -72,6 +72,7 @@ components:
     Delta:
       oneOf:
         - $ref: "#/components/schemas/CreateConversationDelta"
+        - $ref: "#/components/schemas/UpdateConversationDelta"
         - $ref: "#/components/schemas/AddMessageToConversationDelta"
       discriminator:
         propertyName: "delta"
@@ -80,6 +81,16 @@ components:
       properties:
         delta:
           enum: [ CreateConversationDelta ]
+        conversationId:
+          type: string
+          format: uuid
+        info:
+          $ref: "#/components/schemas/ConversationInfo"
+      required: [ delta, conversationId, info ]
+    UpdateConversationDelta:
+      properties:
+        delta:
+          enum: [ UpdateConversationDelta ]
         conversationId:
           type: string
           format: uuid
