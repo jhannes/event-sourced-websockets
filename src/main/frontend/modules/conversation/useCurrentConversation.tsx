@@ -1,14 +1,13 @@
-import { DefaultApi } from "../../conversationsApi";
 import { useParams } from "react-router";
-import { useLoaderWithSelector } from "../../hooks/useLoaderWithSelector";
+import { useContext } from "react";
+import { ConversationsContext } from "../websocket";
 
 export function useCurrentConversation() {
   const { id } = useParams();
-  return useLoaderWithSelector(
-    () => new DefaultApi().apiConversationsGet(),
-    (conversations) => {
-      const conversation = conversations.find((c) => c.id === id);
-      return id && conversation ? { id, conversation } : undefined;
-    }
-  );
+  const { conversationList } = useContext(ConversationsContext);
+  if ("pending" in conversationList) {
+    return conversationList;
+  }
+  const conversation = conversationList.find((c) => c.id === id);
+  return conversation && id ? { id, conversation } : { pending: true };
 }

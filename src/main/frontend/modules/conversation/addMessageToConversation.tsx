@@ -2,23 +2,18 @@ import React, { useState } from "react";
 import { ConversationMessageDto } from "../../conversationsApi";
 import { useSubmitDelta } from "../../hooks/useSubmitDelta";
 import { v4 as uuidv4 } from "uuid";
+import { useParams } from "react-router";
 
-export function AddMessageToConversation({
-  conversationId,
-  onReload,
-}: {
-  conversationId: string;
-  onReload(): void;
-}) {
+export function AddMessageToConversation() {
+  const { id } = useParams();
   const delta = "AddMessageToConversationDelta";
   const [message, setMessage] = useState<ConversationMessageDto>({
     text: "",
   });
   const { handleSubmit, disabled, error } = useSubmitDelta({
-    delta: () => ({ conversationId, delta, messageId: uuidv4(), message }),
+    delta: () => ({ conversationId: id!, delta, messageId: uuidv4(), message }),
     onComplete: () => {
       setMessage({ text: "" });
-      onReload();
     },
   });
 

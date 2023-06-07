@@ -1,10 +1,20 @@
-import { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useEffect, useMemo, useState } from "react";
 import {
   ChangeTrackedDto,
   ConversationSnapshotDto,
   EventFromServerDto,
   MessageFromServerDto,
 } from "../../conversationsApi";
+
+export type ConversationListObservable =
+  | { pending: true }
+  | ConversationSnapshotDto[];
+
+export const ConversationsContext = React.createContext<{
+  conversationList: ConversationListObservable;
+}>({
+  conversationList: { pending: true },
+});
 
 function newChangeTracked(event: EventFromServerDto): ChangeTrackedDto {
   return {
@@ -37,26 +47,40 @@ function applyDeltaToSnapshot(
     case "UpdateConversationDelta":
       return {
         ...snapshotDto,
-        ...delta.info,
+        info: {
+          ...snapshotDto.info,
+          ...delta.info,
+        },
         updatedAt: event.clientTime,
       };
+    default:
+      delta satisfies never;
+      throw new Error("Should never happen");
   }
 }
 
 export function ChatWebSocketContext({ children }: { children: ReactElement }) {
   const [webSocket, setWebSocket] = useState<WebSocket>();
-  const [conversations, setConversations] = useState<
-    Record<string, ConversationSnapshotDto>
-  >({});
+  const [conversations, setConversations] =
+    useState<Record<string, ConversationSnapshotDto>>();
+  const conversationList: ConversationListObservable = useMemo(() => {
+    return conversations === undefined
+      ? { pending: true }
+      : Object.values(conversations);
+  }, [conversations]);
 
   function applyDelta(event: EventFromServerDto) {
     const {
       delta: { conversationId },
     } = event;
-    setConversations((old) => ({
-      ...old,
-      [conversationId]: applyDeltaToSnapshot(event, old[conversationId]),
-    }));
+    setConversations((old) =>
+      old
+        ? {
+            ...old,
+            [conversationId]: applyDeltaToSnapshot(event, old[conversationId]),
+          }
+        : undefined
+    );
   }
 
   useEffect(() => {
@@ -81,5 +105,9 @@ export function ChatWebSocketContext({ children }: { children: ReactElement }) {
     console.log({ conversations });
   }, [conversations]);
 
-  return children;
+  return (
+    <ConversationsContext.Provider value={{ conversationList }}>
+      {children}
+    </ConversationsContext.Provider>
+  );
 }

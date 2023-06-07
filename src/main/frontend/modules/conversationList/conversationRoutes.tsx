@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { ConversationListView } from "./conversationList";
-import { ConversationView } from "../conversation/conversationView";
+import { ConversationView } from "../conversation";
 
 import "./conversations.css";
 

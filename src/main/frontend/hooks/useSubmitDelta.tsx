@@ -6,7 +6,7 @@ export function useSubmitDelta({
   delta,
   onComplete,
 }: {
-  onComplete: () => void;
+  onComplete?: () => void;
   delta: () => DeltaDto;
 }) {
   return useSubmit({

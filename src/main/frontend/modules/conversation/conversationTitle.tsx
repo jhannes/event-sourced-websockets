@@ -5,10 +5,8 @@ import { useSubmitDelta } from "../../hooks/useSubmitDelta";
 export function ConversationTitle({
   conversationId,
   conversation,
-  onReload,
 }: {
   conversation: ConversationInfoDto;
-  onReload: () => Promise<void>;
   conversationId: string;
 }) {
   const [editing, setEditing] = useState(false);
@@ -20,7 +18,7 @@ export function ConversationTitle({
       info: { title },
     }),
     onComplete() {
-      onReload();
+      setEditing(false);
     },
   });
   return (
