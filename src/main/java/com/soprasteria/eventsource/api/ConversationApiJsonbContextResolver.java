@@ -17,9 +17,12 @@ import java.lang.reflect.Type;
 public class ConversationApiJsonbContextResolver implements ContextResolver<Jsonb> {
     @Override
     public Jsonb getContext(Class<?> type) {
-        var jsonb = JsonbBuilder.create();
+        return createJsonb();
+    }
+
+    public static Jsonb createJsonb() {
         return JsonbBuilder.create(new JsonbConfig()
-                .withDeserializers(createDeltaDeserializer(jsonb))
+                .withDeserializers(createDeltaDeserializer(JsonbBuilder.create()))
         );
     }
 

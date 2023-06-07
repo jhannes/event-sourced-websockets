@@ -8,13 +8,13 @@ import java.util.Map;
 
 public class ConversationApiConfig extends ResourceConfig {
 
-    public ConversationApiConfig() {
+    public ConversationApiConfig(ConversationService service) {
         super(ConversationController.class, CommandsController.class);
         register(ConversationApiJsonbContextResolver.class);
         register(new AbstractBinder() {
             @Override
             protected void configure() {
-                bind(new ConversationService()).to(ConversationService.class);
+                bind(service).to(ConversationService.class);
             }
         });
         setProperties(Map.of(

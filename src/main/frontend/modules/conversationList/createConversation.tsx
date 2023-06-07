@@ -27,7 +27,7 @@ export function CreateConversation({ onReload }: { onReload: () => void }) {
       <form onSubmit={handleSubmit}>
         <fieldset disabled={disabled} style={{ border: "none" }}>
           {error && <div>Error: {error.toString()}</div>}
-          <p>
+          <div>
             <label>
               Title:
               <div>
@@ -43,8 +43,8 @@ export function CreateConversation({ onReload }: { onReload: () => void }) {
                 />
               </div>
             </label>
-          </p>
-          <p>
+          </div>
+          <div>
             <label>
               Description:
               <div>
@@ -59,7 +59,7 @@ export function CreateConversation({ onReload }: { onReload: () => void }) {
                 />
               </div>
             </label>
-          </p>
+          </div>
           <p>
             <button disabled={!info.title}>Submit</button>
           </p>

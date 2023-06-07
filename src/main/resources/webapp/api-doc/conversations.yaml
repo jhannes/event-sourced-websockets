@@ -127,3 +127,44 @@ components:
         message:
           $ref: "#/components/schemas/ConversationMessage"
       required: [ delta, conversationId, messageId, message ]
+
+    MessageToServer:
+      oneOf:
+        - $ref: "#/components/schemas/CommandToServer"
+        - $ref: "#/components/schemas/RequestToServer"
+    MessageFromServer:
+      oneOf:
+        - $ref: "#/components/schemas/SnapshotSet"
+        - $ref: "#/components/schemas/EventFromServer"
+
+    SnapshotSet:
+      properties:
+        conversations:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConversationSnapshot"
+    EventFromServer:
+      allOf:
+        - $ref: "#/components/schemas/CommandToServer"
+        - properties:
+            serverTime:
+              type: string
+              format: date-time
+            username:
+              type: string
+          required: [serverTime, username]
+
+    RequestToServer:
+      oneOf:
+        - $ref: "#/components/schemas/SubscribeRequest"
+      discriminator:
+        propertyName: request
+
+    SubscribeRequest:
+      properties:
+        request:
+          enum: [SubscribeRequest]
+        clientId:
+          type: string
+          format: uuid
+      required: [request, clientId]
