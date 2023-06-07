@@ -1,4 +1,4 @@
-import { DefaultApi } from "../../../../../target/generated-sources/openapi-typescript";
+import { DefaultApi } from "../../conversationsApi";
 import { useParams } from "react-router";
 import { useLoaderWithSelector } from "../../hooks/useLoaderWithSelector";
 

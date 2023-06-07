@@ -1,7 +1,4 @@
-import {
-  ConversationSnapshotDto,
-  DefaultApi,
-} from "../../../../../target/generated-sources/openapi-typescript";
+import { ConversationSnapshotDto, DefaultApi } from "../../conversationsApi";
 import React from "react";
 import { useLoader } from "../../hooks/useLoader";
 import { CreateConversation } from "./createConversation";

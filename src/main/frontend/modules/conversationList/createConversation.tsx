@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ConversationInfoDto } from "../../../../../target/generated-sources/openapi-typescript";
+import { ConversationInfoDto } from "../../conversationsApi";
 import { v4 as uuidv4 } from "uuid";
 import { useSubmitDelta } from "../../hooks/useSubmitDelta";
 

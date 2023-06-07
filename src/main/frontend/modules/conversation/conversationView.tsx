@@ -2,10 +2,12 @@ import React from "react";
 import { LoadingView } from "../utils/loadingView";
 import { ErrorView } from "../utils/errorView";
 import { useCurrentConversation } from "./useCurrentConversation";
-import { ConversationMessageSnapshotDto } from "../../../../../target/generated-sources/openapi-typescript";
-import { ConversationSummary } from "./conversationSummary";
-import { ConversationTitle } from "./conversationTitle";
-import { AddMessageToConversation } from "./addMessageToConversation";
+import { ConversationMessageSnapshotDto } from "../../conversationsApi";
+import {
+  AddMessageToConversation,
+  ConversationSummary,
+  ConversationTitle,
+} from "./";
 import { useDateFormat } from "../../hooks/useDateFormat";
 
 function ConversationMessage({

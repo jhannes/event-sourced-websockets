@@ -1,7 +1,4 @@
-import {
-  DefaultApi,
-  DeltaDto,
-} from "../../../../target/generated-sources/openapi-typescript";
+import { DefaultApi, DeltaDto } from "../conversationsApi";
 import { useSubmit } from "./useSubmit";
 import { v4 as uuidv4 } from "uuid";
 

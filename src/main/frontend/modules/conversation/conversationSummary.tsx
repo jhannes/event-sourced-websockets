@@ -1,4 +1,4 @@
-import { ConversationInfoDto } from "../../../../../target/generated-sources/openapi-typescript";
+import { ConversationInfoDto } from "../../conversationsApi";
 import React, { useState } from "react";
 import { useSubmitDelta } from "../../hooks/useSubmitDelta";
 

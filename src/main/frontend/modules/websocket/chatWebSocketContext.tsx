@@ -4,7 +4,7 @@ import {
   ConversationSnapshotDto,
   EventFromServerDto,
   MessageFromServerDto,
-} from "../../../../../target/generated-sources/openapi-typescript";
+} from "../../conversationsApi";
 
 function newChangeTracked(event: EventFromServerDto): ChangeTrackedDto {
   return {
