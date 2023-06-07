@@ -143,6 +143,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ConversationSnapshot"
+      required: [conversations]
     EventFromServer:
       allOf:
         - $ref: "#/components/schemas/CommandToServer"
