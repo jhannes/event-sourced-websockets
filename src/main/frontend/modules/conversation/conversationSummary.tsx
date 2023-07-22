@@ -1,5 +1,5 @@
 import { ConversationInfoDto } from "../../conversationsApi";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSubmitDelta } from "../../hooks/useSubmitDelta";
 
 export function ConversationSummary({
@@ -10,7 +10,11 @@ export function ConversationSummary({
   conversationId: string;
 }) {
   const [editing, setEditing] = useState(false);
-  const [summary, setSummary] = useState(conversation.summary || "");
+  const [summary, setSummary] = useState("");
+  useEffect(
+    () => setSummary(conversation.summary || ""),
+    [conversation.summary]
+  );
   const { handleSubmit, disabled } = useSubmitDelta({
     delta: () => ({
       delta: "UpdateConversationDelta",

@@ -1,5 +1,5 @@
 import { ConversationInfoDto } from "../../conversationsApi";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSubmitDelta } from "../../hooks/useSubmitDelta";
 
 export function ConversationTitle({
@@ -10,7 +10,7 @@ export function ConversationTitle({
   conversationId: string;
 }) {
   const [editing, setEditing] = useState(false);
-  const [title, setTitle] = useState(conversation.title);
+  const [title, setTitle] = useState("");
   const { handleSubmit, disabled } = useSubmitDelta({
     delta: () => ({
       delta: "UpdateConversationDelta",
@@ -21,6 +21,7 @@ export function ConversationTitle({
       setEditing(false);
     },
   });
+  useEffect(() => setTitle(conversation.title), [conversation.title]);
   return (
     <form onSubmit={handleSubmit}>
       {editing && <div className={"scrim"}></div>}
