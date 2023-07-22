@@ -1,6 +1,7 @@
 import React, { ReactElement, useEffect, useMemo, useState } from "react";
 import {
   ChangeTrackedDto,
+  CommandToServerDto,
   ConversationSnapshotDto,
   EventFromServerDto,
   MessageFromServerDto,
@@ -12,8 +13,10 @@ export type ConversationListObservable =
 
 export const ConversationsContext = React.createContext<{
   conversationList: ConversationListObservable;
+  sendMessage(message: CommandToServerDto): void;
 }>({
   conversationList: { pending: true },
+  sendMessage: () => {},
 });
 
 function newChangeTracked(event: EventFromServerDto): ChangeTrackedDto {
@@ -61,6 +64,37 @@ function applyDeltaToSnapshot(
 
 export function ChatWebSocketContext({ children }: { children: ReactElement }) {
   const [webSocket, setWebSocket] = useState<WebSocket>();
+  const [_, setConnected] = useState(false);
+
+  function connect() {
+    webSocket?.close();
+    console.log("Connecting");
+    setConnected(false);
+    const ws = new WebSocket("ws://localhost:8080/ws");
+    ws.onclose = () => {
+      setConnected((connected) => {
+        setTimeout(connect, connected ? 100 : 10000);
+        return false;
+      });
+    };
+    ws.onmessage = handleMessage;
+    setWebSocket(ws);
+  }
+
+  function handleMessage({ data }: MessageEvent) {
+    const messageFromServer = JSON.parse(data) as MessageFromServerDto;
+    setConnected(true);
+    if ("conversations" in messageFromServer) {
+      setConversations(
+        Object.fromEntries(
+          messageFromServer.conversations.map((c) => [c.id, c])
+        )
+      );
+    } else {
+      applyDelta(messageFromServer);
+    }
+  }
+
   const [conversations, setConversations] =
     useState<Record<string, ConversationSnapshotDto>>();
   const conversationList: ConversationListObservable = useMemo(() => {
@@ -83,22 +117,13 @@ export function ChatWebSocketContext({ children }: { children: ReactElement }) {
     );
   }
 
+  function sendMessage(command: CommandToServerDto) {
+    webSocket?.send(JSON.stringify(command));
+  }
+
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:8080/ws");
-    console.log("Connecting websocket");
-    ws.onmessage = ({ data }) => {
-      const messageFromServer = JSON.parse(data) as MessageFromServerDto;
-      if ("conversations" in messageFromServer) {
-        setConversations(
-          Object.fromEntries(
-            messageFromServer.conversations.map((c) => [c.id, c])
-          )
-        );
-      } else {
-        applyDelta(messageFromServer);
-      }
-    };
-    setWebSocket(ws);
+    connect();
+    return () => webSocket?.close();
   }, []);
 
   useEffect(() => {
@@ -106,7 +131,7 @@ export function ChatWebSocketContext({ children }: { children: ReactElement }) {
   }, [conversations]);
 
   return (
-    <ConversationsContext.Provider value={{ conversationList }}>
+    <ConversationsContext.Provider value={{ conversationList, sendMessage }}>
       {children}
     </ConversationsContext.Provider>
   );

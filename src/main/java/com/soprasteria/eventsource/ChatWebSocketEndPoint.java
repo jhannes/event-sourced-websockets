@@ -2,13 +2,13 @@ package com.soprasteria.eventsource;
 
 import com.soprasteria.eventsource.api.ConversationApiJsonbContextResolver;
 import com.soprasteria.eventsource.core.ConversationService;
+import com.soprasteria.eventsource.generated.api.CommandToServerDto;
 import com.soprasteria.eventsource.generated.api.EventFromServerDto;
 import com.soprasteria.eventsource.generated.api.SnapshotSetDto;
 import com.soprasteria.eventsource.infrastructure.SafeCloseable;
 import jakarta.json.bind.Jsonb;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketListener;
-import org.eclipse.jetty.websocket.server.JettyServerUpgradeRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -29,7 +29,7 @@ public class ChatWebSocketEndPoint implements WebSocketListener, ConversationSer
     private final SafeCloseable subscription;
     private Optional<Session> session = Optional.empty();
 
-    public ChatWebSocketEndPoint(JettyServerUpgradeRequest req, ConversationService conversationService) {
+    public ChatWebSocketEndPoint(ConversationService conversationService) {
         this.conversationService = conversationService;
         this.subscription = conversationService.listen(this);
     }
@@ -53,6 +53,7 @@ public class ChatWebSocketEndPoint implements WebSocketListener, ConversationSer
     @Override
     public void onWebSocketConnect(Session session) {
         var mdc = withMdc();
+        //session.setIdleTimeout(Duration.ofSeconds(15));
         this.session = Optional.of(session);
         var snapshotSetDto = new SnapshotSetDto().conversations(conversationService.listConversations());
         try {
@@ -60,6 +61,17 @@ public class ChatWebSocketEndPoint implements WebSocketListener, ConversationSer
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        mdc.close();
+    }
+
+    @Override
+    public void onWebSocketText(String message) {
+        var mdc = withMdc();
+        log.trace("onWebSocketText raw {}", message);
+        var command = jsonb.fromJson(message, CommandToServerDto.class);
+        MDC.put("delta.type", command.getDelta().getDelta());
+        log.debug("onWebSocketText {}", command);
+        conversationService.submitCommand(command, "anon");
         mdc.close();
     }
 

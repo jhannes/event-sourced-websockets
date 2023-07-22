@@ -26,7 +26,7 @@ public class ChatServer {
         handler.addServlet(new ServletHolder(ContentServlet.createWithDefault("/webapp", "/index.html")), "/*");
 
         handler.addServletContainerInitializer(new JettyWebSocketServletContainerInitializer((servletContext, container) ->
-                container.addMapping("/ws", (req, resp) -> new ChatWebSocketEndPoint(req, conversationService))
+                container.addMapping("/ws", (req, resp) -> new ChatWebSocketEndPoint(conversationService))
         ));
 
         return handler;

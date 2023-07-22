@@ -1,6 +1,8 @@
-import { DefaultApi, DeltaDto } from "../conversationsApi";
+import { DeltaDto } from "../conversationsApi";
 import { useSubmit } from "./useSubmit";
 import { v4 as uuidv4 } from "uuid";
+import { useContext } from "react";
+import { ConversationsContext } from "../modules/websocket";
 
 export function useSubmitDelta({
   delta,
@@ -9,15 +11,11 @@ export function useSubmitDelta({
   onComplete?: () => void;
   delta: () => DeltaDto;
 }) {
+  const { sendMessage } = useContext(ConversationsContext);
   return useSubmit({
-    onSubmit: () =>
-      new DefaultApi().apiCommandsPost({
-        commandToServerDto: {
-          clientTime: new Date(),
-          id: uuidv4(),
-          delta: delta(),
-        },
-      }),
+    onSubmit: async () => {
+      sendMessage({ clientTime: new Date(), delta: delta(), id: uuidv4() });
+    },
     onComplete,
   });
 }

@@ -10,7 +10,7 @@ TODO:
   * [x] typescript
   * [x] prettier
   * [x] frontend-maven-plugin
-* [ ] Open API display List<ConversationSnapshot> from server
+* [x] Open API display List<ConversationSnapshot> from server
   * [x] Serve openapi spec with swagger-ui
   * [x] Generate code from openapi
   * [x] Create ConversationController
@@ -19,7 +19,7 @@ TODO:
   * [x] Update API spec to support commands to server
   * [x] Send command from client
   * [x] Create CommandController and apply delta to conversations
-* [ ] Post CommandToServer<AddMessageToConversationDelta> to server
+* [x] Post CommandToServer<AddMessageToConversationDelta> to server
   * [x] Add BrowserRouter
   * [x] Display ConversationMessages
   * [x] Add more interesting test data
@@ -29,9 +29,12 @@ TODO:
   * [x] Modal input: Display text input with shim
   * [x] Post to server
 * [ ] Listen to web sockets
-  * [ ] Client sends offset on connect
-  * [ ] Server sends snapshots and latest sequence
-  * [ ] Server sends new deltas on incoming deltas
+  * [x] Server sends snapshots and latest sequence
+  * [x] Server sends new deltas on incoming deltas
+  * [x] Client updates sent via web socket
+  * [ ] Client sends offset on reconnect
+  * [ ] Implement outbox
+* [ ] Offline support with IndexedDb
 * [ ] Post CommandToServer<UpdateMessageInConversationDelta> to server
 * [ ] Implement authentication
 * [ ] Post CommandToServer<RegisterDeliveryOfConversationMessageDelta>
