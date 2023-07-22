@@ -10,8 +10,8 @@ export function useSubmit({
   const [disabled, setDisabled] = useState(false);
   const [error, setError] = useState<Error>();
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  async function handleSubmit(e?: FormEvent<HTMLFormElement>) {
+    e?.preventDefault();
     setDisabled(true);
     setError(undefined);
     try {

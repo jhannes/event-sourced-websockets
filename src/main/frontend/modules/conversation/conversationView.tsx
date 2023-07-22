@@ -7,25 +7,25 @@ import {
   ConversationSummary,
   ConversationTitle,
 } from "./";
+import { Conversation } from "../websocket";
 
 export function ConversationView() {
+  const conversation = useCurrentConversation();
+
+  if ("pending" in conversation) return <LoadingView />;
+  if ("notFound" in conversation) return <div>Error: Not Found</div>;
+
+  const { id, snapshot } = conversation;
+
   return (
     <div>
-      <ShowConversation />
-      <AddMessageToConversation />
+      <ShowConversation id={id} snapshot={snapshot} />
+      <AddMessageToConversation conversationId={id} />
     </div>
   );
 }
 
-function ShowConversation() {
-  const conversation = useCurrentConversation();
-
-  if ("pending" in conversation) return <LoadingView />;
-
-  const {
-    id,
-    conversation: { info, messages },
-  } = conversation;
+function ShowConversation({ id, snapshot: { info, messages } }: Conversation) {
   return (
     <>
       <ConversationTitle conversation={info} conversationId={id} />

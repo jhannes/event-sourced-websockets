@@ -4,6 +4,7 @@ import "./application.css";
 import { ConversationRoutes } from "../conversationList/conversationRoutes";
 import { BrowserRouter, NavLink, Route, Routes } from "react-router-dom";
 import { ChatWebSocketContext } from "../websocket";
+import { ApplicationHeader } from "./applicationHeader";
 
 function FrontPage() {
   return <h1>Front Page</h1>;
@@ -13,7 +14,7 @@ export function Application() {
   return (
     <ChatWebSocketContext>
       <BrowserRouter>
-        <header>Hello application with layout</header>
+        <ApplicationHeader />
         <div id="main">
           <nav>
             <NavLink to={"/"}>Front page</NavLink>

@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useMemo, useState } from "react";
+import React, { ReactElement, useMemo, useState } from "react";
 import {
   ChangeTrackedDto,
   CommandToServerDto,
@@ -6,17 +6,27 @@ import {
   EventFromServerDto,
   MessageFromServerDto,
 } from "../../conversationsApi";
+import { ConnectionState, useWebSocket } from "../hooks/useWebSocket";
 
 export type ConversationListObservable =
   | { pending: true }
   | ConversationSnapshotDto[];
 
+export type Conversation = { id: string; snapshot: ConversationSnapshotDto };
+
+export type ConversationObservable =
+  | { pending: true }
+  | { notFound: true }
+  | Conversation;
+
 export const ConversationsContext = React.createContext<{
   conversationList: ConversationListObservable;
   sendMessage(message: CommandToServerDto): void;
+  connectionState: ConnectionState;
 }>({
   conversationList: { pending: true },
   sendMessage: () => {},
+  connectionState: { connected: false },
 });
 
 function newChangeTracked(event: EventFromServerDto): ChangeTrackedDto {
@@ -63,35 +73,15 @@ function applyDeltaToSnapshot(
 }
 
 export function ChatWebSocketContext({ children }: { children: ReactElement }) {
-  const [webSocket, setWebSocket] = useState<WebSocket>();
-  const [_, setConnected] = useState(false);
+  const { connectionState, sendMessage } = useWebSocket(handleMessage, "/ws");
 
-  function connect() {
-    webSocket?.close();
-    console.log("Connecting");
-    setConnected(false);
-    const ws = new WebSocket("ws://localhost:8080/ws");
-    ws.onclose = () => {
-      setConnected((connected) => {
-        setTimeout(connect, connected ? 100 : 10000);
-        return false;
-      });
-    };
-    ws.onmessage = handleMessage;
-    setWebSocket(ws);
-  }
-
-  function handleMessage({ data }: MessageEvent) {
-    const messageFromServer = JSON.parse(data) as MessageFromServerDto;
-    setConnected(true);
-    if ("conversations" in messageFromServer) {
+  function handleMessage(message: MessageFromServerDto) {
+    if ("conversations" in message) {
       setConversations(
-        Object.fromEntries(
-          messageFromServer.conversations.map((c) => [c.id, c])
-        )
+        Object.fromEntries(message.conversations.map((c) => [c.id, c]))
       );
     } else {
-      applyDelta(messageFromServer);
+      applyDelta(message);
     }
   }
 
@@ -117,21 +107,10 @@ export function ChatWebSocketContext({ children }: { children: ReactElement }) {
     );
   }
 
-  function sendMessage(command: CommandToServerDto) {
-    webSocket?.send(JSON.stringify(command));
-  }
-
-  useEffect(() => {
-    connect();
-    return () => webSocket?.close();
-  }, []);
-
-  useEffect(() => {
-    console.log({ conversations });
-  }, [conversations]);
-
   return (
-    <ConversationsContext.Provider value={{ conversationList, sendMessage }}>
+    <ConversationsContext.Provider
+      value={{ conversationList, sendMessage, connectionState }}
+    >
       {children}
     </ConversationsContext.Provider>
   );

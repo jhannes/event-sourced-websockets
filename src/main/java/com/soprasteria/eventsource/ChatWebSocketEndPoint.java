@@ -78,7 +78,11 @@ public class ChatWebSocketEndPoint implements WebSocketListener, ConversationSer
     @Override
     public void onWebSocketClose(int statusCode, String reason) {
         var mdc = withMdc();
-        log.debug("Closing");
+        if (reason.equals("Connection Idle Timeout")) {
+            log.debug("Idle timeout: {}", session.map(s -> s.getIdleTimeout().toString()).orElse("(not connected)"));
+        } else {
+            log.debug("Closing: status={} reason={}", statusCode, reason);
+        }
         subscription.close();
         mdc.close();
     }

@@ -3,7 +3,9 @@
 }
 
 #root {
+  /*noinspection CssOverwrittenProperties*/
   height: 100vh;
+  /*noinspection CssOverwrittenProperties*/
   height: 100dvh;
   display: grid;
   grid-auto-rows: auto 1fr auto;
@@ -39,4 +41,8 @@ footer {
 nav {
   display: flex;
   flex-direction: column;
+}
+
+header {
+  display: flex;
 }
