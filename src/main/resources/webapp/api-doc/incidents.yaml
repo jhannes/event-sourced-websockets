@@ -18,12 +18,21 @@ components:
     MessageFromServer:
       oneOf:
         - $ref: "#/components/schemas/IncidentSummaryList"
+        - $ref: "#/components/schemas/IncidentEvent"
 
     MessageToServer:
       oneOf:
         - $ref: "#/components/schemas/IncidentCommand"
       discriminator:
         propertyName: type
+
+    IncidentEvent:
+      allOf:
+        - $ref: "#/components/schemas/IncidentCommand"
+        - properties:
+            username:
+              type: string
+          required: [username]
 
     IncidentSummaryList:
       properties:
@@ -52,7 +61,7 @@ components:
           format: uuid
         delta:
           $ref: "#/components/schemas/IncidentDelta"
-      required: [clientTime, delta]
+      required: [clientTime, incidentId, delta]
 
     IncidentDelta:
       oneOf:
@@ -64,3 +73,4 @@ components:
       properties:
         description:
           type: string
+      required: [description]

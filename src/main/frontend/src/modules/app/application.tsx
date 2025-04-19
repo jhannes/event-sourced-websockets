@@ -4,7 +4,6 @@ import {
   MessageFromServerDto,
   MessageToServerDto,
 } from "../../../../../../target/generated-sources/openapi-typescript";
-import { v4 as uuidv4 } from "uuid";
 import { useWebSocket } from "../../hooks/useWebSocket";
 import { NewIncidentForm } from "../incidents/newIncidentForm";
 
@@ -12,7 +11,18 @@ export function Application() {
   const [incidents, setIncidents] = useState<IncidentSummaryDto[]>([]);
 
   function handleMessage(message: MessageFromServerDto) {
-    setIncidents(message.summaries);
+    if ("summaries" in message) {
+      setIncidents(message.summaries);
+    } else if ("delta" in message) {
+      const {
+        incidentId: id,
+        delta: { description },
+      } = message;
+      setIncidents((old) => [...old, { id, description }]);
+    } else {
+      const unexpected: never = message;
+      console.log("Should never happen: ", unexpected);
+    }
   }
 
   const { sendMessage } = useWebSocket<

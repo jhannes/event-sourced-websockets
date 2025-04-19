@@ -3,18 +3,23 @@ package com.johannesbrodwall;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.websocket.Endpoint;
 import jakarta.websocket.EndpointConfig;
+import jakarta.websocket.RemoteEndpoint;
 import jakarta.websocket.Session;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.openapitools.client.model.CreateIncidentDeltaDto;
 import org.openapitools.client.model.IncidentCommandDto;
+import org.openapitools.client.model.IncidentEventDto;
 import org.openapitools.client.model.IncidentSummaryDto;
 import org.openapitools.client.model.IncidentSummaryListDto;
+import org.openapitools.client.model.MessageFromServerDto;
 import org.openapitools.client.model.MessageToServerDto;
 import org.openapitools.client.model.SampleModelData;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 public class IncidentsWsEndpoint extends Endpoint {
@@ -25,12 +30,20 @@ public class IncidentsWsEndpoint extends Endpoint {
             sampleData.sampleIncidentSummaryDto().setDescription("Fire"),
             sampleData.sampleIncidentSummaryDto().setDescription("Traffic accident")
     ));
+    private RemoteEndpoint.Async remote;
+    private final static Set<IncidentsWsEndpoint> clients = new HashSet<>();
 
-    @SneakyThrows
     @Override
     public void onOpen(Session session, EndpointConfig config) {
-        session.getAsyncRemote().sendText(mapper.writeValueAsString(new IncidentSummaryListDto().setSummaries(summaries)));
+        this.remote = session.getAsyncRemote();
+        sendMessageToClient(new IncidentSummaryListDto().setSummaries(summaries));
         session.addMessageHandler(String.class, this::handleMessage);
+        clients.add(this);
+    }
+
+    @SneakyThrows
+    private void sendMessageToClient(MessageFromServerDto message) {
+        remote.sendText(mapper.writeValueAsString(message));
     }
 
     @SneakyThrows
@@ -39,11 +52,19 @@ public class IncidentsWsEndpoint extends Endpoint {
         switch (message) {
             case IncidentCommandDto command -> {
                 switch (command.getDelta()) {
-                    case CreateIncidentDeltaDto create ->
-                            summaries.add(new IncidentSummaryDto().setDescription(create.getDescription()));
+                    case CreateIncidentDeltaDto create -> summaries.add(new IncidentSummaryDto()
+                            .setId(command.getIncidentId())
+                            .setDescription(create.getDescription()));
                 }
+                broadcastMessage(new IncidentEventDto()
+                        .setUsername("the_user")
+                        .putAll(command));
             }
         }
+    }
+
+    private void broadcastMessage(MessageFromServerDto message) {
+        clients.forEach(c -> c.sendMessageToClient(message));
     }
 
     @Override
