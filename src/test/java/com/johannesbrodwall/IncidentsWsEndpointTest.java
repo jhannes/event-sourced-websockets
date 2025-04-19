@@ -29,7 +29,7 @@ public class IncidentsWsEndpointTest {
         var uri = new URI("ws", server.getURI().getAuthority(), "/ws/incidents", null, null);
 
         var wsClient = new WsClient();
-        try (var connection = ContainerProvider.getWebSocketContainer().connectToServer(wsClient, ClientEndpointConfig.Builder.create().build(), uri)) {
+        try (var _ = ContainerProvider.getWebSocketContainer().connectToServer(wsClient, ClientEndpointConfig.Builder.create().build(), uri)) {
             var message = wsClient.poll(5, TimeUnit.SECONDS);
             var summaries = mapper.readValue(message, IncidentSummaryListDto.class);
             assertThat(summaries.getSummaries()).isNotEmpty();

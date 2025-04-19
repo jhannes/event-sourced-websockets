@@ -1,24 +1,39 @@
 import React, { useCallback, useEffect, useState } from "react";
+import {
+  IncidentSummaryDto,
+  MessageFromServerDto,
+} from "../../../../../../target/generated-sources/openapi-typescript";
 
-export function Application() {
-  const [messages, setMessages] = useState<string[]>(["first message"]);
-
+function useWebSocket<OUTPUT>(params: {
+  url: string;
+  onMessage: (message: OUTPUT) => void;
+}) {
   const connect = useCallback(() => {
-    const ws = new WebSocket("/ws/incidents");
+    const ws = new WebSocket(params.url);
     ws.onmessage = ({ data }) => {
-      setMessages((old) => [...old, data]);
+      params.onMessage(JSON.parse(data) as OUTPUT);
     };
   }, []);
   useEffect(() => {
     connect();
   }, []);
+}
+
+export function Application() {
+  const [incidents, setIncidents] = useState<IncidentSummaryDto[]>([]);
+
+  function handleMessage(message: MessageFromServerDto) {
+    setIncidents(message.summaries);
+  }
+
+  useWebSocket({ url: "/ws/incidents", onMessage: handleMessage });
 
   return (
     <>
-      <h1>Hello websocket component</h1>
+      <h1>Incidents</h1>
       <ul>
-        {messages.map((m, index) => (
-          <li key={index}>{m}</li>
+        {incidents.map((m) => (
+          <li key={m.id}>{m.description}</li>
         ))}
       </ul>
     </>
