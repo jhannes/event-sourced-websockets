@@ -46,6 +46,25 @@ export function useIncidents() {
               : o,
           ),
         );
+      } else if (delta.delta === "UpdatePersonInIncidentDelta") {
+        const { personId, info } = delta;
+        setIncidents((old) =>
+          old.map((o) =>
+            o.id === id
+              ? {
+                  ...o,
+                  persons:
+                    "persons" in o
+                      ? Object.fromEntries(
+                          Object.entries(o.persons).map(([k, v]) =>
+                            k === personId ? [k, { ...v, ...info }] : [k, v],
+                          ),
+                        )
+                      : { [personId]: info },
+                }
+              : o,
+          ),
+        );
       } else {
         const unexpected: never = delta;
         console.log("Should never happen: ", unexpected);

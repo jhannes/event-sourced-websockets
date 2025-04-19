@@ -20,6 +20,7 @@ import org.openapitools.client.model.IncidentSummaryListDto;
 import org.openapitools.client.model.MessageFromServerDto;
 import org.openapitools.client.model.MessageToServerDto;
 import org.openapitools.client.model.UpdateIncidentDeltaDto;
+import org.openapitools.client.model.UpdatePersonInIncidentDeltaDto;
 
 import java.nio.channels.ClosedChannelException;
 import java.util.HashMap;
@@ -72,6 +73,8 @@ public class IncidentsWsEndpoint extends Endpoint {
                             .getInfo().putAll(update.getInfo());
                     case AddPersonToIncidentDeltaDto addPerson -> incidents.get(command.getIncidentId())
                             .getPersons().put(addPerson.getPersonId().toString(), addPerson.getInfo());
+                    case UpdatePersonInIncidentDeltaDto updatePerson -> incidents.get(command.getIncidentId())
+                            .getPersons().get(updatePerson.getPersonId().toString()).putAll(updatePerson.getInfo());
                 }
                 broadcastMessage(new IncidentEventDto()
                         .setUsername("the_user")

@@ -1,5 +1,9 @@
 import React, { FormEvent, useState } from "react";
-import { InvolvedPersonInfoDto } from "../../../../../../../target/generated-sources/openapi-typescript";
+import {
+  InvolvedPersonInfoDto,
+  InvolvedPersonInfoDtoRoleEnum,
+  InvolvedPersonInfoDtoRoleEnumValues,
+} from "../../../../../../../target/generated-sources/openapi-typescript";
 
 export function AddInvolvedPersonForm({
   onAddPerson,
@@ -8,9 +12,10 @@ export function AddInvolvedPersonForm({
 }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [role, setRole] = useState<InvolvedPersonInfoDtoRoleEnum>();
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    onAddPerson({ firstName, lastName });
+    onAddPerson({ firstName, lastName, role });
   }
 
   return (
@@ -34,6 +39,24 @@ export function AddInvolvedPersonForm({
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
           />
+        </label>
+      </div>
+      <div>
+        <label>
+          <strong>Role: </strong>
+          <select
+            value={role}
+            onChange={(e) =>
+              setRole(e.target.value as InvolvedPersonInfoDtoRoleEnum)
+            }
+          >
+            <option></option>
+            {InvolvedPersonInfoDtoRoleEnumValues.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
         </label>
       </div>
       <div>

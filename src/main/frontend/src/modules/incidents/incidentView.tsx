@@ -1,7 +1,10 @@
 import {
+  IncidentDeltaDto,
   IncidentSnapshotDto,
   IncidentSummaryDto,
   InvolvedPersonInfoDto,
+  InvolvedPersonInfoDtoRoleEnum,
+  InvolvedPersonInfoDtoRoleEnumValues,
 } from "../../../../../../target/generated-sources/openapi-typescript";
 import { Link, useParams } from "react-router";
 import React, { useContext, useEffect, useState } from "react";
@@ -46,36 +49,70 @@ function IncidentView({ incident }: { incident: IncidentSummaryDto }) {
     id: incidentId,
     info: { description, priority },
   } = incident;
-  const [personId, setPersonId] = useState(() => uuidv4());
-  function handleAddPerson(info: InvolvedPersonInfoDto) {
+  function sendCommand(delta: IncidentDeltaDto) {
     sendMessage({
       type: "IncidentCommand",
       clientTime: new Date(),
       incidentId,
-      delta: { delta: "AddPersonToIncidentDelta", personId, info },
+      delta,
     });
+  }
+  const [personId, setPersonId] = useState(() => uuidv4());
+  function handleAddPerson(info: InvolvedPersonInfoDto) {
+    sendCommand({ delta: "AddPersonToIncidentDelta", personId, info });
     setPersonId(uuidv4());
   }
+
+  function handleUpdatePerson(personId: string, info: InvolvedPersonInfoDto) {
+    sendCommand({ delta: "UpdatePersonInIncidentDelta", personId, info });
+    setPersonId(uuidv4());
+  }
+
   return (
     <>
       <h1>Incident {description}</h1>
       <p>
         <strong>Priority: </strong> {priority}
       </p>
-      {isSnapshot(incident) && <IncidentDetails incident={incident} />}
+      {isSnapshot(incident) && (
+        <IncidentDetails incident={incident} onUpdate={handleUpdatePerson} />
+      )}
       <AddInvolvedPersonForm key={personId} onAddPerson={handleAddPerson} />
     </>
   );
 }
 
-function IncidentDetails({ incident }: { incident: IncidentSnapshotDto }) {
+function IncidentDetails({
+  incident,
+  onUpdate,
+}: {
+  incident: IncidentSnapshotDto;
+  onUpdate: (personId: string, info: InvolvedPersonInfoDto) => void;
+}) {
   const { persons } = incident;
   return (
     <>
       <h3>Involved persons</h3>
       {Object.entries(persons).map(([k, v]) => (
         <li key={k}>
-          <strong>{v.role}: </strong>
+          <strong>
+            <select
+              value={v.role}
+              onChange={(e) =>
+                onUpdate(k, {
+                  role: e.target.value as InvolvedPersonInfoDtoRoleEnum,
+                })
+              }
+            >
+              <option></option>
+              {InvolvedPersonInfoDtoRoleEnumValues.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </select>
+            :{" "}
+          </strong>
           {v.firstName} {v.lastName}
         </li>
       ))}
