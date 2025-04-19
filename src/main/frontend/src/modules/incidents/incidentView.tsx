@@ -4,10 +4,11 @@ import {
   InvolvedPersonInfoDto,
 } from "../../../../../../target/generated-sources/openapi-typescript";
 import { Link, useParams } from "react-router";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AddInvolvedPersonForm } from "./persons/addInvolvedPersonForm";
 import { v4 as uuidv4 } from "uuid";
 import { useIncidents } from "./useIncidents";
+import { IncidentContext } from "./incidentContext";
 
 function isSnapshot(
   incident: IncidentSummaryDto,
@@ -21,8 +22,12 @@ export function IncidentViewRoute({
   incidents: IncidentSummaryDto[];
 }) {
   const { id } = useParams();
+  const { sendMessage, isConnected } = useContext(IncidentContext);
+  useEffect(() => {
+    sendMessage({ type: "IncidentSubscribeRequest", incidentId: id! });
+  }, [id, isConnected]);
   const incident = incidents.find((o) => o.id === id);
-  if (!id || !incident)
+  if (!id || !incident) {
     return (
       <>
         <h1>Not found incident with {id}</h1>
@@ -31,6 +36,7 @@ export function IncidentViewRoute({
         </p>
       </>
     );
+  }
   return <IncidentView incident={incident} />;
 }
 

@@ -50,18 +50,21 @@ export function useIncidents() {
         const unexpected: never = delta;
         console.log("Should never happen: ", unexpected);
       }
+    } else if ("id" in message) {
+      const { id } = message;
+      setIncidents((old) => old.map((o) => (o.id === id ? message : o)));
     } else {
       const unexpected: never = message;
       console.log("Should never happen: ", unexpected);
     }
   }
 
-  const { sendMessage } = useWebSocket<
+  const { sendMessage, isConnected } = useWebSocket<
     MessageFromServerDto,
     MessageToServerDto
   >({
     url: "/ws/incidents",
     onMessage: handleMessage,
   });
-  return { incidents, sendMessage };
+  return { incidents, sendMessage, isConnected };
 }

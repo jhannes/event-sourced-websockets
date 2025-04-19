@@ -18,10 +18,12 @@ components:
     MessageFromServer:
       oneOf:
         - $ref: "#/components/schemas/IncidentSummaryList"
+        - $ref: "#/components/schemas/IncidentSnapshot"
         - $ref: "#/components/schemas/IncidentEvent"
 
     MessageToServer:
       oneOf:
+        - $ref: "#/components/schemas/IncidentSubscribeRequest"
         - $ref: "#/components/schemas/IncidentCommand"
       discriminator:
         propertyName: type
@@ -73,6 +75,13 @@ components:
         priority:
           type: string
           enum: [ALERT, HIGH, MEDIUM, LOW]
+
+    IncidentSubscribeRequest:
+      properties:
+        incidentId:
+          type: string
+          format: uuid
+      required: [incidentId]
 
     IncidentCommand:
       properties:

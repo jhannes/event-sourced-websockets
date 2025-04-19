@@ -6,10 +6,10 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import { IncidentViewRoute } from "../incidents/incidentView";
 
 export function Application() {
-  const { incidents, sendMessage } = useIncidents();
+  const { incidents, sendMessage, isConnected } = useIncidents();
 
   return (
-    <IncidentContext value={{ sendMessage }}>
+    <IncidentContext value={{ sendMessage, isConnected }}>
       <BrowserRouter>
         <Routes>
           <Route path={"/"} element={<IncidentsList incidents={incidents} />} />

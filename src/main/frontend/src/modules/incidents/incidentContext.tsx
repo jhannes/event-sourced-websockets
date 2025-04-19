@@ -3,4 +3,5 @@ import { MessageToServerDto } from "../../../../../../target/generated-sources/o
 
 export const IncidentContext = React.createContext({
   sendMessage: (message: MessageToServerDto) => {},
+  isConnected: false,
 });

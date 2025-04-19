@@ -14,6 +14,7 @@ import org.openapitools.client.model.CreateIncidentDeltaDto;
 import org.openapitools.client.model.IncidentCommandDto;
 import org.openapitools.client.model.IncidentEventDto;
 import org.openapitools.client.model.IncidentSnapshotDto;
+import org.openapitools.client.model.IncidentSubscribeRequestDto;
 import org.openapitools.client.model.IncidentSummaryDto;
 import org.openapitools.client.model.IncidentSummaryListDto;
 import org.openapitools.client.model.MessageFromServerDto;
@@ -54,6 +55,8 @@ public class IncidentsWsEndpoint extends Endpoint {
     private void handleMessage(String s) {
         var message = mapper.readValue(s, MessageToServerDto.class);
         switch (message) {
+            case IncidentSubscribeRequestDto subscribe ->
+                    sendMessageToClient(incidents.get(subscribe.getIncidentId()));
             case IncidentCommandDto command -> {
                 switch (command.getDelta()) {
                     case CreateIncidentDeltaDto create -> incidents.put(
