@@ -17,9 +17,21 @@ components:
   schemas:
     MessageFromServer:
       oneOf:
-        - $ref: "#/components/schemas/MessageSummary"
+        - $ref: "#/components/schemas/IncidentSummaryList"
 
-    MessageSummary:
+    IncidentSummaryList:
       properties:
-        messageText:
+        summaries:
+          type: array
+          items:
+            $ref: "#/components/schemas/IncidentSummary"
+      required: [summaries]
+
+    IncidentSummary:
+      properties:
+        id:
           type: string
+          format: uuid
+        description:
+          type: string
+      required: [id, description]
