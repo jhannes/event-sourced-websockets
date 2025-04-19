@@ -98,6 +98,23 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.4.5</version>
+                <configuration>
+                    <to>
+                        <image>${project.artifactId}</image>
+                    </to>
+                    <from>
+                        <image>openjdk:25</image>
+                    </from>
+                    <container>
+                        <mainClass>com.johannesbrodwall.EventSourcingServer</mainClass>
+                        <ports>9080</ports>
+                    </container>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
