@@ -1,8 +1,10 @@
 package com.johannesbrodwall;
 
+import jakarta.websocket.server.ServerEndpointConfig;
 import lombok.SneakyThrows;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
+import org.eclipse.jetty.ee10.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
 import org.eclipse.jetty.server.CustomRequestLog;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
@@ -10,20 +12,29 @@ import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.util.resource.ResourceFactory;
 
-public class EventSourcingServer {
+public class EventSourcingServer extends Server {
 
-    private final Server server = new Server(9080);
-    private final ResourceFactory resourceFactory = ResourceFactory.of(server);
+    private final ResourceFactory resourceFactory = ResourceFactory.of(this);
 
     @SneakyThrows
-    EventSourcingServer() {
-        server.setHandler(new ContextHandlerCollection(
+    EventSourcingServer(int port) {
+        super(port);
+        setHandler(new ContextHandlerCollection(
                 getServletContextHandler(),
+                getWebSocketContextHandler(),
                 new ContextHandler(swaggerUi(), "/api-doc/swagger-ui"),
                 new ContextHandler(apiDoc(), "/api-doc"),
                 new ContextHandler(reactApplication(), "/")
         ));
-        server.setRequestLog(new CustomRequestLog());
+        setRequestLog(new CustomRequestLog());
+    }
+
+    private ContextHandler getWebSocketContextHandler() {
+        var handler = new ServletContextHandler("/ws");
+        handler.addServletContainerInitializer(new JakartaWebSocketServletContainerInitializer((_, container) -> {
+            container.addEndpoint(ServerEndpointConfig.Builder.create(IncidentsWsEndpoint.class, "/incidents").build());
+        }));
+        return handler;
     }
 
     private ContentResourceHandler reactApplication() {
@@ -45,12 +56,9 @@ public class EventSourcingServer {
         return handler;
     }
 
-    private void start() throws Exception {
-        server.start();
-    }
-
-    public static void main(String[] args) throws Exception {
-        new EventSourcingServer().start();
+    @SneakyThrows
+    public static void main(String[] args) {
+        new EventSourcingServer(9080).start();
     }
 
 }
