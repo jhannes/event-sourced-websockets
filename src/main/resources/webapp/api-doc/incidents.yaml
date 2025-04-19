@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
-  title: My service
-  description: My service
+  title: Incident management
+  description: Web socket API to share information about incidents
   version: 1.0.0
 paths:
   /ws/messages:
