@@ -25,7 +25,7 @@ export function IncidentItem({ incident }: { incident: IncidentSummaryDto }) {
 
   return (
     <li>
-      <Link to={`/incidents/${id}`}>{description}</Link>
+      <Link to={`/incidents/${id}`}>{description}</Link>{" "}
       <span>
         <select onChange={(e) => handleChange(e.target.value)} value={priority}>
           <option value={""}>(not specified)</option>
