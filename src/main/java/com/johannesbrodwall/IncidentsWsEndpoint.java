@@ -1,12 +1,14 @@
 package com.johannesbrodwall;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.websocket.CloseReason;
 import jakarta.websocket.Endpoint;
 import jakarta.websocket.EndpointConfig;
 import jakarta.websocket.RemoteEndpoint;
 import jakarta.websocket.Session;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.jetty.websocket.core.exception.WebSocketTimeoutException;
 import org.openapitools.client.model.CreateIncidentDeltaDto;
 import org.openapitools.client.model.IncidentCommandDto;
 import org.openapitools.client.model.IncidentEventDto;
@@ -16,6 +18,7 @@ import org.openapitools.client.model.MessageFromServerDto;
 import org.openapitools.client.model.MessageToServerDto;
 import org.openapitools.client.model.SampleModelData;
 
+import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -69,7 +72,13 @@ public class IncidentsWsEndpoint extends Endpoint {
 
     @Override
     public void onError(Session session, Throwable throwable) {
+        if (throwable instanceof WebSocketTimeoutException) return;
+        if (throwable instanceof ClosedChannelException) return;
         log.error("Web socket error", throwable);
     }
 
+    @Override
+    public void onClose(Session session, CloseReason closeReason) {
+        clients.remove(this);
+    }
 }
