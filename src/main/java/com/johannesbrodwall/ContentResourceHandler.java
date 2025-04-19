@@ -9,7 +9,6 @@ import org.eclipse.jetty.util.Callback;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceFactory;
 
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,7 +26,7 @@ class ContentResourceHandler extends ResourceHandler {
     }
 
     @SneakyThrows
-    public static ResourceHandler getWebJarResource(String webjar) {
+    public static ResourceHandler getWebJarResource(String webjar, ResourceFactory resourceFactory) {
         var properties = new Properties();
         try (var stream = EventSourcingServer.class.getClassLoader().getResourceAsStream("META-INF/maven/org.webjars/" + webjar + "/pom.properties")) {
             if (stream == null) {
@@ -35,16 +34,12 @@ class ContentResourceHandler extends ResourceHandler {
             }
             properties.load(stream);
             var version = properties.getProperty("version");
-            return ContentResourceHandler.newResourceHandler(ResourceFactory.root().newClassLoaderResource("/META-INF/resources/webjars/" + webjar + "/" + version));
+            return ContentResourceHandler.newResourceHandler(resourceFactory.newClassLoaderResource("/META-INF/resources/webjars/" + webjar + "/" + version));
         }
     }
 
     @SneakyThrows
-    public static ResourceHandler getProjectResourceHandler(String name) {
-        return new ContentResourceHandler(getProjectResource(name));
-    }
-
-    private static Resource getProjectResource(String name) throws URISyntaxException {
+    public static Resource getProjectResource(String name, ResourceFactory resourceFactory) {
         var targetDir = Path.of("target", "classes").resolve(name);
         var url = EventSourcingServer.class.getClassLoader().getResource(name);
         if (url == null) {
@@ -60,11 +55,11 @@ class ContentResourceHandler extends ResourceHandler {
                         .resolve(Path.of("src", "main", "resources"))
                         .resolve(name);
                 if (Files.isDirectory(path)) {
-                    return ResourceFactory.root().newResource(path);
+                    return resourceFactory.newResource(path);
                 }
             }
         }
-        return ResourceFactory.root().newResource(url);
+        return resourceFactory.newResource(url);
     }
 
     @Override
@@ -77,6 +72,9 @@ class ContentResourceHandler extends ResourceHandler {
         var content = this.getResourceService().getContent(Request.getPathInContext(request), request);
         if (content == null) {
             content = this.getResourceService().getContent("/index.html", request);
+        }
+        if (content == null) {
+            return super.handle(request, response, callback);
         }
 
         this.getResourceService().doGet(request, response, callback, content);
