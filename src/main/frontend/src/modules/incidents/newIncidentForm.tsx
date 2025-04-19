@@ -1,12 +1,9 @@
-import { MessageToServerDto } from "../../../../../../target/generated-sources/openapi-typescript";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { IncidentContext } from "./incidentContext";
 
-export function NewIncidentForm({
-  sendMessage,
-}: {
-  sendMessage: (message: MessageToServerDto) => void;
-}) {
+export function NewIncidentForm() {
+  const { sendMessage } = useContext(IncidentContext);
   const [description, setDescription] = useState("");
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -14,7 +11,7 @@ export function NewIncidentForm({
       type: "IncidentCommand",
       clientTime: new Date(),
       incidentId: uuidv4(),
-      delta: { delta: "CreateIncidentDelta", description },
+      delta: { delta: "CreateIncidentDelta", info: { description } },
     });
     setDescription("");
   }

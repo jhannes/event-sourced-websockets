@@ -1,9 +1,11 @@
 package com.johannesbrodwall;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -15,10 +17,11 @@ import java.util.function.Function;
 
 class ApplicationObjectMapper extends ObjectMapper {
     public ApplicationObjectMapper() {
+        setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
+        configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         registerModule(new JavaTimeModule());
         registerModule(new ApplicationModule());
     }
-
 
     private static class ApplicationModule extends SimpleModule {
         {

@@ -12,34 +12,42 @@ import org.eclipse.jetty.websocket.core.exception.WebSocketTimeoutException;
 import org.openapitools.client.model.CreateIncidentDeltaDto;
 import org.openapitools.client.model.IncidentCommandDto;
 import org.openapitools.client.model.IncidentEventDto;
+import org.openapitools.client.model.IncidentInfoDto;
 import org.openapitools.client.model.IncidentSummaryDto;
 import org.openapitools.client.model.IncidentSummaryListDto;
 import org.openapitools.client.model.MessageFromServerDto;
 import org.openapitools.client.model.MessageToServerDto;
 import org.openapitools.client.model.SampleModelData;
+import org.openapitools.client.model.UpdateIncidentDeltaDto;
 
 import java.nio.channels.ClosedChannelException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 @Slf4j
 public class IncidentsWsEndpoint extends Endpoint {
 
     private static final ObjectMapper mapper = new ApplicationObjectMapper();
     private static final SampleModelData sampleData = new SampleModelData(-1);
-    private static final List<IncidentSummaryDto> summaries = new ArrayList<>(List.of(
-            sampleData.sampleIncidentSummaryDto().setDescription("Fire"),
-            sampleData.sampleIncidentSummaryDto().setDescription("Traffic accident")
-    ));
+    private static final Map<UUID, IncidentSummaryDto> summaries = new HashMap<>();
     private RemoteEndpoint.Async remote;
     private final static Set<IncidentsWsEndpoint> clients = new HashSet<>();
+
+    static {
+        List.of(
+                sampleData.sampleIncidentSummaryDto().setInfo(new IncidentInfoDto().setDescription("Fire")),
+                sampleData.sampleIncidentSummaryDto().setInfo(new IncidentInfoDto().setDescription("Traffic accident"))
+        ).forEach(o -> summaries.put(o.getId(), o));
+    }
 
     @Override
     public void onOpen(Session session, EndpointConfig config) {
         this.remote = session.getAsyncRemote();
-        sendMessageToClient(new IncidentSummaryListDto().setSummaries(summaries));
+        sendMessageToClient(new IncidentSummaryListDto().setSummaries(summaries.values().stream().toList()));
         session.addMessageHandler(String.class, this::handleMessage);
         clients.add(this);
     }
@@ -55,9 +63,12 @@ public class IncidentsWsEndpoint extends Endpoint {
         switch (message) {
             case IncidentCommandDto command -> {
                 switch (command.getDelta()) {
-                    case CreateIncidentDeltaDto create -> summaries.add(new IncidentSummaryDto()
-                            .setId(command.getIncidentId())
-                            .setDescription(create.getDescription()));
+                    case CreateIncidentDeltaDto create -> summaries.put(
+                            command.getIncidentId(),
+                            new IncidentSummaryDto().setId(command.getIncidentId()).setInfo(create.getInfo())
+                    );
+                    case UpdateIncidentDeltaDto update -> summaries.get(command.getIncidentId())
+                            .getInfo().putAll(update.getInfo());
                 }
                 broadcastMessage(new IncidentEventDto()
                         .setUsername("the_user")

@@ -47,9 +47,17 @@ components:
         id:
           type: string
           format: uuid
+        info:
+          $ref: "#/components/schemas/IncidentInfo"
+      required: [id, info]
+
+    IncidentInfo:
+      properties:
         description:
           type: string
-      required: [id, description]
+        priority:
+          type: string
+          enum: [ALERT, HIGH, MEDIUM, LOW]
 
     IncidentCommand:
       properties:
@@ -66,11 +74,18 @@ components:
     IncidentDelta:
       oneOf:
         - $ref: "#/components/schemas/CreateIncidentDelta"
+        - $ref: "#/components/schemas/UpdateIncidentDelta"
       discriminator:
         propertyName: delta
 
     CreateIncidentDelta:
       properties:
-        description:
-          type: string
-      required: [description]
+        info:
+          $ref: "#/components/schemas/IncidentInfo"
+      required: [info]
+
+    UpdateIncidentDelta:
+      properties:
+        info:
+          $ref: "#/components/schemas/IncidentInfo"
+      required: [info]
