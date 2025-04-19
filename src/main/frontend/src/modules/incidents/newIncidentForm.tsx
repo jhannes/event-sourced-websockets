@@ -11,9 +11,10 @@ export function NewIncidentForm({
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     sendMessage({
+      type: "IncidentCommand",
       clientTime: new Date(),
       incidentId: uuidv4(),
-      delta: { description },
+      delta: { delta: "CreateIncidentDelta", description },
     });
     setDescription("");
   }
