@@ -19,6 +19,10 @@ components:
       oneOf:
         - $ref: "#/components/schemas/IncidentSummaryList"
 
+    MessageToServer:
+      oneOf:
+        - $ref: "#/components/schemas/IncidentCommand"
+
     IncidentSummaryList:
       properties:
         summaries:
@@ -35,3 +39,24 @@ components:
         description:
           type: string
       required: [id, description]
+
+    IncidentCommand:
+      properties:
+        clientTime:
+          type: string
+          format: date-time
+        incidentId:
+          type: string
+          format: uuid
+        delta:
+          $ref: "#/components/schemas/IncidentDelta"
+      required: [clientTime, delta]
+
+    IncidentDelta:
+      oneOf:
+        - $ref: "#/components/schemas/CreateIncidentDelta"
+
+    CreateIncidentDelta:
+      properties:
+        description:
+          type: string
