@@ -12,7 +12,6 @@ import org.eclipse.jetty.websocket.core.exception.WebSocketTimeoutException;
 import org.openapitools.client.model.CreateIncidentDeltaDto;
 import org.openapitools.client.model.IncidentCommandDto;
 import org.openapitools.client.model.IncidentEventDto;
-import org.openapitools.client.model.IncidentInfoDto;
 import org.openapitools.client.model.IncidentSummaryDto;
 import org.openapitools.client.model.IncidentSummaryListDto;
 import org.openapitools.client.model.MessageFromServerDto;
@@ -23,7 +22,6 @@ import org.openapitools.client.model.UpdateIncidentDeltaDto;
 import java.nio.channels.ClosedChannelException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -36,13 +34,6 @@ public class IncidentsWsEndpoint extends Endpoint {
     private static final Map<UUID, IncidentSummaryDto> summaries = new HashMap<>();
     private RemoteEndpoint.Async remote;
     private final static Set<IncidentsWsEndpoint> clients = new HashSet<>();
-
-    static {
-        List.of(
-                sampleData.sampleIncidentSummaryDto().setInfo(new IncidentInfoDto().setDescription("Fire")),
-                sampleData.sampleIncidentSummaryDto().setInfo(new IncidentInfoDto().setDescription("Traffic accident"))
-        ).forEach(o -> summaries.put(o.getId(), o));
-    }
 
     @Override
     public void onOpen(Session session, EndpointConfig config) {
@@ -65,9 +56,14 @@ public class IncidentsWsEndpoint extends Endpoint {
                 switch (command.getDelta()) {
                     case CreateIncidentDeltaDto create -> summaries.put(
                             command.getIncidentId(),
-                            new IncidentSummaryDto().setId(command.getIncidentId()).setInfo(create.getInfo())
+                            new IncidentSummaryDto()
+                                    .setId(command.getIncidentId())
+                                    .setCreatedAt(command.getClientTime())
+                                    .setUpdatedAt(command.getClientTime())
+                                    .setInfo(create.getInfo())
                     );
                     case UpdateIncidentDeltaDto update -> summaries.get(command.getIncidentId())
+                            .setUpdatedAt(command.getClientTime())
                             .getInfo().putAll(update.getInfo());
                 }
                 broadcastMessage(new IncidentEventDto()

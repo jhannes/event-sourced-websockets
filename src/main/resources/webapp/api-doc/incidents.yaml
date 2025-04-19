@@ -47,9 +47,15 @@ components:
         id:
           type: string
           format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
         info:
           $ref: "#/components/schemas/IncidentInfo"
-      required: [id, info]
+      required: [id, info, createdAt, updatedAt]
 
     IncidentInfo:
       properties:
