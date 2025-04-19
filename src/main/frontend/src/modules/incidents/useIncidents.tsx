@@ -7,10 +7,19 @@ import {
 } from "../../../../../../target/generated-sources/openapi-typescript";
 import { useWebSocket } from "../../hooks/useWebSocket";
 
+type IncidentLike = IncidentSummaryDto | IncidentSnapshotDto;
+
 export function useIncidents() {
-  const [incidents, setIncidents] = useState<
-    (IncidentSummaryDto | IncidentSnapshotDto)[]
-  >([]);
+  const [incidents, setIncidents] = useState<IncidentLike[]>([]);
+
+  function updateIncident(
+    id: string,
+    fn: (old: IncidentLike) => Partial<IncidentLike>,
+  ) {
+    setIncidents((old) =>
+      old.map((o) => (o.id === id ? { ...o, ...fn(o) } : o)),
+    );
+  }
 
   function handleMessage(message: MessageFromServerDto) {
     if ("summaries" in message) {
@@ -25,46 +34,29 @@ export function useIncidents() {
         ]);
       } else if (delta.delta === "UpdateIncidentDelta") {
         const { info } = delta;
-        setIncidents((old) =>
-          old.map((o) =>
-            o.id === id ? { ...o, updatedAt, info: { ...o.info, ...info } } : o,
-          ),
-        );
+        updateIncident(id, (o) => ({
+          updatedAt,
+          info: { ...o.info, ...info },
+        }));
       } else if (delta.delta === "AddPersonToIncidentDelta") {
         const { personId, info } = delta;
         const addedPerson = { [personId]: info };
-        setIncidents((old) =>
-          old.map((o) =>
-            o.id === id
-              ? {
-                  ...o,
-                  persons:
-                    "persons" in o
-                      ? { ...o.persons, ...addedPerson }
-                      : addedPerson,
-                }
-              : o,
-          ),
-        );
+        updateIncident(id, (o) => ({
+          persons:
+            "persons" in o ? { ...o.persons, ...addedPerson } : addedPerson,
+        }));
       } else if (delta.delta === "UpdatePersonInIncidentDelta") {
         const { personId, info } = delta;
-        setIncidents((old) =>
-          old.map((o) =>
-            o.id === id
-              ? {
-                  ...o,
-                  persons:
-                    "persons" in o
-                      ? Object.fromEntries(
-                          Object.entries(o.persons).map(([k, v]) =>
-                            k === personId ? [k, { ...v, ...info }] : [k, v],
-                          ),
-                        )
-                      : { [personId]: info },
-                }
-              : o,
-          ),
-        );
+        updateIncident(id, (o) => ({
+          persons:
+            "persons" in o
+              ? Object.fromEntries(
+                  Object.entries(o.persons).map(([k, v]) =>
+                    k === personId ? [k, { ...v, ...info }] : [k, v],
+                  ),
+                )
+              : { [personId]: info },
+        }));
       } else {
         const unexpected: never = delta;
         console.log("Should never happen: ", unexpected);
