@@ -4,6 +4,7 @@ import {
 } from "../../../../../../target/generated-sources/openapi-typescript";
 import React, { useContext } from "react";
 import { IncidentContext } from "./incidentContext";
+import { Link } from "react-router";
 
 export function IncidentItem({ incident }: { incident: IncidentSummaryDto }) {
   const { sendMessage } = useContext(IncidentContext);
@@ -24,7 +25,7 @@ export function IncidentItem({ incident }: { incident: IncidentSummaryDto }) {
 
   return (
     <li>
-      {description}
+      <Link to={`/incidents/${id}`}>{description}</Link>
       <span>
         <select onChange={(e) => handleChange(e.target.value)} value={priority}>
           <option value={""}>(not specified)</option>

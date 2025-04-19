@@ -1,72 +1,25 @@
-import React, { useState } from "react";
-import {
-  IncidentSummaryDto,
-  MessageFromServerDto,
-  MessageToServerDto,
-} from "../../../../../../target/generated-sources/openapi-typescript";
-import { useWebSocket } from "../../hooks/useWebSocket";
-import { NewIncidentForm } from "../incidents/newIncidentForm";
-import { IncidentItem } from "../incidents/incidentItem";
+import React from "react";
 import { IncidentContext } from "../incidents/incidentContext";
-
-function sortByTimestamp(a: IncidentSummaryDto, b: IncidentSummaryDto) {
-  return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-}
+import { useIncidents } from "../incidents/useIncidents";
+import { IncidentsList } from "../incidents/incidentsList";
+import { BrowserRouter, Route, Routes } from "react-router";
+import { IncidentView } from "../incidents/incidentView";
 
 export function Application() {
-  const [incidents, setIncidents] = useState<IncidentSummaryDto[]>([]);
-
-  function handleMessage(message: MessageFromServerDto) {
-    if ("summaries" in message) {
-      setIncidents(message.summaries);
-    } else if ("delta" in message) {
-      const { incidentId: id, clientTime: updatedAt } = message;
-      if (message.delta.delta === "CreateIncidentDelta") {
-        const {
-          delta: { info },
-        } = message;
-        setIncidents((old) => [
-          ...old,
-          { id, createdAt: updatedAt, updatedAt, info },
-        ]);
-      } else if (message.delta.delta === "UpdateIncidentDelta") {
-        const {
-          delta: { info },
-        } = message;
-        setIncidents((old) =>
-          old.map((o) =>
-            o.id === id ? { ...o, updatedAt, info: { ...o.info, ...info } } : o,
-          ),
-        );
-      } else {
-        const unexpected: never = message.delta;
-        console.log("Should never happen: ", unexpected);
-      }
-    } else {
-      const unexpected: never = message;
-      console.log("Should never happen: ", unexpected);
-    }
-  }
-
-  const { sendMessage } = useWebSocket<
-    MessageFromServerDto,
-    MessageToServerDto
-  >({
-    url: "/ws/incidents",
-    onMessage: handleMessage,
-  });
+  const { incidents, sendMessage } = useIncidents();
 
   return (
     <IncidentContext value={{ sendMessage }}>
-      <h1>Incidents</h1>
-      <ul>
-        {incidents.toSorted(sortByTimestamp).map((m) => (
-          <IncidentItem key={m.id} incident={m} />
-        ))}
-      </ul>
-      <h2>New incident</h2>
-
-      <NewIncidentForm />
+      <BrowserRouter>
+        <Routes>
+          <Route path={"/"} element={<IncidentsList incidents={incidents} />} />
+          <Route
+            path={"/incidents/:id"}
+            element={<IncidentView incidents={incidents} />}
+          />
+          <Route path={"*"} element={<h1>Not found</h1>} />
+        </Routes>
+      </BrowserRouter>
     </IncidentContext>
   );
 }
