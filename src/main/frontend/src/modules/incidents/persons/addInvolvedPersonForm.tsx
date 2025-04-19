@@ -1,23 +1,16 @@
-import React, { FormEvent, useContext, useState } from "react";
-import { IncidentContext } from "../incidentContext";
-import { v4 as uuidv4 } from "uuid";
+import React, { FormEvent, useState } from "react";
+import { InvolvedPersonInfoDto } from "../../../../../../../target/generated-sources/openapi-typescript";
 
-export function AddInvolvedPersonForm({ incidentId }: { incidentId: string }) {
-  const { sendMessage } = useContext(IncidentContext);
+export function AddInvolvedPersonForm({
+  onAddPerson,
+}: {
+  onAddPerson: (person: InvolvedPersonInfoDto) => void;
+}) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    sendMessage({
-      type: "IncidentCommand",
-      clientTime: new Date(),
-      incidentId,
-      delta: {
-        delta: "AddPersonToIncidentDelta",
-        personId: uuidv4(),
-        info: { firstName, lastName },
-      },
-    });
+    onAddPerson({ firstName, lastName });
   }
 
   return (

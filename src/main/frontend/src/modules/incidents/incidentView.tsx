@@ -1,10 +1,13 @@
 import {
   IncidentSnapshotDto,
   IncidentSummaryDto,
+  InvolvedPersonInfoDto,
 } from "../../../../../../target/generated-sources/openapi-typescript";
 import { Link, useParams } from "react-router";
-import React from "react";
+import React, { useState } from "react";
 import { AddInvolvedPersonForm } from "./persons/addInvolvedPersonForm";
+import { v4 as uuidv4 } from "uuid";
+import { useIncidents } from "./useIncidents";
 
 function isSnapshot(
   incident: IncidentSummaryDto,
@@ -12,7 +15,7 @@ function isSnapshot(
   return "persons" in incident;
 }
 
-export function IncidentView({
+export function IncidentViewRoute({
   incidents,
 }: {
   incidents: IncidentSummaryDto[];
@@ -28,14 +31,33 @@ export function IncidentView({
         </p>
       </>
     );
+  return <IncidentView incident={incident} />;
+}
+
+function IncidentView({ incident }: { incident: IncidentSummaryDto }) {
+  const { sendMessage } = useIncidents();
+  const {
+    id: incidentId,
+    info: { description, priority },
+  } = incident;
+  const [personId, setPersonId] = useState(() => uuidv4());
+  function handleAddPerson(info: InvolvedPersonInfoDto) {
+    sendMessage({
+      type: "IncidentCommand",
+      clientTime: new Date(),
+      incidentId,
+      delta: { delta: "AddPersonToIncidentDelta", personId, info },
+    });
+    setPersonId(uuidv4());
+  }
   return (
     <>
-      <h1>Incident {incident.info.description}</h1>
+      <h1>Incident {description}</h1>
       <p>
-        <strong>Priority: </strong> {incident.info.priority}
+        <strong>Priority: </strong> {priority}
       </p>
       {isSnapshot(incident) && <IncidentDetails incident={incident} />}
-      <AddInvolvedPersonForm incidentId={id} />
+      <AddInvolvedPersonForm key={personId} onAddPerson={handleAddPerson} />
     </>
   );
 }
