@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   IncidentSnapshotDto,
   IncidentSummaryDto,
@@ -10,28 +10,35 @@ import { useWebSocket } from "../../hooks/useWebSocket";
 type IncidentLike = IncidentSummaryDto | IncidentSnapshotDto;
 
 export function useIncidents() {
-  const [incidents, setIncidents] = useState<IncidentLike[]>([]);
+  const [incidents, setIncidents] = useState<Record<string, IncidentLike>>({});
+  const lastSequenceId = useRef<number | undefined>(undefined);
 
   function updateIncident(
     id: string,
     fn: (old: IncidentLike) => Partial<IncidentLike>,
   ) {
-    setIncidents((old) =>
-      old.map((o) => (o.id === id ? { ...o, ...fn(o) } : o)),
-    );
+    setIncidents((old) => ({ ...old, [id]: { ...old[id], ...fn(old[id]) } }));
   }
 
   function handleMessage(message: MessageFromServerDto) {
     if ("summaries" in message) {
-      setIncidents(message.summaries);
+      lastSequenceId.current = message.lastSequenceId;
+      const newIncidents = Object.fromEntries(
+        message.summaries.map((o) => [o.id, o]),
+      );
+      if (message.replaceList) {
+        setIncidents(newIncidents);
+      } else {
+        setIncidents((old) => ({ ...old, ...newIncidents }));
+      }
     } else if ("delta" in message) {
       const { incidentId: id, clientTime: updatedAt, delta } = message;
       if (delta.delta === "CreateIncidentDelta") {
         const { info } = delta;
-        setIncidents((old) => [
+        setIncidents((old) => ({
           ...old,
-          { id, createdAt: updatedAt, updatedAt, info },
-        ]);
+          [id]: { id, createdAt: updatedAt, updatedAt, info },
+        }));
       } else if (delta.delta === "UpdateIncidentDelta") {
         const { info } = delta;
         updateIncident(id, (o) => ({
@@ -58,12 +65,13 @@ export function useIncidents() {
               : { [personId]: info },
         }));
       } else {
+        // noinspection UnnecessaryLocalVariableJS
         const unexpected: never = delta;
         console.log("Should never happen: ", unexpected);
       }
     } else if ("id" in message) {
       const { id } = message;
-      setIncidents((old) => old.map((o) => (o.id === id ? message : o)));
+      setIncidents((old) => ({ ...old, [id]: message }));
     } else {
       const unexpected: never = message;
       console.log("Should never happen: ", unexpected);
@@ -76,6 +84,11 @@ export function useIncidents() {
   >({
     url: "/ws/incidents",
     onMessage: handleMessage,
+    onConnect: () =>
+      sendMessage({
+        type: "IncidentSummarySubscribeRequest",
+        lastSequenceId: lastSequenceId.current,
+      }),
   });
-  return { incidents, sendMessage, isConnected };
+  return { incidents: Object.values(incidents), sendMessage, isConnected };
 }

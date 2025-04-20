@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 export function useWebSocket<OUTPUT, INPUT>(params: {
   url: string;
   onMessage: (message: OUTPUT) => void;
+  onConnect?: () => void;
 }) {
   const [isConnected, setIsConnected] = useState(false);
   const websocketRef = useRef<WebSocket | null>(null);
@@ -14,13 +15,14 @@ export function useWebSocket<OUTPUT, INPUT>(params: {
     ws.onopen = () => {
       setIsConnected(true);
       websocketRef.current = ws;
+      params.onConnect?.();
     };
     ws.onclose = () => {
       websocketRef.current = null;
       setTimeout(() => {
         setIsConnected(false);
         connect();
-      }, 1000);
+      }, 3000);
     };
   }, []);
   useEffect(() => {

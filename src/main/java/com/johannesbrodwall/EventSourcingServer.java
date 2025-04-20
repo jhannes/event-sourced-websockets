@@ -35,16 +35,21 @@ public class EventSourcingServer extends Server {
     private ContextHandler getWebSocketContextHandler() {
         var handler = new ServletContextHandler("/ws");
         handler.addServletContainerInitializer(new JakartaWebSocketServletContainerInitializer((_, container) -> {
-            container.addEndpoint(ServerEndpointConfig.Builder
-                    .create(IncidentsWsEndpoint.class, "/incidents")
-                    .configurator(new ServerEndpointConfig.Configurator() {
-                        @Override
-                        public <T> T getEndpointInstance(Class<T> endpointClass) {
-                            return (T) new IncidentsWsEndpoint(incidentReactor);
-                        }
-                    }).build());
+            container.addEndpoint(incidentsWsEndpointConfig());
         }));
         return handler;
+    }
+
+    private ServerEndpointConfig incidentsWsEndpointConfig() {
+        return ServerEndpointConfig.Builder
+                .create(IncidentsWsEndpoint.class, "/incidents")
+                .configurator(new ServerEndpointConfig.Configurator() {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public <T> T getEndpointInstance(Class<T> endpointClass) {
+                        return (T) new IncidentsWsEndpoint(incidentReactor);
+                    }
+                }).build();
     }
 
     private ContentResourceHandler reactApplication() {

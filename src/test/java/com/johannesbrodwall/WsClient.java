@@ -49,7 +49,7 @@ class WsClient<T> extends Endpoint implements Closeable {
     }
 
     public <U extends T> U pollNext() {
-        return poll(3, TimeUnit.SECONDS);
+        return poll(1, TimeUnit.SECONDS);
     }
 
     @Override

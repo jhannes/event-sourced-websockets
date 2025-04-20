@@ -23,6 +23,7 @@ components:
 
     MessageToServer:
       oneOf:
+        - $ref: "#/components/schemas/IncidentSummarySubscribeRequest"
         - $ref: "#/components/schemas/IncidentSubscribeRequest"
         - $ref: "#/components/schemas/IncidentCommand"
       discriminator:
@@ -42,7 +43,12 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/IncidentSummary"
-      required: [summaries]
+        lastSequenceId:
+          type: integer
+          format: int64
+        replaceList:
+          type: boolean
+      required: [summaries, lastSequenceId]
 
     IncidentSummary:
       properties:
@@ -63,10 +69,13 @@ components:
       allOf:
         - $ref: "#/components/schemas/IncidentSummary"
         - properties:
+            lastSequenceId:
+              type: integer
+              format: int64
             persons:
               additionalProperties:
                 $ref: "#/components/schemas/InvolvedPersonInfo"
-          required: [persons]
+          required: [persons, lastSequenceId]
 
     IncidentInfo:
       properties:
@@ -75,6 +84,12 @@ components:
         priority:
           type: string
           enum: [ALERT, HIGH, MEDIUM, LOW]
+
+    IncidentSummarySubscribeRequest:
+      properties:
+        lastSequenceId:
+          type: integer
+          format: int64
 
     IncidentSubscribeRequest:
       properties:

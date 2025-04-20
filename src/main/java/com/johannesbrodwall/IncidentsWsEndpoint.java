@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jetty.websocket.core.exception.WebSocketTimeoutException;
 import org.openapitools.client.model.IncidentCommandDto;
 import org.openapitools.client.model.IncidentSubscribeRequestDto;
+import org.openapitools.client.model.IncidentSummarySubscribeRequestDto;
 import org.openapitools.client.model.MessageFromServerDto;
 import org.openapitools.client.model.MessageToServerDto;
 
@@ -31,15 +32,15 @@ public class IncidentsWsEndpoint extends Endpoint implements IncidentListener {
     public void onOpen(Session session, EndpointConfig config) {
         this.remote = session.getAsyncRemote();
         session.addMessageHandler(String.class, this::handleMessage);
-        incidents.subscribe(this);
+        session.setMaxIdleTimeout(10_000L);
     }
 
     @SneakyThrows
     private void handleMessage(String s) {
         var message = mapper.readValue(s, MessageToServerDto.class);
         switch (message) {
-            case IncidentSubscribeRequestDto subscribe ->
-                    sendMessage(incidents.snapshot(subscribe.getIncidentId()));
+            case IncidentSummarySubscribeRequestDto subscribe -> incidents.subscribe(this, subscribe);
+            case IncidentSubscribeRequestDto subscribe -> sendMessage(incidents.snapshot(subscribe.getIncidentId()));
             case IncidentCommandDto command -> incidents.processCommand(command);
         }
     }
