@@ -319,6 +319,10 @@ components:
         aud:
           type: string
           description: Audience - the client_id that the JWT was issued to
+        exp:
+          type: integer
+          format: int64
+          description: Expiry - the unix timestamp after which the JWT should be rejected
         name:
           type: string
           description: The name of the logged in user

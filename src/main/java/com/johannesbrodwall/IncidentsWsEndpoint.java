@@ -48,7 +48,7 @@ public class IncidentsWsEndpoint extends Endpoint implements IncidentListener {
         switch (message) {
             case IncidentSummarySubscribeRequestDto subscribe -> incidents.subscribe(this, subscribe);
             case IncidentSubscribeRequestDto subscribe -> sendMessage(incidents.snapshot(subscribe.getIncidentId()));
-            case IncidentCommandDto command -> incidents.processCommand(command);
+            case IncidentCommandDto command -> incidents.processCommand(command, userPrincipal);
         }
     }
 

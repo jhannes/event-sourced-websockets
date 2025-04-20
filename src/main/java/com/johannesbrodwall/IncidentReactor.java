@@ -12,6 +12,7 @@ import com.johannesbrodwall.incidents.model.IncidentSummarySubscribeRequestDto;
 import com.johannesbrodwall.incidents.model.UpdateIncidentDeltaDto;
 import com.johannesbrodwall.incidents.model.UpdatePersonInIncidentDeltaDto;
 
+import java.security.Principal;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -31,7 +32,7 @@ public class IncidentReactor {
         return incidents.get(incidentId);
     }
 
-    public void processCommand(IncidentCommandDto command) {
+    public void processCommand(IncidentCommandDto command, Principal userPrincipal) {
         var eventSequence = nextSequenceId();
         switch (command.getDelta()) {
             case CreateIncidentDeltaDto create -> putIncident(createIncident(command, create.getInfo())
@@ -47,7 +48,8 @@ public class IncidentReactor {
                     .setLastSequenceId(eventSequence)
                     .getPersons().get(updatePerson.getPersonId().toString()).putAll(updatePerson.getInfo());
         }
-        broadcastMessage(new IncidentEventDto().setUsername("the_user").setSequenceId(eventSequence).putAll(command));
+        var event = new IncidentEventDto().setUsername(userPrincipal.getName()).setSequenceId(eventSequence).putAll(command);
+        broadcastMessage(event);
     }
 
     private void putIncident(IncidentSnapshotDto incident) {
@@ -69,10 +71,6 @@ public class IncidentReactor {
                 .setInfo(incidentInfo);
     }
 
-    private long nextSequenceId() {
-        return sequenceId.incrementAndGet();
-    }
-
     public void subscribe(IncidentListener listener, IncidentSummarySubscribeRequestDto subscribe) {
         this.subscriptions.add(listener);
 
@@ -88,6 +86,10 @@ public class IncidentReactor {
                 .setLastSequenceId(lastSequenceId));
     }
 
+    public void unsubscribe(IncidentListener listener) {
+        this.subscriptions.remove(listener);
+    }
+
     private List<IncidentSummaryDto> getSummaries(Long requestedSequenceId) {
         return incidents.values().stream()
                 .filter(s -> requestedSequenceId == null || requestedSequenceId < s.getLastSequenceId())
@@ -95,7 +97,7 @@ public class IncidentReactor {
                 .toList();
     }
 
-    public void unsubscribe(IncidentListener listener) {
-        this.subscriptions.remove(listener);
+    private long nextSequenceId() {
+        return sequenceId.incrementAndGet();
     }
 }

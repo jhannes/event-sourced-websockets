@@ -2,6 +2,7 @@ package com.johannesbrodwall;
 
 import com.johannesbrodwall.incidents.model.MessageToServerDto;
 import com.johannesbrodwall.incidents.model.UnauthenticatedErrorSignalDto;
+import com.johannesbrodwall.openid.model.JwtPayloadDto;
 import jakarta.websocket.ClientEndpointConfig;
 import org.junit.jupiter.api.Test;
 import com.johannesbrodwall.incidents.model.CreateIncidentDeltaDto;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.johannesbrodwall.OpenidConnectMockServer.base64Json;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @LifeCycleExtension
@@ -25,29 +27,37 @@ public class IncidentsWsEndpointTest {
     private final OpenidConnectMockServer loginServer = new OpenidConnectMockServer(0);
     private final EventSourcingServer server = new EventSourcingServer(0, loginServer.getClientConfiguration());
 
-    private final SampleModelData sampleData = new SampleModelData(-1);
+    private final SampleModelData sampleData = new SampleModelData(0);
+
+    private JwtPayloadDto createAccessToken() {
+        return new JwtPayloadDto()
+                .setName("my-user-name")
+                .setAud(loginServer.getClientConfiguration().getClientId())
+                .setExp(System.currentTimeMillis() + 60 * 60 * 1000);
+    }
 
     private WsClient<MessageFromServerDto, MessageToServerDto> createClient() throws IOException {
-        var accessToken = OpenidConnectMockServer.createAccessToken("test-server", "my-user-name");
-        var config = ClientEndpointConfig.Builder.create()
+        return createClientWithAccessToken(createAccessToken());
+    }
+
+    private WsClient<MessageFromServerDto, MessageToServerDto> createClientWithAccessToken(JwtPayloadDto accessToken) throws IOException {
+        return createClient(ClientEndpointConfig.Builder.create()
                 .configurator(new ClientEndpointConfig.Configurator() {
                     @Override
                     public void beforeRequest(Map<String, List<String>> headers) {
-                        headers.put("Cookie", List.of("accessToken=" + accessToken));
+                        headers.put("Cookie", List.of("accessToken=" + base64Json(accessToken)));
                     }
                 })
-                .build();
-        return new WsClient<>(MessageFromServerDto.class, new ApplicationObjectMapper(), server.getWsUri(), config);
+                .build());
     }
 
-    private WsClient<MessageFromServerDto, MessageToServerDto> unauthenticedClient() throws IOException {
-        var config = ClientEndpointConfig.Builder.create().build();
+    private WsClient<MessageFromServerDto, MessageToServerDto> createClient(ClientEndpointConfig config) throws IOException {
         return new WsClient<>(MessageFromServerDto.class, new ApplicationObjectMapper(), server.getWsUri(), config);
     }
 
     @Test
     void shouldRequestLogin() throws IOException {
-        try (var wsClient = unauthenticedClient()) {
+        try (var wsClient = createClient(ClientEndpointConfig.Builder.create().build())) {
             var message = wsClient.pollNext();
             assertThat(message).isInstanceOf(UnauthenticatedErrorSignalDto.class);
         }
@@ -63,11 +73,13 @@ public class IncidentsWsEndpointTest {
 
     @Test
     void shouldReceiveEventWhenCommandIsAccepted() throws IOException {
-        try (var wsClient = createClient()) {
+        var accessToken = createAccessToken().setName(sampleData.randomEmail());
+        try (var wsClient = createClientWithAccessToken(accessToken)) {
             var _ = wsClient.request(new IncidentSummarySubscribeRequestDto());
             var delta = sampleData.sampleCreateIncidentDeltaDto();
             IncidentEventDto event = wsClient.request(sampleData.sampleIncidentCommandDto().setDelta(delta));
             assertThat(event.getDelta()).isEqualTo(delta);
+            assertThat(event.getUsername()).isEqualTo(accessToken.getName());
         }
     }
 

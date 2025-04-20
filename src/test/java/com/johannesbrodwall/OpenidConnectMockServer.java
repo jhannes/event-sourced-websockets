@@ -177,7 +177,12 @@ public class OpenidConnectMockServer extends Server {
                 throw new BadRequestException("Wrong clientId");
             }
 
-            return new TokenResponseDto().setAccess_token(createAccessToken(clientId, codeJson.getUsername()));
+            return new TokenResponseDto()
+                    .setAccess_token(base64Json(new JwtPayloadDto()
+                            .setName(codeJson.getUsername())
+                            .setAud(clientId)
+                            .setExp(System.currentTimeMillis() + 60*60*1000)
+                    ));
         }
 
         @GET
@@ -193,12 +198,8 @@ public class OpenidConnectMockServer extends Server {
 
     }
 
-    public static String createAccessToken(String clientId, String username) {
-        return base64Json(new JwtPayloadDto().setName(username).setAud(clientId));
-    }
-
     @SneakyThrows
-    private static String base64Json(Object value) {
+    public static String base64Json(Object value) {
         return Base64.getUrlEncoder().encodeToString(mapper.writeValueAsBytes(value));
     }
 
