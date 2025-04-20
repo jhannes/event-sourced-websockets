@@ -17,6 +17,6 @@
     "prepare": "husky",
     "test": "tsc --noEmit && prettier --check .",
     "dev": "vite",
-    "build": "vite build"
+    "build": "npm test && vite build"
   }
 }

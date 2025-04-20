@@ -10,12 +10,12 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.openapitools.client.model.IncidentDeltaDto;
-import org.openapitools.client.model.IncidentEventDto;
-import org.openapitools.client.model.IncidentSnapshotDto;
-import org.openapitools.client.model.IncidentSummaryListDto;
-import org.openapitools.client.model.MessageFromServerDto;
-import org.openapitools.client.model.MessageToServerDto;
+import com.johannesbrodwall.incidents.model.IncidentDeltaDto;
+import com.johannesbrodwall.incidents.model.IncidentEventDto;
+import com.johannesbrodwall.incidents.model.IncidentSnapshotDto;
+import com.johannesbrodwall.incidents.model.IncidentSummaryListDto;
+import com.johannesbrodwall.incidents.model.MessageFromServerDto;
+import com.johannesbrodwall.incidents.model.MessageToServerDto;
 
 import java.io.IOException;
 import java.util.function.Function;

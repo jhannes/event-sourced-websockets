@@ -1,14 +1,14 @@
 package com.johannesbrodwall;
 
 import org.junit.jupiter.api.Test;
-import org.openapitools.client.model.CreateIncidentDeltaDto;
-import org.openapitools.client.model.IncidentEventDto;
-import org.openapitools.client.model.IncidentSummaryDto;
-import org.openapitools.client.model.IncidentSummaryListDto;
-import org.openapitools.client.model.IncidentSummarySubscribeRequestDto;
-import org.openapitools.client.model.MessageFromServerDto;
-import org.openapitools.client.model.SampleModelData;
-import org.openapitools.client.model.UpdateIncidentDeltaDto;
+import com.johannesbrodwall.incidents.model.CreateIncidentDeltaDto;
+import com.johannesbrodwall.incidents.model.IncidentEventDto;
+import com.johannesbrodwall.incidents.model.IncidentSummaryDto;
+import com.johannesbrodwall.incidents.model.IncidentSummaryListDto;
+import com.johannesbrodwall.incidents.model.IncidentSummarySubscribeRequestDto;
+import com.johannesbrodwall.incidents.model.MessageFromServerDto;
+import com.johannesbrodwall.incidents.model.SampleModelData;
+import com.johannesbrodwall.incidents.model.UpdateIncidentDeltaDto;
 
 import java.io.IOException;
 import java.util.List;

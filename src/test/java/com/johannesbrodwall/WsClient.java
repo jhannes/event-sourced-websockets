@@ -9,7 +9,7 @@ import jakarta.websocket.EndpointConfig;
 import jakarta.websocket.Session;
 import lombok.SneakyThrows;
 import org.eclipse.jetty.util.BlockingArrayQueue;
-import org.openapitools.client.model.MessageToServerDto;
+import com.johannesbrodwall.incidents.model.MessageToServerDto;
 
 import java.io.Closeable;
 import java.io.IOException;

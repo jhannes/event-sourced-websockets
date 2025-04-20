@@ -1,16 +1,16 @@
 package com.johannesbrodwall;
 
-import org.openapitools.client.model.AddPersonToIncidentDeltaDto;
-import org.openapitools.client.model.CreateIncidentDeltaDto;
-import org.openapitools.client.model.IncidentCommandDto;
-import org.openapitools.client.model.IncidentEventDto;
-import org.openapitools.client.model.IncidentInfoDto;
-import org.openapitools.client.model.IncidentSnapshotDto;
-import org.openapitools.client.model.IncidentSummaryDto;
-import org.openapitools.client.model.IncidentSummaryListDto;
-import org.openapitools.client.model.IncidentSummarySubscribeRequestDto;
-import org.openapitools.client.model.UpdateIncidentDeltaDto;
-import org.openapitools.client.model.UpdatePersonInIncidentDeltaDto;
+import com.johannesbrodwall.incidents.model.AddPersonToIncidentDeltaDto;
+import com.johannesbrodwall.incidents.model.CreateIncidentDeltaDto;
+import com.johannesbrodwall.incidents.model.IncidentCommandDto;
+import com.johannesbrodwall.incidents.model.IncidentEventDto;
+import com.johannesbrodwall.incidents.model.IncidentInfoDto;
+import com.johannesbrodwall.incidents.model.IncidentSnapshotDto;
+import com.johannesbrodwall.incidents.model.IncidentSummaryDto;
+import com.johannesbrodwall.incidents.model.IncidentSummaryListDto;
+import com.johannesbrodwall.incidents.model.IncidentSummarySubscribeRequestDto;
+import com.johannesbrodwall.incidents.model.UpdateIncidentDeltaDto;
+import com.johannesbrodwall.incidents.model.UpdatePersonInIncidentDeltaDto;
 
 import java.util.Collections;
 import java.util.HashSet;

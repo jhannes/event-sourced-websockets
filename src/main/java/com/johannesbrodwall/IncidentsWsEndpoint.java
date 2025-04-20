@@ -9,11 +9,11 @@ import jakarta.websocket.Session;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jetty.websocket.core.exception.WebSocketTimeoutException;
-import org.openapitools.client.model.IncidentCommandDto;
-import org.openapitools.client.model.IncidentSubscribeRequestDto;
-import org.openapitools.client.model.IncidentSummarySubscribeRequestDto;
-import org.openapitools.client.model.MessageFromServerDto;
-import org.openapitools.client.model.MessageToServerDto;
+import com.johannesbrodwall.incidents.model.IncidentCommandDto;
+import com.johannesbrodwall.incidents.model.IncidentSubscribeRequestDto;
+import com.johannesbrodwall.incidents.model.IncidentSummarySubscribeRequestDto;
+import com.johannesbrodwall.incidents.model.MessageFromServerDto;
+import com.johannesbrodwall.incidents.model.MessageToServerDto;
 
 import java.nio.channels.ClosedChannelException;
 
