@@ -1,6 +1,7 @@
 package com.johannesbrodwall;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.johannesbrodwall.incidents.model.UnauthenticatedErrorSignalDto;
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.Endpoint;
 import jakarta.websocket.EndpointConfig;
@@ -16,6 +17,7 @@ import com.johannesbrodwall.incidents.model.MessageFromServerDto;
 import com.johannesbrodwall.incidents.model.MessageToServerDto;
 
 import java.nio.channels.ClosedChannelException;
+import java.security.Principal;
 
 @Slf4j
 public class IncidentsWsEndpoint extends Endpoint implements IncidentListener {
@@ -23,6 +25,7 @@ public class IncidentsWsEndpoint extends Endpoint implements IncidentListener {
     private static final ObjectMapper mapper = new ApplicationObjectMapper();
     private final IncidentReactor incidents;
     private RemoteEndpoint.Async remote;
+    private Principal userPrincipal;
 
     public IncidentsWsEndpoint(IncidentReactor incidentReactor) {
         incidents = incidentReactor;
@@ -31,7 +34,12 @@ public class IncidentsWsEndpoint extends Endpoint implements IncidentListener {
     @Override
     public void onOpen(Session session, EndpointConfig config) {
         this.remote = session.getAsyncRemote();
-        session.addMessageHandler(String.class, this::handleMessage);
+        userPrincipal = session.getUserPrincipal();
+        if (userPrincipal != null) {
+            session.addMessageHandler(String.class, this::handleMessage);
+        } else {
+            sendMessage(new UnauthenticatedErrorSignalDto());
+        }
     }
 
     @SneakyThrows

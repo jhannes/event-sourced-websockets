@@ -16,6 +16,7 @@ import com.johannesbrodwall.incidents.model.IncidentSnapshotDto;
 import com.johannesbrodwall.incidents.model.IncidentSummaryListDto;
 import com.johannesbrodwall.incidents.model.MessageFromServerDto;
 import com.johannesbrodwall.incidents.model.MessageToServerDto;
+import com.johannesbrodwall.incidents.model.SignalFromServerDto;
 
 import java.io.IOException;
 import java.util.function.Function;
@@ -37,6 +38,7 @@ class ApplicationObjectMapper extends ObjectMapper {
                 if (o.has("summaries")) return IncidentSummaryListDto.class;
                 if (o.has("delta")) return IncidentEventDto.class;
                 if (o.has("id")) return IncidentSnapshotDto.class;
+                if (o.has("signal")) return SignalFromServerDto.getType(o.get("signal").asText());
                 throw new IllegalArgumentException("Don't know how to deserialize " + o);
             });
         }

@@ -1,5 +1,8 @@
 package com.johannesbrodwall;
 
+import com.johannesbrodwall.incidents.model.MessageToServerDto;
+import com.johannesbrodwall.incidents.model.UnauthenticatedErrorSignalDto;
+import jakarta.websocket.ClientEndpointConfig;
 import org.junit.jupiter.api.Test;
 import com.johannesbrodwall.incidents.model.CreateIncidentDeltaDto;
 import com.johannesbrodwall.incidents.model.IncidentEventDto;
@@ -12,18 +15,42 @@ import com.johannesbrodwall.incidents.model.UpdateIncidentDeltaDto;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @LifeCycleExtension
 public class IncidentsWsEndpointTest {
-    private final EventSourcingServer server = new EventSourcingServer(0);
+    private final OpenidConnectMockServer loginServer = new OpenidConnectMockServer(0);
+    private final EventSourcingServer server = new EventSourcingServer(0, loginServer.getClientConfiguration());
 
     private final SampleModelData sampleData = new SampleModelData(-1);
 
-    private WsClient<MessageFromServerDto> createClient() throws IOException {
-        return new WsClient<>(MessageFromServerDto.class, new ApplicationObjectMapper(), server.getWsUri());
+    private WsClient<MessageFromServerDto, MessageToServerDto> createClient() throws IOException {
+        var accessToken = OpenidConnectMockServer.createAccessToken("test-server", "my-user-name");
+        var config = ClientEndpointConfig.Builder.create()
+                .configurator(new ClientEndpointConfig.Configurator() {
+                    @Override
+                    public void beforeRequest(Map<String, List<String>> headers) {
+                        headers.put("Cookie", List.of("accessToken=" + accessToken));
+                    }
+                })
+                .build();
+        return new WsClient<>(MessageFromServerDto.class, new ApplicationObjectMapper(), server.getWsUri(), config);
+    }
+
+    private WsClient<MessageFromServerDto, MessageToServerDto> unauthenticedClient() throws IOException {
+        var config = ClientEndpointConfig.Builder.create().build();
+        return new WsClient<>(MessageFromServerDto.class, new ApplicationObjectMapper(), server.getWsUri(), config);
+    }
+
+    @Test
+    void shouldRequestLogin() throws IOException {
+        try (var wsClient = unauthenticedClient()) {
+            var message = wsClient.pollNext();
+            assertThat(message).isInstanceOf(UnauthenticatedErrorSignalDto.class);
+        }
     }
 
     @Test

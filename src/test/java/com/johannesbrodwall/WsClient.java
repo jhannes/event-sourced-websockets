@@ -9,7 +9,6 @@ import jakarta.websocket.EndpointConfig;
 import jakarta.websocket.Session;
 import lombok.SneakyThrows;
 import org.eclipse.jetty.util.BlockingArrayQueue;
-import com.johannesbrodwall.incidents.model.MessageToServerDto;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -17,18 +16,17 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-class WsClient<T> extends Endpoint implements Closeable {
+class WsClient<FROM_SERVER, TO_SERVER> extends Endpoint implements Closeable {
     private final ObjectMapper mapper;
     private final BlockingArrayQueue<String> buffer = new BlockingArrayQueue<>(1000);
-    private final Class<T> valueType;
+    private final Class<FROM_SERVER> valueType;
     private final Session session;
 
     @SneakyThrows(DeploymentException.class)
-    public WsClient(Class<T> valueType, ApplicationObjectMapper mapper, URI uri) throws IOException {
+    public WsClient(Class<FROM_SERVER> valueType, ApplicationObjectMapper mapper, URI uri, ClientEndpointConfig clientConfig) throws IOException {
         this.valueType = valueType;
         this.mapper = mapper;
-        this.session = ContainerProvider.getWebSocketContainer()
-                .connectToServer(this, ClientEndpointConfig.Builder.create().build(), uri);
+        this.session = ContainerProvider.getWebSocketContainer().connectToServer(this, clientConfig, uri);
     }
 
     @Override
@@ -42,13 +40,13 @@ class WsClient<T> extends Endpoint implements Closeable {
 
     @SuppressWarnings("unchecked")
     @SneakyThrows
-    public <U extends T> U poll(long time, TimeUnit timeUnit) {
+    public <U extends FROM_SERVER> U poll(long time, TimeUnit timeUnit) {
         var message = buffer.poll(time, timeUnit);
         if (message == null) throw new TimeoutException("No message received for " + time + " " + timeUnit);
         return (U)mapper.readValue(message, valueType);
     }
 
-    public <U extends T> U pollNext() {
+    public <U extends FROM_SERVER> U pollNext() {
         return poll(1, TimeUnit.SECONDS);
     }
 
@@ -58,7 +56,7 @@ class WsClient<T> extends Endpoint implements Closeable {
     }
 
     @SneakyThrows
-    public <U extends T> U request(MessageToServerDto message) {
+    public <U extends FROM_SERVER> U request(TO_SERVER message) {
         buffer.clear();
         session.getAsyncRemote().sendText(mapper.writeValueAsString(message));
         return pollNext();

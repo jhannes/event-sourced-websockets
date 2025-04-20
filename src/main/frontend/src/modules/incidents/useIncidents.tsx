@@ -78,6 +78,14 @@ export function useIncidents() {
     } else if ("id" in message) {
       const { id } = message;
       setIncidents((old) => ({ ...old, [id]: message }));
+    } else if ("signal" in message) {
+      const { signal } = message;
+      if (signal === "UnauthenticatedErrorSignal") {
+        window.location.href = "/api/login/start";
+      } else {
+        const unexpected: never = signal;
+        console.log("Should never happen: ", unexpected);
+      }
     } else {
       const unexpected: never = message;
       console.log("Should never happen: ", unexpected);

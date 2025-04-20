@@ -27,6 +27,21 @@
             <version>2.18.3</version>
         </dependency>
         <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet</artifactId>
+            <version>3.1.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>3.1.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+            <version>3.1.10</version>
+        </dependency>
+        <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>swagger-ui</artifactId>
             <version>5.11.10</version>
@@ -133,7 +148,7 @@
                     <dependency>
                         <groupId>io.github.jhannes.openapi</groupId>
                         <artifactId>openapi-generator-java-lombok</artifactId>
-                        <version>0.2.5</version>
+                        <version>0.2.6</version>
                     </dependency>
                     <dependency>
                         <groupId>io.github.jhannes.openapi</groupId>
@@ -165,6 +180,18 @@
                             <generatorName>java-lombok</generatorName>
                             <packageName>com.johannesbrodwall.incidents</packageName>
                             <output>target/generated-sources/openapi-java</output>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>openid</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <generatorName>java-lombok</generatorName>
+                            <packageName>com.johannesbrodwall.openid</packageName>
+                            <output>target/generated-sources/openid-configuration</output>
+                            <inputSpec>src/main/resources/webapp/api-doc/openid-configuration.yaml</inputSpec>
                         </configuration>
                     </execution>
                 </executions>

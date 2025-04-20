@@ -20,6 +20,19 @@ components:
         - $ref: "#/components/schemas/IncidentSummaryList"
         - $ref: "#/components/schemas/IncidentSnapshot"
         - $ref: "#/components/schemas/IncidentEvent"
+        - $ref: "#/components/schemas/SignalFromServer"
+
+    SignalFromServer:
+      oneOf:
+        - $ref: "#/components/schemas/UnauthenticatedErrorSignal"
+      discriminator:
+        propertyName: signal
+
+    UnauthenticatedErrorSignal:
+      properties:
+        signal:
+          enum: ["UnauthenticatedErrorSignal"]
+      required: [signal]
 
     MessageToServer:
       oneOf:
