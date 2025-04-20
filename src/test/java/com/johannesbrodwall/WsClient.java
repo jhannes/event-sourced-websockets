@@ -9,11 +9,13 @@ import jakarta.websocket.EndpointConfig;
 import jakarta.websocket.Session;
 import lombok.SneakyThrows;
 import org.eclipse.jetty.util.BlockingArrayQueue;
+import org.openapitools.client.model.MessageToServerDto;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 class WsClient<T> extends Endpoint implements Closeable {
     private final ObjectMapper mapper;
@@ -42,11 +44,23 @@ class WsClient<T> extends Endpoint implements Closeable {
     @SneakyThrows
     public <U extends T> U poll(long time, TimeUnit timeUnit) {
         var message = buffer.poll(time, timeUnit);
+        if (message == null) throw new TimeoutException("No message received for " + time + " " + timeUnit);
         return (U)mapper.readValue(message, valueType);
+    }
+
+    public <U extends T> U pollNext() {
+        return poll(3, TimeUnit.SECONDS);
     }
 
     @Override
     public void close() throws IOException {
         session.close();
+    }
+
+    @SneakyThrows
+    public <U extends T> U request(MessageToServerDto message) {
+        buffer.clear();
+        session.getAsyncRemote().sendText(mapper.writeValueAsString(message));
+        return pollNext();
     }
 }

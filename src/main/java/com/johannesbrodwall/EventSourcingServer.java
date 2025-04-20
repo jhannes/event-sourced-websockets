@@ -17,6 +17,7 @@ import java.net.URI;
 public class EventSourcingServer extends Server {
 
     private final ResourceFactory resourceFactory = ResourceFactory.of(this);
+    private final IncidentReactor incidentReactor = new IncidentReactor();
 
     @SneakyThrows
     EventSourcingServer(int port) {
@@ -34,7 +35,14 @@ public class EventSourcingServer extends Server {
     private ContextHandler getWebSocketContextHandler() {
         var handler = new ServletContextHandler("/ws");
         handler.addServletContainerInitializer(new JakartaWebSocketServletContainerInitializer((_, container) -> {
-            container.addEndpoint(ServerEndpointConfig.Builder.create(IncidentsWsEndpoint.class, "/incidents").build());
+            container.addEndpoint(ServerEndpointConfig.Builder
+                    .create(IncidentsWsEndpoint.class, "/incidents")
+                    .configurator(new ServerEndpointConfig.Configurator() {
+                        @Override
+                        public <T> T getEndpointInstance(Class<T> endpointClass) {
+                            return (T) new IncidentsWsEndpoint(incidentReactor);
+                        }
+                    }).build());
         }));
         return handler;
     }
