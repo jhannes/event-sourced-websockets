@@ -10,6 +10,10 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.openapitools.client.model.IncidentDeltaDto;
+import org.openapitools.client.model.IncidentEventDto;
+import org.openapitools.client.model.IncidentSnapshotDto;
+import org.openapitools.client.model.IncidentSummaryListDto;
+import org.openapitools.client.model.MessageFromServerDto;
 import org.openapitools.client.model.MessageToServerDto;
 
 import java.io.IOException;
@@ -27,6 +31,12 @@ class ApplicationObjectMapper extends ObjectMapper {
         {
             addInterfaceDeserializer(MessageToServerDto.class, o -> MessageToServerDto.getType(o.get("type").asText()));
             addInterfaceDeserializer(IncidentDeltaDto.class, o -> IncidentDeltaDto.getType(o.get("delta").asText()));
+            addInterfaceDeserializer(MessageFromServerDto.class, o -> {
+                if (o.has("summaries")) return IncidentSummaryListDto.class;
+                if (o.has("delta")) return IncidentEventDto.class;
+                if (o.has("id")) return IncidentSnapshotDto.class;
+                throw new IllegalArgumentException("Don't know how to deserialize " + o);
+            });
         }
 
         private <T> void addInterfaceDeserializer(Class<T> type, Function<ObjectNode, Class<? extends T>> resolver) {

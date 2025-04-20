@@ -12,6 +12,8 @@ import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.util.resource.ResourceFactory;
 
+import java.net.URI;
+
 public class EventSourcingServer extends Server {
 
     private final ResourceFactory resourceFactory = ResourceFactory.of(this);
@@ -61,4 +63,8 @@ public class EventSourcingServer extends Server {
         new EventSourcingServer(9080).start();
     }
 
+    @SneakyThrows
+    public URI getWsUri() {
+        return new URI("ws", getURI().getAuthority(), "/ws/incidents", null, null);
+    }
 }
