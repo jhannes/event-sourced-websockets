@@ -13,6 +13,7 @@ import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.util.resource.ResourceFactory;
+import org.glassfish.jersey.servlet.ServletContainer;
 
 import java.net.URI;
 
@@ -26,7 +27,7 @@ public class EventSourcingServer extends Server {
         super(port);
         setHandler(new OpenidAuthorizationHandler(environment,
                 new ContextHandlerCollection(
-                        getServletContextHandler(),
+                        getServletContextHandler(environment),
                         getWebSocketContextHandler(),
                         new ContextHandler(swaggerUi(), "/api-doc/swagger-ui"),
                         new ContextHandler(apiDoc(), "/api-doc"),
@@ -67,10 +68,10 @@ public class EventSourcingServer extends Server {
         return ContentResourceHandler.getWebJarResource("swagger-ui", resourceFactory);
     }
 
-    private static ServletContextHandler getServletContextHandler() {
+    private static ServletContextHandler getServletContextHandler(OpenIdClientConfiguration environment) {
         var handler = new ServletContextHandler();
         handler.getServletHandler().setEnsureDefaultServlet(false);
-        handler.addServlet(new ServletHolder(new HelloWorldServlet()), "/api/hello");
+        handler.addServlet(new ServletHolder(new ServletContainer(new ApiConfig(environment))), "/api/*");
         return handler;
     }
 
