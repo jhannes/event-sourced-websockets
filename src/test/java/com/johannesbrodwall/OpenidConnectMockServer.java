@@ -192,6 +192,9 @@ public class OpenidConnectMockServer extends Server {
                 throw new ClientErrorException(Response.Status.UNAUTHORIZED);
             }
             var accessToken = base64Json(authorization.substring("bearer ".length()), JwtPayloadDto.class);
+            if (accessToken.getExp() == null || accessToken.getExp() < System.currentTimeMillis()) {
+                throw new ClientErrorException(Response.Status.UNAUTHORIZED);
+            }
             return new UserinfoDto()
                     .setName(accessToken.getName());
         }

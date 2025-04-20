@@ -64,6 +64,14 @@ public class IncidentsWsEndpointTest {
     }
 
     @Test
+    void shouldRequestLoginForExpiredCookie() throws IOException {
+        try (var wsClient = createClientWithAccessToken(createAccessToken().setExp(System.currentTimeMillis() - 60 * 1000))) {
+            var message = wsClient.pollNext();
+            assertThat(message).isInstanceOf(UnauthenticatedErrorSignalDto.class);
+        }
+    }
+
+    @Test
     void shouldReceiveInitialSummaries() throws IOException {
         try (var wsClient = createClient()) {
             IncidentSummaryListDto summaries = wsClient.request(new IncidentSummarySubscribeRequestDto());

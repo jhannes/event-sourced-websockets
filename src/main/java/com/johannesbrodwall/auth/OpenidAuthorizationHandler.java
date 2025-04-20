@@ -5,6 +5,7 @@ import com.johannesbrodwall.openid.model.DiscoveryDocumentDto;
 import com.johannesbrodwall.openid.model.UserinfoDto;
 import jakarta.ws.rs.InternalServerErrorException;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jetty.security.AuthenticationState;
 import org.eclipse.jetty.security.UserPrincipal;
 import org.eclipse.jetty.security.authentication.LoginAuthenticator;
@@ -20,6 +21,7 @@ import javax.security.auth.Subject;
 import java.net.HttpURLConnection;
 import java.util.Set;
 
+@Slf4j
 public class OpenidAuthorizationHandler extends ContextHandler {
     private static final ObjectMapper mapper = new ObjectMapper();
     private final OpenIdClientConfiguration environment;
@@ -41,6 +43,10 @@ public class OpenidAuthorizationHandler extends ContextHandler {
     private void setUserPrincipal(Request request, String value) {
         var connection = (HttpURLConnection) getDiscoveryDocument().getUserinfo_endpoint().toURL().openConnection();
         connection.setRequestProperty("Authorization", "Bearer " + value);
+        if (connection.getResponseCode() == 401) {
+            log.debug("Expired cookie");
+            return;
+        }
         if (connection.getResponseCode() != 200) {
             throw new InternalServerErrorException(jakarta.ws.rs.core.Response.status(500).entity("Failed to get userinfo status=" + connection.getResponseCode()).build());
         }
