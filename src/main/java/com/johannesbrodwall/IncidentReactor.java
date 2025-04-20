@@ -22,7 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class IncidentReactor {
-    private final AtomicLong sequenceId = new AtomicLong(System.currentTimeMillis());
+    private final long lowestSequenceId = System.currentTimeMillis();
+    private final AtomicLong sequenceId = new AtomicLong(lowestSequenceId);
     private final Map<UUID, IncidentSnapshotDto> incidents = new ConcurrentHashMap<>();
     private final Set<IncidentListener> subscriptions = Collections.synchronizedSet(new HashSet<>());
 
@@ -31,20 +32,22 @@ public class IncidentReactor {
     }
 
     public void processCommand(IncidentCommandDto command) {
+        var eventSequence = nextSequenceId();
         switch (command.getDelta()) {
-            case CreateIncidentDeltaDto create -> putIncident(createIncident(command, create.getInfo()));
+            case CreateIncidentDeltaDto create -> putIncident(createIncident(command, create.getInfo())
+                    .setLastSequenceId(eventSequence));
             case UpdateIncidentDeltaDto update -> incidents.get(command.getIncidentId())
                     .setUpdatedAt(command.getClientTime())
-                    .setLastSequenceId(nextSequenceId())
+                    .setLastSequenceId(eventSequence)
                     .getInfo().putAll(update.getInfo());
             case AddPersonToIncidentDeltaDto addPerson -> incidents.get(command.getIncidentId())
-                    .setLastSequenceId(nextSequenceId())
+                    .setLastSequenceId(eventSequence)
                     .getPersons().put(addPerson.getPersonId().toString(), addPerson.getInfo());
             case UpdatePersonInIncidentDeltaDto updatePerson -> incidents.get(command.getIncidentId())
-                    .setLastSequenceId(nextSequenceId())
+                    .setLastSequenceId(eventSequence)
                     .getPersons().get(updatePerson.getPersonId().toString()).putAll(updatePerson.getInfo());
         }
-        broadcastMessage(new IncidentEventDto().setUsername("the_user").putAll(command));
+        broadcastMessage(new IncidentEventDto().setUsername("the_user").setSequenceId(eventSequence).putAll(command));
     }
 
     private void putIncident(IncidentSnapshotDto incident) {
@@ -63,7 +66,6 @@ public class IncidentReactor {
                 .setId(command.getIncidentId())
                 .setCreatedAt(command.getClientTime())
                 .setUpdatedAt(command.getClientTime())
-                .setLastSequenceId(nextSequenceId())
                 .setInfo(incidentInfo);
     }
 
@@ -73,16 +75,24 @@ public class IncidentReactor {
 
     public void subscribe(IncidentListener listener, IncidentSummarySubscribeRequestDto subscribe) {
         this.subscriptions.add(listener);
-        var lastSequenceId = subscribe.getLastSequenceId();
-        var summaries = incidents.values().stream()
-                .filter(s -> lastSequenceId == null || lastSequenceId < s.getLastSequenceId())
+
+        var requestedSequenceId = subscribe.getLastSequenceId();
+        var lastSequenceId = incidents.values().stream().mapToLong(IncidentSnapshotDto::getLastSequenceId).max().orElse(lowestSequenceId);
+        if (requestedSequenceId != null && (requestedSequenceId < lowestSequenceId || requestedSequenceId > lastSequenceId)) {
+            requestedSequenceId = null;
+        }
+
+        listener.sendMessage(new IncidentSummaryListDto()
+                .setReplaceList(requestedSequenceId == null)
+                .setSummaries(getSummaries(requestedSequenceId))
+                .setLastSequenceId(lastSequenceId));
+    }
+
+    private List<IncidentSummaryDto> getSummaries(Long requestedSequenceId) {
+        return incidents.values().stream()
+                .filter(s -> requestedSequenceId == null || requestedSequenceId < s.getLastSequenceId())
                 .map(s -> new IncidentSummaryDto().putAll(s))
                 .toList();
-        var message = new IncidentSummaryListDto()
-                .setReplaceList(lastSequenceId == null)
-                .setSummaries(summaries)
-                .setLastSequenceId(incidents.values().stream().mapToLong(IncidentSnapshotDto::getLastSequenceId).max().orElse(-1));
-        listener.sendMessage(message);
     }
 
     public void unsubscribe(IncidentListener listener) {

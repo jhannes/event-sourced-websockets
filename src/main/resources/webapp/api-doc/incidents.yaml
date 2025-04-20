@@ -35,7 +35,10 @@ components:
         - properties:
             username:
               type: string
-          required: [username]
+            sequenceId:
+              type: integer
+              format: int64
+          required: [username, sequenceId]
 
     IncidentSummaryList:
       properties:

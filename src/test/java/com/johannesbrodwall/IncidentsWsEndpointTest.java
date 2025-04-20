@@ -145,4 +145,15 @@ public class IncidentsWsEndpointTest {
                     .isEqualTo(List.of(incidentId));
         }
     }
+
+    @Test
+    void resetSequenceIdOnNewReactor() throws IOException {
+        try (var client = createClient()) {
+            IncidentSummaryListDto summaries = client.request(new IncidentSummarySubscribeRequestDto()
+                    .setLastSequenceId(System.currentTimeMillis() - 10_000_000)
+            );
+            assertThat(summaries.getSummaries()).isEmpty();
+            assertThat(summaries.getReplaceList()).isEqualTo(true);
+        }
+    }
 }

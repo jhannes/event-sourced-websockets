@@ -32,7 +32,13 @@ export function useIncidents() {
         setIncidents((old) => ({ ...old, ...newIncidents }));
       }
     } else if ("delta" in message) {
-      const { incidentId: id, clientTime: updatedAt, delta } = message;
+      const {
+        incidentId: id,
+        clientTime: updatedAt,
+        sequenceId,
+        delta,
+      } = message;
+      lastSequenceId.current = sequenceId;
       if (delta.delta === "CreateIncidentDelta") {
         const { info } = delta;
         setIncidents((old) => ({

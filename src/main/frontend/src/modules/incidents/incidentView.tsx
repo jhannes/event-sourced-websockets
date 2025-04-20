@@ -10,7 +10,6 @@ import { Link, useParams } from "react-router";
 import React, { useContext, useEffect, useState } from "react";
 import { AddInvolvedPersonForm } from "./persons/addInvolvedPersonForm";
 import { v4 as uuidv4 } from "uuid";
-import { useIncidents } from "./useIncidents";
 import { IncidentContext } from "./incidentContext";
 
 function isSnapshot(
@@ -44,7 +43,7 @@ export function IncidentViewRoute({
 }
 
 function IncidentView({ incident }: { incident: IncidentSummaryDto }) {
-  const { sendMessage } = useIncidents();
+  const { sendMessage } = useContext(IncidentContext);
   const {
     id: incidentId,
     info: { description, priority },

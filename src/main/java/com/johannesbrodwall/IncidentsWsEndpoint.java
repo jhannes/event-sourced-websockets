@@ -32,7 +32,6 @@ public class IncidentsWsEndpoint extends Endpoint implements IncidentListener {
     public void onOpen(Session session, EndpointConfig config) {
         this.remote = session.getAsyncRemote();
         session.addMessageHandler(String.class, this::handleMessage);
-        session.setMaxIdleTimeout(10_000L);
     }
 
     @SneakyThrows
@@ -60,6 +59,10 @@ public class IncidentsWsEndpoint extends Endpoint implements IncidentListener {
     @Override
     @SneakyThrows
     public void sendMessage(MessageFromServerDto message) {
+        if (message == null) return;
+        if (!message.missingRequiredFields("").isEmpty()) {
+            throw new IllegalArgumentException("Missing required fields " + message.missingRequiredFields("") + " in " + message);
+        }
         remote.sendText(mapper.writeValueAsString(message));
     }
 }
