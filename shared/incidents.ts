@@ -41,5 +41,7 @@ const MessageFromServer = z.discriminatedUnion("type", [
 export const schema = { Incident, MessageFromServer, MessageToServer };
 
 export type Incident = z.infer<typeof Incident>;
+export type IncidentEvent = z.infer<typeof IncidentEvent>;
+export type IncidentDelta = z.infer<typeof IncidentDelta>;
 export type MessageToServer = z.infer<typeof MessageToServer>;
 export type MessageFromServer = z.infer<typeof MessageFromServer>;
