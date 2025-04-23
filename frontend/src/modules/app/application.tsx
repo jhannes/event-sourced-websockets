@@ -1,15 +1,6 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { z } from "zod";
-import { v4 as uuidv4 } from "uuid";
-
-const Incident = z.object({
-  id: z.string(),
-  title: z.string(),
-  priority: z.optional(z.enum(["HIGH", "MEDIUM", "LOW"])),
-});
-
-type Incident = z.infer<typeof Incident>;
+import { Incident, uuidv4 } from "../../../../shared/incidents";
 
 async function time(number: number) {
   return new Promise((resolve) => setTimeout(resolve, number));

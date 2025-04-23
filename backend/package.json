@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "dev": "tsx --watch server.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.3"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
