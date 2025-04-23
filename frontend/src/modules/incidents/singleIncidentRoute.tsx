@@ -9,7 +9,7 @@ import { useParams } from "react-router-dom";
 import { NewPersonForm } from "./newPersonForm";
 
 function IncidentDetailView({
-  incident: { id, info },
+  incident: { id, info, persons },
   sendCommand,
 }: {
   incident: IncidentSnapshot;
@@ -30,6 +30,13 @@ function IncidentDetailView({
         <strong>Priority: </strong> {priority}
       </p>
       <h2>Involved persons</h2>
+      <ul>
+        {Object.entries(persons).map(([k, v]) => (
+          <li key={k}>
+            {v.firstName} {v.lastName} <strong>{v.role}</strong>
+          </li>
+        ))}
+      </ul>
       <h2>Add person</h2>
       <NewPersonForm key={personId} onNewPerson={handleNewPerson} />
     </>

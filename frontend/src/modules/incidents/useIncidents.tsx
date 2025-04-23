@@ -36,6 +36,14 @@ export function useIncidents() {
         ),
       );
     } else if (delta.delta === "AddPersonToIncident") {
+      const { personId, person } = delta;
+      setIncidents((old) =>
+        old.map((o) =>
+          o.id === incidentId
+            ? { ...o, persons: { ...o.persons, [personId]: person } }
+            : o,
+        ),
+      );
     } else {
       const unexpectedDelta: never = delta;
       console.log({ unexpectedDelta });
