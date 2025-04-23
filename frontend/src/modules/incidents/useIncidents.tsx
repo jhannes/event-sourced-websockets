@@ -24,9 +24,14 @@ export function useIncidents() {
   }
 
   function handleIncidentEvent(event: IncidentEvent) {
-    const delta = event.delta.delta;
-    if (delta === "CreateIncidentDelta") {
-      setIncidents((old) => [...old, event.delta.incident]);
+    const delta = event.delta;
+    if (delta.delta === "CreateIncidentDelta") {
+      setIncidents((old) => [...old, delta.incident]);
+    } else if (delta.delta === "UpdateIncidentDelta") {
+      const { incidentId } = event;
+      setIncidents((old) =>
+        old.map((o) => (o.id === incidentId ? { ...o, ...delta.incident } : o)),
+      );
     } else {
       const unexpectedDelta: never = delta;
       console.log({ unexpectedDelta });

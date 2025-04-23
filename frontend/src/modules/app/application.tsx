@@ -15,7 +15,7 @@ export function Application() {
     <>
       <h1>Incidents</h1>
       {incidents.map((i) => (
-        <IncidentItem key={i.id} incident={i} />
+        <IncidentItem key={i.id} incident={i} sendCommand={sendCommand} />
       ))}
 
       <NewIncidentForm onNewIncident={handleNewIncident} />

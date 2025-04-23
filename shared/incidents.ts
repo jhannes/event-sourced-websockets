@@ -5,7 +5,7 @@ export const IncidentPriorityValues = ["HIGH", "MEDIUM", "LOW"] as const;
 const Incident = z.object({
   id: z.string(),
   title: z.string(),
-  priority: z.optional(z.enum(IncidentPriorityValues)),
+  priority: z.enum(IncidentPriorityValues).optional(),
 });
 
 const IncidentSummaryList = z.object({
@@ -14,6 +14,10 @@ const IncidentSummaryList = z.object({
 
 const IncidentDelta = z.discriminatedUnion("delta", [
   z.object({ delta: z.literal("CreateIncidentDelta"), incident: Incident }),
+  z.object({
+    delta: z.literal("UpdateIncidentDelta"),
+    incident: Incident.partial(),
+  }),
 ]);
 
 const IncidentCommand = z.object({
@@ -41,6 +45,7 @@ const MessageFromServer = z.discriminatedUnion("type", [
 export const schema = { Incident, MessageFromServer, MessageToServer };
 
 export type Incident = z.infer<typeof Incident>;
+export type IncidentPriority = (typeof IncidentPriorityValues)[number];
 export type IncidentEvent = z.infer<typeof IncidentEvent>;
 export type IncidentDelta = z.infer<typeof IncidentDelta>;
 export type MessageToServer = z.infer<typeof MessageToServer>;
