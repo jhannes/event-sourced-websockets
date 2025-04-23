@@ -3,7 +3,7 @@ import express from "express";
 import { WebSocketServer, WebSocket } from "ws";
 
 const incidents: Incident[] = [
-  { id: uuidv4(), title: "Fire from the server" },
+  { id: uuidv4(), title: "Fire from the server", priority: "HIGH" },
   { id: uuidv4(), title: "Traffic Accident from the server" },
 ];
 

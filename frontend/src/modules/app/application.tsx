@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Incident, schema } from "../../../../shared/incidents";
 import { z } from "zod";
 import { NewIncidentForm } from "../incidents/newIncidentForm";
+import { IncidentItem } from "../incidents/incidentItem";
 
 export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
@@ -28,8 +29,8 @@ export function Application() {
   return (
     <>
       <h1>Incidents</h1>
-      {incidents.map(({ id, title }) => (
-        <div key={id}>{title}</div>
+      {incidents.map((i) => (
+        <IncidentItem key={i.id} incident={i} />
       ))}
 
       <NewIncidentForm onNewIncident={handleNewIncident} />
