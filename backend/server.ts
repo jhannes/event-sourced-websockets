@@ -5,7 +5,7 @@ import {
   uuidv4,
 } from "../shared/incidents";
 import express from "express";
-import { WebSocketServer, WebSocket } from "ws";
+import { WebSocket, WebSocketServer } from "ws";
 
 const incidents: Incident[] = [
   { id: uuidv4(), title: "Fire from the server", priority: "HIGH" },
@@ -34,6 +34,17 @@ server.on("upgrade", (req, socket, head) => {
       const command = schema.MessageToServer.parse(
         JSON.parse(e.data.toString()),
       );
+      const { delta } = command;
+      if (delta.delta === "CreateIncidentDelta") {
+        incidents.push(delta.incident);
+      } else if (delta.delta === "UpdateIncidentDelta") {
+        for (let i = 0; i < incidents.length; i++) {
+          if (incidents[i].id === command.incidentId) {
+            incidents[i] = { ...incidents[i], ...delta.incident };
+          }
+        }
+      }
+
       const event: MessageFromServer = {
         ...command,
         type: "IncidentEvent",
