@@ -7,3 +7,4 @@ const Incident = z.object({
   priority: z.optional(z.enum(["HIGH", "MEDIUM", "LOW"])),
 });
 export type Incident = z.infer<typeof Incident>;
+export const schema = { Incident };

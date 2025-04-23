@@ -1,21 +1,15 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { Incident, uuidv4 } from "../../../../shared/incidents";
-
-async function time(number: number) {
-  return new Promise((resolve) => setTimeout(resolve, number));
-}
+import { Incident, schema } from "../../../../shared/incidents";
+import { z } from "zod";
 
 export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
 
   useEffect(() => {
     (async () => {
-      await time(1000);
-      setIncidents([
-        { id: uuidv4(), title: "Fire" },
-        { id: uuidv4(), title: "Traffic Accident" },
-      ]);
+      const res = await fetch("/api/incidents");
+      setIncidents(z.array(schema.Incident).parse(await res.json()));
     })();
   }, []);
 
