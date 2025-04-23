@@ -7,10 +7,10 @@ export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
 
   useEffect(() => {
-    (async () => {
-      const res = await fetch("/api/incidents");
-      setIncidents(z.array(schema.Incident).parse(await res.json()));
-    })();
+    const ws = new WebSocket("/ws/incidents");
+    ws.onmessage = (event) => {
+      setIncidents(z.array(schema.Incident).parse(JSON.parse(event.data)));
+    };
   }, []);
 
   return (
