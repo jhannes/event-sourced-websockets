@@ -1,6 +1,8 @@
 {
   "scripts": {
-    "dev": "cd frontend && npm run dev",
+    "dev": "concurrently npm:dev:backend npm:dev:frontend",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
     "test": "tsc --noEmit && prettier --check .",
     "prepare": "husky"
   },
