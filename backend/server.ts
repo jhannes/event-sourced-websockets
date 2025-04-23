@@ -14,7 +14,7 @@ const incidents: Incident[] = [
 
 const app = express();
 
-app.get("/api/incidents", (req, res) => {
+app.get("/api/incidents", (_, res) => {
   res.json(incidents);
 });
 
@@ -49,7 +49,7 @@ server.on("upgrade", (req, socket, head) => {
         ...command,
         type: "IncidentEvent",
         serverTime: new Date().toISOString(),
-        username: "dummyuser",
+        username: "dummy-user",
       };
       for (const peer of peers) {
         peer.send(JSON.stringify(event));

@@ -5,6 +5,7 @@ import {
   IncidentPriorityValues,
 } from "../../../../shared/incidents";
 import * as React from "react";
+import { Link } from "react-router-dom";
 
 export function IncidentItem({
   incident: { id, title, priority },
@@ -20,7 +21,7 @@ export function IncidentItem({
   }
   return (
     <div>
-      {title}{" "}
+      <Link to={`/incidents/${id}`}>{title} </Link>
       <select
         value={priority}
         onChange={(e) =>
