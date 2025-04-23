@@ -19,5 +19,8 @@ const wsServer = new WebSocketServer({ noServer: true });
 server.on("upgrade", (req, socket, head) => {
   wsServer.handleUpgrade(req, socket, head, (socket) => {
     socket.send(JSON.stringify(incidents));
+    socket.onmessage = (event) => {
+      console.log("Message", event.data);
+    };
   });
 });
