@@ -1,4 +1,9 @@
-import { Incident, schema, uuidv4 } from "../shared/incidents";
+import {
+  Incident,
+  MessageFromServer,
+  schema,
+  uuidv4,
+} from "../shared/incidents";
 import express from "express";
 import { WebSocketServer, WebSocket } from "ws";
 
@@ -20,11 +25,23 @@ const wsServer = new WebSocketServer({ noServer: true });
 server.on("upgrade", (req, socket, head) => {
   wsServer.handleUpgrade(req, socket, head, (socket) => {
     peers.add(socket);
-    socket.send(JSON.stringify(incidents));
-    socket.onmessage = (event) => {
-      const message = schema.Incident.parse(JSON.parse(event.data.toString()));
+    const incidentMessage: MessageFromServer = {
+      type: "IncidentSummaryList",
+      summaries: incidents,
+    };
+    socket.send(JSON.stringify(incidentMessage));
+    socket.onmessage = (e) => {
+      const command = schema.MessageToServer.parse(
+        JSON.parse(e.data.toString()),
+      );
+      const event: MessageFromServer = {
+        ...command,
+        type: "IncidentEvent",
+        serverTime: new Date().toISOString(),
+        username: "dummyuser",
+      };
       for (const peer of peers) {
-        peer.send(JSON.stringify(message));
+        peer.send(JSON.stringify(event));
       }
     };
   });

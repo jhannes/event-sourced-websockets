@@ -1,7 +1,11 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { Incident, schema } from "../../../../shared/incidents";
-import { z } from "zod";
+import {
+  Incident,
+  MessageToServer,
+  schema,
+  uuidv4,
+} from "../../../../shared/incidents";
 import { NewIncidentForm } from "../incidents/newIncidentForm";
 import { IncidentItem } from "../incidents/incidentItem";
 
@@ -12,18 +16,41 @@ export function Application() {
   useEffect(() => {
     const ws = new WebSocket("/ws/incidents");
     ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      if (Array.isArray(message)) {
-        setIncidents(z.array(schema.Incident).parse(message));
+      const message = schema.MessageFromServer.parse(JSON.parse(event.data));
+      const type = message.type;
+      if (type === "IncidentEvent") {
+        const delta = message.delta.delta;
+        if (delta === "CreateIncidentDelta") {
+          setIncidents((old) => [...old, message.delta.incident]);
+        } else {
+          const unexpectedDelta: never = delta;
+          console.log({ unexpectedDelta });
+        }
+      } else if (type === "IncidentSummaryList") {
+        setIncidents(message.summaries);
       } else {
-        setIncidents((old) => [...old, schema.Incident.parse(message)]);
+        const unexpectedMessage: never = type;
+        console.log({ unexpectedMessage });
       }
     };
     setWs(ws);
   }, []);
 
+  function send(message: MessageToServer) {
+    ws?.send(JSON.stringify(message));
+  }
+
   function handleNewIncident(incident: Incident) {
-    ws?.send(JSON.stringify(incident));
+    send({
+      id: uuidv4(),
+      clientTime: new Date().toISOString(),
+      type: "IncidentCommand",
+      incidentId: incident.id,
+      delta: {
+        delta: "CreateIncidentDelta",
+        incident,
+      },
+    });
   }
 
   return (
