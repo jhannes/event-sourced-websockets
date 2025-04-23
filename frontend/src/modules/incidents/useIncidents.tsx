@@ -23,6 +23,18 @@ export function useIncidents() {
     }
   }
 
+  function updateIncident(
+    event: IncidentEvent,
+    updater: (old: IncidentSnapshot) => Partial<IncidentSnapshot>,
+  ) {
+    const { incidentId, clientTime: updatedAt } = event;
+    setIncidents((old) =>
+      old.map((o) =>
+        o.id === incidentId ? { ...o, updatedAt, ...updater(o) } : o,
+      ),
+    );
+  }
+
   function handleIncidentEvent(event: IncidentEvent) {
     const { incidentId, delta, clientTime: updatedAt } = event;
     if (delta.delta === "CreateIncidentDelta") {
@@ -33,22 +45,20 @@ export function useIncidents() {
       ]);
     } else if (delta.delta === "UpdateIncidentDelta") {
       const { incident: info } = delta;
-      setIncidents((old) =>
-        old.map((o) =>
-          o.id === incidentId
-            ? { ...o, updatedAt, info: { ...o.info, ...info } }
-            : o,
-        ),
-      );
+      updateIncident(event, (o) => ({ info: { ...o.info, ...info } }));
     } else if (delta.delta === "AddPersonToIncident") {
       const { personId, person } = delta;
-      setIncidents((old) =>
-        old.map((o) =>
-          o.id === incidentId
-            ? { ...o, updatedAt, persons: { ...o.persons, [personId]: person } }
-            : o,
-        ),
-      );
+      updateIncident(event, (o) => ({
+        persons: { ...o.persons, [personId]: person },
+      }));
+    } else if (delta.delta === "UpdatePersonInIncident") {
+      const { personId, person } = delta;
+      updateIncident(event, (o) => ({
+        persons: {
+          ...o.persons,
+          [personId]: { ...o.persons[personId], ...person },
+        },
+      }));
     } else {
       const unexpectedDelta: never = delta;
       console.log({ unexpectedDelta });
@@ -62,13 +72,8 @@ export function useIncidents() {
 
   function sendCommand(incidentId: string, delta: IncidentDelta) {
     const clientTime = new Date().toISOString();
-    sendMessage({
-      id: uuidv4(),
-      clientTime: clientTime,
-      type: "IncidentCommand",
-      incidentId,
-      delta,
-    });
+    const type = "IncidentCommand";
+    sendMessage({ id: uuidv4(), clientTime, type, incidentId, delta });
   }
 
   return { sendCommand, incidents };

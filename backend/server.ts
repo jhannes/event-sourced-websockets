@@ -69,6 +69,16 @@ server.on("upgrade", (req, socket, head) => {
             item.persons[delta.personId] = delta.person;
           }
         }
+      } else if (delta.delta === "UpdatePersonInIncident") {
+        for (const item of incidents) {
+          if (item.id === incidentId) {
+            item.updatedAt = updatedAt;
+            item.persons[delta.personId] = {
+              ...item.persons[delta.personId],
+              ...delta.person,
+            };
+          }
+        }
       } else {
         const unexpected: never = delta;
         console.log({ unexpected });

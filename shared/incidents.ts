@@ -36,6 +36,11 @@ const IncidentDelta = z.discriminatedUnion("delta", [
     personId: z.string().uuid(),
     person: InvolvedPerson,
   }),
+  z.object({
+    delta: z.literal("UpdatePersonInIncident"),
+    personId: z.string().uuid(),
+    person: InvolvedPerson.partial(),
+  }),
 ]);
 
 const IncidentCommand = z.object({

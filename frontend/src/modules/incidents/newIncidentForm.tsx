@@ -4,13 +4,11 @@ import {
   uuidv4,
 } from "../../../../shared/incidents";
 import * as React from "react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useContext, useState } from "react";
+import { IncidentContext } from "./incidentContext";
 
-export function NewIncidentForm({
-  sendCommand,
-}: {
-  sendCommand: (incidentId: string, delta: IncidentDelta) => void;
-}) {
+export function NewIncidentForm() {
+  const { sendCommand } = useContext(IncidentContext);
   const [id, setId] = useState(uuidv4());
   function handleNewIncident(incident: IncidentInfo) {
     sendCommand(id, { delta: "CreateIncidentDelta", incident });

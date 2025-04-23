@@ -1,22 +1,22 @@
 import {
-  IncidentDelta,
   IncidentPriority,
   IncidentPriorityValues,
   IncidentSnapshot,
 } from "../../../../shared/incidents";
 import * as React from "react";
+import { useContext } from "react";
 import { Link } from "react-router-dom";
+import { IncidentContext } from "./incidentContext";
 
 export function IncidentItem({
   incident: {
     id,
     info: { title, priority },
   },
-  sendCommand,
 }: {
   incident: IncidentSnapshot;
-  sendCommand: (incidentId: string, delta: IncidentDelta) => void;
 }) {
+  const { sendCommand } = useContext(IncidentContext);
   function handleChangePriority(priority?: IncidentPriority) {
     if (priority) {
       sendCommand(id, { delta: "UpdateIncidentDelta", incident: { priority } });
