@@ -1,6 +1,6 @@
-import { Incident, uuidv4 } from "../shared/incidents";
+import { Incident, schema, uuidv4 } from "../shared/incidents";
 import express from "express";
-import { WebSocketServer } from "ws";
+import { WebSocketServer, WebSocket } from "ws";
 
 const incidents: Incident[] = [
   { id: uuidv4(), title: "Fire from the server" },
@@ -15,12 +15,17 @@ app.get("/api/incidents", (req, res) => {
 
 const server = app.listen(process.env.PORT || 3000);
 
+const peers = new Set<WebSocket>();
 const wsServer = new WebSocketServer({ noServer: true });
 server.on("upgrade", (req, socket, head) => {
   wsServer.handleUpgrade(req, socket, head, (socket) => {
+    peers.add(socket);
     socket.send(JSON.stringify(incidents));
     socket.onmessage = (event) => {
-      console.log("Message", event.data);
+      const message = schema.Incident.parse(JSON.parse(event.data.toString()));
+      for (const peer of peers) {
+        peer.send(JSON.stringify(message));
+      }
     };
   });
 });

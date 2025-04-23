@@ -11,7 +11,12 @@ export function Application() {
   useEffect(() => {
     const ws = new WebSocket("/ws/incidents");
     ws.onmessage = (event) => {
-      setIncidents(z.array(schema.Incident).parse(JSON.parse(event.data)));
+      const message = JSON.parse(event.data);
+      if (Array.isArray(message)) {
+        setIncidents(z.array(schema.Incident).parse(message));
+      } else {
+        setIncidents((old) => [...old, schema.Incident.parse(message)]);
+      }
     };
     setWs(ws);
   }, []);
