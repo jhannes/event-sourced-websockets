@@ -24,15 +24,20 @@ export function useIncidents() {
   }
 
   function handleIncidentEvent(event: IncidentEvent) {
-    const { incidentId, delta } = event;
+    const { incidentId, delta, clientTime: updatedAt } = event;
     if (delta.delta === "CreateIncidentDelta") {
       const { incident: info } = delta;
-      setIncidents((old) => [...old, { id: incidentId, info, persons: {} }]);
+      setIncidents((old) => [
+        ...old,
+        { id: incidentId, createdAt: updatedAt, updatedAt, info, persons: {} },
+      ]);
     } else if (delta.delta === "UpdateIncidentDelta") {
       const { incident: info } = delta;
       setIncidents((old) =>
         old.map((o) =>
-          o.id === incidentId ? { ...o, info: { ...o.info, ...info } } : o,
+          o.id === incidentId
+            ? { ...o, updatedAt, info: { ...o.info, ...info } }
+            : o,
         ),
       );
     } else if (delta.delta === "AddPersonToIncident") {
@@ -40,7 +45,7 @@ export function useIncidents() {
       setIncidents((old) =>
         old.map((o) =>
           o.id === incidentId
-            ? { ...o, persons: { ...o.persons, [personId]: person } }
+            ? { ...o, updatedAt, persons: { ...o.persons, [personId]: person } }
             : o,
         ),
       );

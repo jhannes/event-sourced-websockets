@@ -19,6 +19,8 @@ const IncidentInfo = z.object({
 });
 const IncidentSnapshot = z.object({
   id: z.string().uuid(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
   info: IncidentInfo,
   persons: z.record(z.string().uuid(), InvolvedPerson),
 });

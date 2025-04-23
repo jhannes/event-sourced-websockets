@@ -3,6 +3,10 @@ import { IncidentItem } from "./incidentItem";
 import { NewIncidentForm } from "./newIncidentForm";
 import * as React from "react";
 
+function sortByUpdated(a: IncidentSnapshot, b: IncidentSnapshot) {
+  return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+}
+
 export function IncidentSummary({
   incidents,
   sendCommand,
@@ -13,7 +17,7 @@ export function IncidentSummary({
   return (
     <>
       <h1>Incidents</h1>
-      {incidents.map((i) => (
+      {incidents.toSorted(sortByUpdated).map((i) => (
         <IncidentItem key={i.id} incident={i} sendCommand={sendCommand} />
       ))}
 
