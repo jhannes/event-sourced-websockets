@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { Incident } from "../../../../shared/incidents";
+import { Incident, schema } from "../../../../shared/incidents";
+import { z } from "zod";
 
 async function time(number: number) {
   return new Promise((resolve) => setTimeout(resolve, number));
@@ -12,11 +12,8 @@ export function Application() {
 
   useEffect(() => {
     (async () => {
-      await time(1000);
-      setIncidents([
-        { id: uuidv4(), title: "Fire" },
-        { id: uuidv4(), title: "Traffic Accident" },
-      ]);
+      const res = await fetch("/api/incidents");
+      setIncidents(z.array(schema.Incident).parse(await res.json()));
     })();
   }, []);
 

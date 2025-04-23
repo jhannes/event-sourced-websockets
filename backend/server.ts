@@ -7,7 +7,7 @@ const app = new Hono();
 
 app.get("/api/incidents", (c) => {
   const incidents: Incident[] = [
-    { id: uuidv4(), title: "Fire from the server" },
+    { id: uuidv4(), title: "Fire from the server", priority: "MEDIUM" },
     { id: uuidv4(), title: "Traffic Accident from the server" },
   ];
   return c.json(incidents);
