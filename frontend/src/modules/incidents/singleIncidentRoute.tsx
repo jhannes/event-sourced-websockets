@@ -1,18 +1,28 @@
 import React, { useState } from "react";
-import { Incident, IncidentDelta, uuidv4 } from "../../../../shared/incidents";
+import {
+  Incident,
+  IncidentDelta,
+  InvolvedPerson,
+  uuidv4,
+} from "../../../../shared/incidents";
 import { useParams } from "react-router-dom";
 import { NewPersonForm } from "./newPersonForm";
 
 function IncidentDetailView({
   incident,
+  sendCommand,
 }: {
   incident: Incident;
   sendCommand: (incidentId: string, delta: IncidentDelta) => void;
 }) {
   const { title, priority } = incident;
-  const [id, setId] = useState(uuidv4());
+  const [personId, setPersonId] = useState(uuidv4());
 
-  function handleNewPerson() {}
+  function handleNewPerson(person: InvolvedPerson) {
+    const delta = "AddPersonToIncident";
+    sendCommand(incident.id, { delta, personId, person });
+    setPersonId(uuidv4());
+  }
 
   return (
     <>
@@ -22,7 +32,7 @@ function IncidentDetailView({
       </p>
       <h2>Involved persons</h2>
       <h2>Add person</h2>
-      <NewPersonForm key={id} onNewPerson={handleNewPerson} />
+      <NewPersonForm key={personId} onNewPerson={handleNewPerson} />
     </>
   );
 }

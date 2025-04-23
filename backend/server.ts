@@ -43,6 +43,10 @@ server.on("upgrade", (req, socket, head) => {
             incidents[i] = { ...incidents[i], ...delta.incident };
           }
         }
+      } else if (delta.delta === "AddPersonToIncident") {
+      } else {
+        const unexpected: never = delta;
+        console.log({ unexpected });
       }
 
       const event: MessageFromServer = {

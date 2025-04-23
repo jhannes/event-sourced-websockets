@@ -32,6 +32,7 @@ export function useIncidents() {
       setIncidents((old) =>
         old.map((o) => (o.id === incidentId ? { ...o, ...delta.incident } : o)),
       );
+    } else if (delta.delta === "AddPersonToIncident") {
     } else {
       const unexpectedDelta: never = delta;
       console.log({ unexpectedDelta });
