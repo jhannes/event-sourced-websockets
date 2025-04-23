@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
-  Incident,
   IncidentDelta,
+  IncidentSnapshot,
   InvolvedPerson,
   uuidv4,
 } from "../../../../shared/incidents";
@@ -9,21 +9,20 @@ import { useParams } from "react-router-dom";
 import { NewPersonForm } from "./newPersonForm";
 
 function IncidentDetailView({
-  incident,
+  incident: { id, info },
   sendCommand,
 }: {
-  incident: Incident;
+  incident: IncidentSnapshot;
   sendCommand: (incidentId: string, delta: IncidentDelta) => void;
 }) {
-  const { title, priority } = incident;
   const [personId, setPersonId] = useState(uuidv4());
 
   function handleNewPerson(person: InvolvedPerson) {
-    const delta = "AddPersonToIncident";
-    sendCommand(incident.id, { delta, personId, person });
+    sendCommand(id, { delta: "AddPersonToIncident", personId, person });
     setPersonId(uuidv4());
   }
 
+  const { title, priority } = info;
   return (
     <>
       <h1>Incident: {title}</h1>
@@ -41,7 +40,7 @@ export function SingleIncidentRoute({
   incidents,
   sendCommand,
 }: {
-  incidents: Incident[];
+  incidents: IncidentSnapshot[];
   sendCommand: (incidentId: string, delta: IncidentDelta) => void;
 }) {
   const { id } = useParams();

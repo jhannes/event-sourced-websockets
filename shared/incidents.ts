@@ -1,13 +1,6 @@
 import { z } from "zod";
 export { v4 as uuidv4 } from "uuid";
 
-export const IncidentPriorityValues = ["HIGH", "MEDIUM", "LOW"] as const;
-const Incident = z.object({
-  id: z.string().uuid(),
-  title: z.string(),
-  priority: z.enum(IncidentPriorityValues).optional(),
-});
-
 export const InvolvedPersonRoleValues = [
   "CALLER",
   "SUSPECT",
@@ -19,11 +12,22 @@ const InvolvedPerson = z.object({
   role: z.enum(InvolvedPersonRoleValues).optional(),
 });
 
+export const IncidentPriorityValues = ["HIGH", "MEDIUM", "LOW"] as const;
+const IncidentInfo = z.object({
+  title: z.string(),
+  priority: z.enum(IncidentPriorityValues).optional(),
+});
+const IncidentSnapshot = z.object({
+  id: z.string().uuid(),
+  info: IncidentInfo,
+  persons: z.record(z.string().uuid(), InvolvedPerson),
+});
+
 const IncidentDelta = z.discriminatedUnion("delta", [
-  z.object({ delta: z.literal("CreateIncidentDelta"), incident: Incident }),
+  z.object({ delta: z.literal("CreateIncidentDelta"), incident: IncidentInfo }),
   z.object({
     delta: z.literal("UpdateIncidentDelta"),
-    incident: Incident.partial(),
+    incident: IncidentInfo.partial(),
   }),
   z.object({
     delta: z.literal("AddPersonToIncident"),
@@ -49,14 +53,15 @@ const MessageToServer = z.discriminatedUnion("type", [
 const MessageFromServer = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("IncidentSummaryList"),
-    summaries: z.array(Incident),
+    summaries: z.array(IncidentSnapshot),
   }),
   IncidentEvent.extend({ type: z.literal("IncidentEvent") }),
 ]);
 
-export const schema = { Incident, MessageFromServer, MessageToServer };
+export const schema = { IncidentInfo, MessageFromServer, MessageToServer };
 
-export type Incident = z.infer<typeof Incident>;
+export type IncidentSnapshot = z.infer<typeof IncidentSnapshot>;
+export type IncidentInfo = z.infer<typeof IncidentInfo>;
 export type IncidentPriority = (typeof IncidentPriorityValues)[number];
 export type InvolvedPerson = z.infer<typeof InvolvedPerson>;
 export type InvolvedPersonRole = (typeof InvolvedPersonRoleValues)[number];

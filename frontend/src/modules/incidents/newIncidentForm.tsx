@@ -1,8 +1,10 @@
-import { Incident, IncidentDelta, uuidv4 } from "../../../../shared/incidents";
+import {
+  IncidentDelta,
+  IncidentInfo,
+  uuidv4,
+} from "../../../../shared/incidents";
 import * as React from "react";
 import { FormEvent, useState } from "react";
-import { util } from "zod";
-import Omit = util.Omit;
 
 export function NewIncidentForm({
   sendCommand,
@@ -10,11 +12,8 @@ export function NewIncidentForm({
   sendCommand: (incidentId: string, delta: IncidentDelta) => void;
 }) {
   const [id, setId] = useState(uuidv4());
-  function handleNewIncident(incident: Omit<Incident, "id">) {
-    sendCommand(id, {
-      delta: "CreateIncidentDelta",
-      incident: { ...incident, id },
-    });
+  function handleNewIncident(incident: IncidentInfo) {
+    sendCommand(id, { delta: "CreateIncidentDelta", incident });
     setId(uuidv4());
   }
 
@@ -29,7 +28,7 @@ export function NewIncidentForm({
 export function IncidentForm({
   onNewIncident,
 }: {
-  onNewIncident: (incident: Omit<Incident, "id">) => void;
+  onNewIncident: (incident: IncidentInfo) => void;
 }) {
   const [title, setTitle] = useState("");
 

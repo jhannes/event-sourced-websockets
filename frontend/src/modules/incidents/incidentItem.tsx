@@ -1,17 +1,20 @@
 import {
-  Incident,
   IncidentDelta,
   IncidentPriority,
   IncidentPriorityValues,
+  IncidentSnapshot,
 } from "../../../../shared/incidents";
 import * as React from "react";
 import { Link } from "react-router-dom";
 
 export function IncidentItem({
-  incident: { id, title, priority },
+  incident: {
+    id,
+    info: { title, priority },
+  },
   sendCommand,
 }: {
-  incident: Incident;
+  incident: IncidentSnapshot;
   sendCommand: (incidentId: string, delta: IncidentDelta) => void;
 }) {
   function handleChangePriority(priority?: IncidentPriority) {

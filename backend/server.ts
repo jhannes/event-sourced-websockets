@@ -1,5 +1,6 @@
 import {
-  Incident,
+  IncidentInfo,
+  IncidentSnapshot,
   MessageFromServer,
   schema,
   uuidv4,
@@ -7,9 +8,17 @@ import {
 import express from "express";
 import { WebSocket, WebSocketServer } from "ws";
 
-const incidents: Incident[] = [
-  { id: uuidv4(), title: "Fire from the server", priority: "HIGH" },
-  { id: uuidv4(), title: "Traffic Accident from the server" },
+const incidents: IncidentSnapshot[] = [
+  {
+    id: uuidv4(),
+    info: { title: "Fire from the server", priority: "HIGH" },
+    persons: {},
+  },
+  {
+    id: uuidv4(),
+    info: { title: "Traffic Accident from the server" },
+    persons: {},
+  },
 ];
 
 const app = express();
@@ -34,13 +43,13 @@ server.on("upgrade", (req, socket, head) => {
       const command = schema.MessageToServer.parse(
         JSON.parse(e.data.toString()),
       );
-      const { delta } = command;
+      const { incidentId, delta } = command;
       if (delta.delta === "CreateIncidentDelta") {
-        incidents.push(delta.incident);
+        incidents.push({ id: incidentId, info: delta.incident, persons: {} });
       } else if (delta.delta === "UpdateIncidentDelta") {
-        for (let i = 0; i < incidents.length; i++) {
-          if (incidents[i].id === command.incidentId) {
-            incidents[i] = { ...incidents[i], ...delta.incident };
+        for (const item of incidents) {
+          if (item.id === incidentId) {
+            item.info = { ...item.info, ...delta.incident };
           }
         }
       } else if (delta.delta === "AddPersonToIncident") {

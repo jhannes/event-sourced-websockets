@@ -1,7 +1,7 @@
 import {
-  Incident,
   IncidentDelta,
   IncidentEvent,
+  IncidentSnapshot,
   MessageFromServer,
   uuidv4,
 } from "../../../../shared/incidents";
@@ -9,7 +9,7 @@ import { useState } from "react";
 import { useWebSocket } from "./useWebSocket";
 
 export function useIncidents() {
-  const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [incidents, setIncidents] = useState<IncidentSnapshot[]>([]);
 
   function handleMessage(message: MessageFromServer) {
     const { type } = message;
@@ -24,13 +24,16 @@ export function useIncidents() {
   }
 
   function handleIncidentEvent(event: IncidentEvent) {
-    const delta = event.delta;
+    const { incidentId, delta } = event;
     if (delta.delta === "CreateIncidentDelta") {
-      setIncidents((old) => [...old, delta.incident]);
+      const { incident: info } = delta;
+      setIncidents((old) => [...old, { id: incidentId, info, persons: {} }]);
     } else if (delta.delta === "UpdateIncidentDelta") {
-      const { incidentId } = event;
+      const { incident: info } = delta;
       setIncidents((old) =>
-        old.map((o) => (o.id === incidentId ? { ...o, ...delta.incident } : o)),
+        old.map((o) =>
+          o.id === incidentId ? { ...o, info: { ...o.info, ...info } } : o,
+        ),
       );
     } else if (delta.delta === "AddPersonToIncident") {
     } else {
