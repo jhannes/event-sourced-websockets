@@ -1,5 +1,4 @@
 import {
-  IncidentInfo,
   IncidentSnapshot,
   MessageFromServer,
   schema,
@@ -53,6 +52,11 @@ server.on("upgrade", (req, socket, head) => {
           }
         }
       } else if (delta.delta === "AddPersonToIncident") {
+        for (const item of incidents) {
+          if (item.id === incidentId) {
+            item.persons[delta.personId] = delta.person;
+          }
+        }
       } else {
         const unexpected: never = delta;
         console.log({ unexpected });
