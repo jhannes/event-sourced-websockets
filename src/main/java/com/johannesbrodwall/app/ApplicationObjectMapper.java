@@ -1,4 +1,4 @@
-package com.johannesbrodwall;
+package com.johannesbrodwall.app;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
@@ -21,7 +21,7 @@ import com.johannesbrodwall.incidents.model.SignalFromServerDto;
 import java.io.IOException;
 import java.util.function.Function;
 
-class ApplicationObjectMapper extends ObjectMapper {
+public class ApplicationObjectMapper extends ObjectMapper {
     public ApplicationObjectMapper() {
         setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
         configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);

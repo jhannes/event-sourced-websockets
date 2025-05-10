@@ -1,6 +1,8 @@
-package com.johannesbrodwall;
+package com.johannesbrodwall.incidents;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.johannesbrodwall.app.ApplicationObjectMapper;
+import com.johannesbrodwall.incidents.model.IncidentSummaryListDto;
 import com.johannesbrodwall.incidents.model.UnauthenticatedErrorSignalDto;
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.Endpoint;
@@ -37,6 +39,8 @@ public class IncidentsWsEndpoint extends Endpoint implements IncidentListener {
         userPrincipal = session.getUserPrincipal();
         if (userPrincipal != null) {
             session.addMessageHandler(String.class, this::handleMessage);
+            sendMessage(new IncidentSummaryListDto()
+                    .setSummaries(incidents.getSummaries(null)));
         } else {
             sendMessage(new UnauthenticatedErrorSignalDto());
         }

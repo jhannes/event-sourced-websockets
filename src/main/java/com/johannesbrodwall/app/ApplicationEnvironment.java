@@ -1,4 +1,4 @@
-package com.johannesbrodwall;
+package com.johannesbrodwall.app;
 
 import com.johannesbrodwall.auth.OpenIdClientConfiguration;
 import lombok.Data;

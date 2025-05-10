@@ -1,7 +1,6 @@
-package com.johannesbrodwall;
+package com.johannesbrodwall.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.johannesbrodwall.auth.OpenIdClientConfiguration;
 import com.johannesbrodwall.openid.api.DiscoveryApi;
 import com.johannesbrodwall.openid.api.IdentityClientApi;
 import com.johannesbrodwall.openid.model.DiscoveryDocumentDto;

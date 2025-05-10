@@ -1,4 +1,4 @@
-package com.johannesbrodwall;
+package com.johannesbrodwall.incidents;
 
 import com.johannesbrodwall.incidents.model.AddPersonToIncidentDeltaDto;
 import com.johannesbrodwall.incidents.model.CreateIncidentDeltaDto;
@@ -90,7 +90,7 @@ public class IncidentReactor {
         this.subscriptions.remove(listener);
     }
 
-    private List<IncidentSummaryDto> getSummaries(Long requestedSequenceId) {
+    public List<IncidentSummaryDto> getSummaries(Long requestedSequenceId) {
         return incidents.values().stream()
                 .filter(s -> requestedSequenceId == null || requestedSequenceId < s.getLastSequenceId())
                 .map(s -> new IncidentSummaryDto().putAll(s))

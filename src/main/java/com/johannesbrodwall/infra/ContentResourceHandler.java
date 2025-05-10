@@ -1,4 +1,4 @@
-package com.johannesbrodwall;
+package com.johannesbrodwall.infra;
 
 import lombok.SneakyThrows;
 import org.eclipse.jetty.http.HttpMethod;
@@ -14,7 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-class ContentResourceHandler extends ResourceHandler {
+public class ContentResourceHandler extends ResourceHandler {
     public ContentResourceHandler(Resource baseResource) {
         setBaseResource(baseResource);
     }
@@ -28,7 +28,7 @@ class ContentResourceHandler extends ResourceHandler {
     @SneakyThrows
     public static ResourceHandler getWebJarResource(String webjar, ResourceFactory resourceFactory) {
         var properties = new Properties();
-        try (var stream = EventSourcingServer.class.getClassLoader().getResourceAsStream("META-INF/maven/org.webjars/" + webjar + "/pom.properties")) {
+        try (var stream = ContentResourceHandler.class.getClassLoader().getResourceAsStream("META-INF/maven/org.webjars/" + webjar + "/pom.properties")) {
             if (stream == null) {
                 throw new IllegalArgumentException(webjar + " not found");
             }
@@ -41,7 +41,7 @@ class ContentResourceHandler extends ResourceHandler {
     @SneakyThrows
     public static Resource getProjectResource(String name, ResourceFactory resourceFactory) {
         var targetDir = Path.of("target", "classes").resolve(name);
-        var url = EventSourcingServer.class.getClassLoader().getResource(name);
+        var url = ContentResourceHandler.class.getClassLoader().getResource(name);
         if (url == null) {
             throw new IllegalArgumentException("Not found in classpath: " + name);
         } else if (url.getProtocol().equals("file")) {

@@ -1,7 +1,12 @@
 package com.johannesbrodwall;
 
+import com.johannesbrodwall.app.ApiConfig;
+import com.johannesbrodwall.app.ApplicationEnvironment;
 import com.johannesbrodwall.auth.OpenIdClientConfiguration;
 import com.johannesbrodwall.auth.OpenidAuthorizationHandler;
+import com.johannesbrodwall.incidents.IncidentReactor;
+import com.johannesbrodwall.incidents.IncidentsWsEndpoint;
+import com.johannesbrodwall.infra.ContentResourceHandler;
 import jakarta.websocket.server.ServerEndpointConfig;
 import lombok.SneakyThrows;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
@@ -23,7 +28,7 @@ public class EventSourcingServer extends Server {
     private final IncidentReactor incidentReactor = new IncidentReactor();
 
     @SneakyThrows
-    EventSourcingServer(int port, OpenIdClientConfiguration environment) {
+    public EventSourcingServer(int port, OpenIdClientConfiguration environment) {
         super(port);
         setHandler(new OpenidAuthorizationHandler(environment,
                 new ContextHandlerCollection(

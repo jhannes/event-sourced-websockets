@@ -1,7 +1,11 @@
-package com.johannesbrodwall;
+package com.johannesbrodwall.app;
 
+import com.johannesbrodwall.EventSourcingServer;
+import com.johannesbrodwall.auth.OpenidConnectMockServer;
 import com.johannesbrodwall.incidents.model.MessageToServerDto;
 import com.johannesbrodwall.incidents.model.UnauthenticatedErrorSignalDto;
+import com.johannesbrodwall.infra.LifeCycleExtension;
+import com.johannesbrodwall.infra.WsClient;
 import com.johannesbrodwall.openid.model.JwtPayloadDto;
 import jakarta.websocket.ClientEndpointConfig;
 import org.junit.jupiter.api.Test;
@@ -19,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.johannesbrodwall.OpenidConnectMockServer.base64Json;
+import static com.johannesbrodwall.auth.OpenidConnectMockServer.base64Json;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @LifeCycleExtension

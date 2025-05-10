@@ -1,4 +1,4 @@
-package com.johannesbrodwall;
+package com.johannesbrodwall.incidents;
 
 import com.johannesbrodwall.incidents.model.MessageFromServerDto;
 
