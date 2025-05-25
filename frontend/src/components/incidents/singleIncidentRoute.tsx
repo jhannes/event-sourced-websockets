@@ -1,18 +1,7 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
-import { IncidentSnapshot } from "../../../../shared/incidents";
 import { useIncidentsContext } from "./useIncidentsContext";
-
-function IncidentView({ incident }: { incident: IncidentSnapshot }) {
-  const {
-    info: { title, priority },
-  } = incident;
-  return (
-    <h1>
-      {title} (priority: {priority})
-    </h1>
-  );
-}
+import { IncidentView } from "./incidentView";
 
 export function SingleIncidentRoute() {
   const { id } = useParams();
