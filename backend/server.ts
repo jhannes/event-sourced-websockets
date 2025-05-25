@@ -34,24 +34,30 @@ function broadcastMessage(message: MessageFromServer) {
   }
 }
 
+function updateIncident(
+  incidentId: string,
+  fn: (old: IncidentSnapshot) => Partial<IncidentSnapshot>,
+) {
+  const index = incidents.findIndex(({ id }) => id === incidentId)!;
+  incidents[index] = { ...incidents[index], ...fn(incidents[index]) };
+}
+
 function handleMessageToServer(message: MessageToServer) {
-  const { incidentId, clientTime, delta } = message;
+  const { incidentId, clientTime: updatedAt, delta } = message;
 
   if (delta.delta === "CreateIncidentDelta") {
-    incidents.push({
-      id: incidentId,
-      updatedAt: clientTime,
-      info: delta.info,
-      persons: {},
-    });
+    const { info } = delta;
+    incidents.push({ id: incidentId, updatedAt, info, persons: {} });
   } else if (delta.delta === "UpdateIncidentDelta") {
-    const incident = incidents.find(({ id }) => id === incidentId)!;
-    incident.info = { ...incident.info, ...delta.info };
-    incident.updatedAt = clientTime;
+    updateIncident(incidentId, (o) => ({
+      updatedAt,
+      info: { ...o.info, ...delta.info },
+    }));
   } else if (delta.delta === "AddPersonToIncident") {
-    const incident = incidents.find(({ id }) => id === incidentId)!;
     const { personId, personInfo } = delta;
-    incident.persons[personId] = { updatedAt: clientTime, personInfo };
+    updateIncident(incidentId, (o) => ({
+      persons: { ...o.persons, [personId]: { personInfo, updatedAt } },
+    }));
   } else {
     const _: never = delta;
     console.log("Unexpected delta", delta);

@@ -61,7 +61,7 @@ export interface InvolvedPersonInfo {
 
 export type MessageFromServer = IncidentEvent | IncidentSnapshotList;
 
-interface IncidentEvent extends IncidentCommand {
+export interface IncidentEvent extends IncidentCommand {
   username: string;
   serverTime: Date;
 }
