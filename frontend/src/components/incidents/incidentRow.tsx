@@ -1,17 +1,12 @@
 import React, { ChangeEvent } from "react";
 import {
-  IncidentCommand,
   IncidentPriorityEnum,
   IncidentSnapshot,
 } from "../../../../shared/incidents";
+import { incidentsContext } from "./incidentsContext";
 
-export function IncidentRow({
-  incident,
-  sendCommand,
-}: {
-  incident: IncidentSnapshot;
-  sendCommand: (command: Pick<IncidentCommand, "incidentId" | "delta">) => void;
-}) {
+export function IncidentRow({ incident }: { incident: IncidentSnapshot }) {
+  const { sendCommand } = incidentsContext();
   const {
     id: incidentId,
     info: { title, priority },
