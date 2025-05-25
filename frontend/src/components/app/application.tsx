@@ -1,27 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { NewIncidentForm } from "../incidents/newIncidentForm";
 import { Incident } from "../../incidents";
 import { IncidentRow } from "../incidents/incidentRow";
+import { useWebSocket } from "../../hooks/useWebSocket";
 
 export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
-  const [websocket, setWebsocket] = useState<WebSocket>();
-  useEffect(() => {
-    const websocket = new WebSocket("/ws/incidents");
-    websocket.onmessage = (event) => {
-      const messageFromServer = JSON.parse(event.data);
-      if (Array.isArray(messageFromServer)) {
-        setIncidents(messageFromServer);
-      } else {
-        setIncidents((old) => [...old, messageFromServer]);
-      }
-    };
-    setWebsocket(websocket);
-  }, []);
+  function handleMessageFromServer(messageFromServer: any) {
+    if (Array.isArray(messageFromServer)) {
+      setIncidents(messageFromServer);
+    } else {
+      setIncidents((old) => [...old, messageFromServer]);
+    }
+  }
+
+  const { sendMessage } = useWebSocket(
+    "/ws/incidents",
+    handleMessageFromServer,
+  );
 
   function handleNewIncident(incident: Incident) {
-    websocket?.send(JSON.stringify(incident));
+    sendMessage(incident);
   }
 
   return (
