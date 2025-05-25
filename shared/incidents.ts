@@ -1,11 +1,11 @@
-interface IncidentCommand {
+export interface IncidentCommand {
   id: string;
   incidentId: string;
   clientTime: Date;
   delta: IncidentDelta;
 }
 
-type IncidentDelta = CreateIncidentDelta | UpdateIncidentDelta;
+export type IncidentDelta = CreateIncidentDelta | UpdateIncidentDelta;
 
 interface CreateIncidentDelta {
   delta: "CreateIncidentDelta";
