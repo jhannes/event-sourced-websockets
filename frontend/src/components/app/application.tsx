@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { NewIncidentForm } from "../incidents/newIncidentForm";
 import { Incident } from "../../incidents";
+import { IncidentRow } from "../incidents/incidentRow";
 
 export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
@@ -28,7 +29,9 @@ export function Application() {
       <h1>Incidents</h1>
       <ul>
         {incidents.map((i, index) => (
-          <li key={index}>{i.title}</li>
+          <li key={index}>
+            <IncidentRow incident={i} />
+          </li>
         ))}
       </ul>
 
