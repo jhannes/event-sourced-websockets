@@ -5,15 +5,22 @@ import { Incident } from "../../incidents";
 
 export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [websocket, setWebsocket] = useState<WebSocket>();
   useEffect(() => {
     const websocket = new WebSocket("/ws/incidents");
     websocket.onmessage = (event) => {
-      setIncidents(JSON.parse(event.data));
+      const messageFromServer = JSON.parse(event.data);
+      if (Array.isArray(messageFromServer)) {
+        setIncidents(messageFromServer);
+      } else {
+        setIncidents((old) => [...old, messageFromServer]);
+      }
     };
+    setWebsocket(websocket);
   }, []);
 
   function handleNewIncident(incident: Incident) {
-    setIncidents((old) => [...old, incident]);
+    websocket?.send(JSON.stringify(incident));
   }
 
   return (
