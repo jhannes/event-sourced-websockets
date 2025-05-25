@@ -14,7 +14,7 @@ interface CreateIncidentDelta {
 
 interface UpdateIncidentDelta {
   delta: "UpdateIncidentDelta";
-  info: IncidentInfo;
+  info: Partial<IncidentInfo>;
 }
 
 export interface IncidentSnapshot {
@@ -23,9 +23,11 @@ export interface IncidentSnapshot {
   info: IncidentInfo;
 }
 
+export type IncidentPriorityEnum = "HIGH" | "MEDIUM" | "LOW";
+
 export interface IncidentInfo {
   title: string;
-  priority?: "HIGH" | "MEDIUM" | "LOW";
+  priority?: IncidentPriorityEnum;
 }
 
 export type MessageFromServer = IncidentEvent | IncidentSnapshotList;

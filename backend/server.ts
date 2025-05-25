@@ -33,12 +33,19 @@ function broadcastMessage(message: MessageFromServer) {
 }
 
 function handleMessageToServer(message: MessageToServer) {
-  const {
-    incidentId,
-    clientTime,
-    delta: { info },
-  } = message;
-  incidents.push({ id: incidentId, updatedAt: clientTime, info });
+  const { incidentId, clientTime, delta } = message;
+
+  if (delta.delta === "CreateIncidentDelta") {
+    incidents.push({ id: incidentId, updatedAt: clientTime, info: delta.info });
+  } else if (delta.delta === "UpdateIncidentDelta") {
+    const incident = incidents.find(({ id }) => id === incidentId)!;
+    incident.info = { ...incident.info, ...delta.info };
+    incident.updatedAt = clientTime;
+  } else {
+    const _: never = delta;
+    console.log("Unexpected delta", delta);
+  }
+
   const messageFromServer = {
     ...message,
     serverTime: new Date(),

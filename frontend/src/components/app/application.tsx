@@ -29,7 +29,7 @@ export function Application() {
       <ul>
         {incidents.map((i, index) => (
           <li key={index}>
-            <IncidentRow incident={i} />
+            <IncidentRow incident={i} sendCommand={sendCommand} />
           </li>
         ))}
       </ul>
