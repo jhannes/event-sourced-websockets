@@ -2,6 +2,7 @@ import express from "express";
 import { WebSocket, WebSocketServer } from "ws";
 import { MessageFromServer, MessageToServer } from "../shared/incidents";
 
+let index = 0;
 const incidents = [
   { title: "Fire from server" },
   { title: "Traffic from server" },
@@ -24,8 +25,16 @@ function broadcastMessage(message: MessageFromServer) {
 }
 
 function handleMessageFromClient(messageToServer: MessageToServer) {
-  incidents.push(messageToServer);
-  broadcastMessage(messageToServer);
+  const { delta } = messageToServer;
+  if (delta.type === "CreateIncident") {
+    const { info } = delta;
+    incidents.push(info);
+  }
+  broadcastMessage({
+    ...messageToServer,
+    serverTime: new Date(),
+    sequenceNumber: index++,
+  });
 }
 
 server.on("upgrade", (req, socket, head) => {

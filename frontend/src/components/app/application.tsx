@@ -3,7 +3,11 @@ import { v4 as uuidv4 } from "uuid";
 import { NewIncidentForm } from "../incidents/newIncidentForm";
 import { IncidentRow } from "../incidents/incidentRow";
 import { useWebSocket } from "../../hooks/useWebSocket";
-import { Incident, MessageFromServer } from "../../../../shared/incidents";
+import {
+  Incident,
+  IncidentCommand,
+  MessageFromServer,
+} from "../../../../shared/incidents";
 
 export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
@@ -11,7 +15,10 @@ export function Application() {
     if (Array.isArray(messageFromServer)) {
       setIncidents(messageFromServer);
     } else {
-      setIncidents((old) => [...old, messageFromServer]);
+      const {
+        delta: { info },
+      } = messageFromServer;
+      setIncidents((old) => [...old, info]);
     }
   }
 
@@ -20,8 +27,8 @@ export function Application() {
     handleMessageFromServer,
   );
 
-  function handleNewIncident(incident: Incident) {
-    sendMessage(incident);
+  function sendCommand(command: Pick<IncidentCommand, "incidentId" | "delta">) {
+    sendMessage({ clientTime: new Date(), eventId: uuidv4(), ...command });
   }
 
   return (
@@ -36,20 +43,20 @@ export function Application() {
       </ul>
 
       <h2>New incident</h2>
-      <NewIncident onNewIncident={handleNewIncident} />
+      <NewIncident sendCommand={sendCommand} />
     </div>
   );
 }
 
 function NewIncident({
-  onNewIncident,
+  sendCommand,
 }: {
-  onNewIncident: (incident: Incident) => void;
+  sendCommand: (command: Pick<IncidentCommand, "delta" | "incidentId">) => void;
 }) {
   const [incidentId, setIncidentId] = useState(uuidv4());
 
-  function handleSubmit(incident: Incident) {
-    onNewIncident(incident);
+  function handleSubmit(info: Incident) {
+    sendCommand({ incidentId, delta: { type: "CreateIncident", info } });
     setIncidentId(uuidv4());
   }
 
