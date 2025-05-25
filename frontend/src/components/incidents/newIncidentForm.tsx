@@ -1,5 +1,5 @@
 import React, { FormEvent, useState } from "react";
-import { Incident } from "../../incidents";
+import { Incident } from "../../../../shared/incidents";
 
 export function NewIncidentForm({
   onSubmit,

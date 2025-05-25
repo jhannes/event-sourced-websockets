@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import { MessageFromServer, MessageToServer } from "../../../shared/incidents";
 
 export function useWebSocket(
   url: string,
-  handleMessageFromServer: (messageFromServer: any) => void,
+  handleMessageFromServer: (messageFromServer: MessageFromServer) => void,
 ) {
   const [websocket, setWebsocket] = useState<WebSocket>();
 
@@ -14,7 +15,7 @@ export function useWebSocket(
     setWebsocket(websocket);
   }, []);
 
-  function sendMessage(messageToServer: object) {
+  function sendMessage(messageToServer: MessageToServer) {
     websocket?.send(JSON.stringify(messageToServer));
   }
 

@@ -1,5 +1,5 @@
-import { Incident } from "../../incidents";
 import React from "react";
+import { Incident } from "../../../../shared/incidents";
 
 export function IncidentRow({ incident }: { incident: Incident }) {
   return (

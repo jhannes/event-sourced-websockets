@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { NewIncidentForm } from "../incidents/newIncidentForm";
-import { Incident } from "../../incidents";
 import { IncidentRow } from "../incidents/incidentRow";
 import { useWebSocket } from "../../hooks/useWebSocket";
+import { Incident, MessageFromServer } from "../../../../shared/incidents";
 
 export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
-  function handleMessageFromServer(messageFromServer: any) {
+  function handleMessageFromServer(messageFromServer: MessageFromServer) {
     if (Array.isArray(messageFromServer)) {
       setIncidents(messageFromServer);
     } else {
