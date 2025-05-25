@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
-
-interface Incident {
-  title: string;
-}
+import { Incident, NewIncidentForm } from "../incidents/newIncidentForm";
 
 export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
@@ -12,6 +9,10 @@ export function Application() {
       2000,
     );
   }, []);
+
+  function handleNewIncident(incident: Incident) {
+    setIncidents((old) => [...old, incident]);
+  }
 
   return (
     <div>
@@ -23,16 +24,7 @@ export function Application() {
       </ul>
 
       <h2>New incident</h2>
-      <form>
-        <div>
-          <label>
-            <input />
-          </label>
-        </div>
-        <div>
-          <button>Register</button>
-        </div>
-      </form>
+      <NewIncidentForm onNewIncident={handleNewIncident} />
     </div>
   );
 }
