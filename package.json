@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "prettier --check .",
-    "prepare": "husky"
+    "test": "tsc --noEmit && prettier --check .",
+    "prepare": "husky",
+    "dev": "npm run dev:frontend",
+    "dev:frontend": "cd frontend && npm run dev"
   },
   "repository": {
     "type": "git",
