@@ -1,5 +1,5 @@
 import express from "express";
-import { WebSocketServer, WebSocket } from "ws";
+import { WebSocket, WebSocketServer } from "ws";
 
 const incidents = [
   { title: "Fire from server" },
@@ -11,15 +11,24 @@ const server = app.listen(3000);
 
 const peers: WebSocket[] = [];
 const wsServer = new WebSocketServer({ noServer: true });
+
+function broadcastMessage(incident: unknown) {
+  for (const peer of peers) {
+    peer.send(JSON.stringify(incident));
+  }
+}
+
+function handleMessageToServer(incident: any) {
+  incidents.push(incident);
+  broadcastMessage(incident);
+}
+
 server.on("upgrade", (req, socket, head) => {
   wsServer.handleUpgrade(req, socket, head, (socket) => {
     peers.push(socket);
     socket.send(JSON.stringify(incidents));
     socket.onmessage = (event) => {
-      const incident = JSON.parse(event.data.toString());
-      for (const peer of peers) {
-        peer.send(JSON.stringify(incident));
-      }
+      handleMessageToServer(JSON.parse(event.data.toString()));
     };
   });
 });
