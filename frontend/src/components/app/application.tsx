@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-
-interface Incident {
-  title: string;
-}
+import { v4 as uuidv4 } from "uuid";
+import { NewIncidentForm } from "../incidents/newIncidentForm";
+import { Incident } from "../../incidents";
 
 export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
@@ -12,6 +11,10 @@ export function Application() {
       2000,
     );
   }, []);
+
+  function handleNewIncident(incident: Incident) {
+    setIncidents((old) => [...old, incident]);
+  }
 
   return (
     <div>
@@ -23,16 +26,22 @@ export function Application() {
       </ul>
 
       <h2>New incident</h2>
-      <form>
-        <div>
-          <label>
-            <input />
-          </label>
-        </div>
-        <div>
-          <button>Register</button>
-        </div>
-      </form>
+      <NewIncident onNewIncident={handleNewIncident} />
     </div>
   );
+}
+
+function NewIncident({
+  onNewIncident,
+}: {
+  onNewIncident: (incident: Incident) => void;
+}) {
+  const [incidentId, setIncidentId] = useState(uuidv4());
+
+  function handleSubmit(incident: Incident) {
+    onNewIncident(incident);
+    setIncidentId(uuidv4());
+  }
+
+  return <NewIncidentForm key={incidentId} onSubmit={handleSubmit} />;
 }
