@@ -12,11 +12,13 @@ const incidents: IncidentSnapshot[] = [
     id: uuidv4(),
     info: { title: "Fire from server" },
     updatedAt: new Date(),
+    persons: {},
   },
   {
     id: uuidv4(),
     info: { title: "Traffic from server" },
     updatedAt: new Date(),
+    persons: {},
   },
 ];
 
@@ -36,11 +38,20 @@ function handleMessageToServer(message: MessageToServer) {
   const { incidentId, clientTime, delta } = message;
 
   if (delta.delta === "CreateIncidentDelta") {
-    incidents.push({ id: incidentId, updatedAt: clientTime, info: delta.info });
+    incidents.push({
+      id: incidentId,
+      updatedAt: clientTime,
+      info: delta.info,
+      persons: {},
+    });
   } else if (delta.delta === "UpdateIncidentDelta") {
     const incident = incidents.find(({ id }) => id === incidentId)!;
     incident.info = { ...incident.info, ...delta.info };
     incident.updatedAt = clientTime;
+  } else if (delta.delta === "AddPersonToIncident") {
+    const incident = incidents.find(({ id }) => id === incidentId)!;
+    const { personId, personInfo } = delta;
+    incident.persons[personId] = { updatedAt: clientTime, personInfo };
   } else {
     const _: never = delta;
     console.log("Unexpected delta", delta);
