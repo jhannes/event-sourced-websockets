@@ -6,10 +6,10 @@ import { Incident } from "../../incidents";
 export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
   useEffect(() => {
-    setTimeout(
-      () => setIncidents([{ title: "Fire" }, { title: "Traffic" }]),
-      2000,
-    );
+    const websocket = new WebSocket("/ws/incidents");
+    websocket.onmessage = (event) => {
+      setIncidents(JSON.parse(event.data));
+    };
   }, []);
 
   function handleNewIncident(incident: Incident) {
