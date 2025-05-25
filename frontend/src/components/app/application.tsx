@@ -3,15 +3,23 @@ import { Incident, NewIncidentForm } from "../incidents/newIncidentForm";
 
 export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
+
+  const [websocket, setWebsocket] = useState<WebSocket>();
   useEffect(() => {
     const webSocket = new WebSocket("/ws/incidents");
     webSocket.onmessage = (event) => {
-      setIncidents(JSON.parse(event.data));
+      const messageFromServer = JSON.parse(event.data);
+      if (Array.isArray(messageFromServer)) {
+        setIncidents(messageFromServer);
+      } else {
+        setIncidents((old) => [...old, messageFromServer]);
+      }
     };
+    setWebsocket(webSocket);
   }, []);
 
   function handleNewIncident(incident: Incident) {
-    setIncidents((old) => [...old, incident]);
+    websocket?.send(JSON.stringify(incident));
   }
 
   return (
