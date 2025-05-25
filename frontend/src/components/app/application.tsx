@@ -4,10 +4,10 @@ import { Incident, NewIncidentForm } from "../incidents/newIncidentForm";
 export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
   useEffect(() => {
-    setTimeout(
-      () => setIncidents([{ title: "Fire" }, { title: "Traffic" }]),
-      2000,
-    );
+    const webSocket = new WebSocket("/ws/incidents");
+    webSocket.onmessage = (event) => {
+      setIncidents(JSON.parse(event.data));
+    };
   }, []);
 
   function handleNewIncident(incident: Incident) {

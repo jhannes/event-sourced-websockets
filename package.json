@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "npm run dev:frontend",
+    "dev": "concurrently npm:dev:frontend npm:dev:backend",
     "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
     "test": "tsc --noEmit && prettier --check .",
     "prepare": "husky"
   },
@@ -26,5 +27,6 @@
     "husky": "^9.1.7",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3"
-  }
+  },
+  "scripts:dev": "concurrently npm:dev:client npm:dev:backend"
 }
