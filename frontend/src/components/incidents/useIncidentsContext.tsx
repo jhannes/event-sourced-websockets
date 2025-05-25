@@ -4,6 +4,7 @@ import {
   IncidentSnapshot,
   MessageFromServer,
   MessageToServer,
+  updateRecord,
 } from "../../../../shared/incidents";
 import { v4 as uuidv4 } from "uuid";
 import { useWebSocket } from "../../hooks/useWebSocket";
@@ -76,21 +77,10 @@ function useIncidents() {
       } else if (delta.delta === "UpdatePersonInIncident") {
         const { personId, personInfo } = delta;
         updateIncident(incidentId, (o) => ({
-          persons: Object.fromEntries(
-            Object.entries(o.persons).map(([id, p]) => [
-              id,
-              id === personId
-                ? {
-                    ...p,
-                    personInfo: {
-                      ...p.personInfo,
-                      ...personInfo,
-                      updatedAt,
-                    },
-                  }
-                : p,
-            ]),
-          ),
+          persons: updateRecord(o.persons, personId, (p) => ({
+            personInfo: { ...p.personInfo, ...personInfo },
+            updatedAt,
+          })),
         }));
       } else {
         const _: never = delta;

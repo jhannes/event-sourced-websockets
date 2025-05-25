@@ -71,3 +71,16 @@ interface IncidentSnapshotList {
 }
 
 export type MessageToServer = IncidentCommand;
+
+export function updateRecord<T>(
+  record: Record<string, T>,
+  id: string,
+  fn: (old: T) => Partial<T>,
+) {
+  return Object.fromEntries(
+    Object.entries(record).map(([key, value]) => [
+      key,
+      key === id ? { ...value, ...fn(value) } : value,
+    ]),
+  );
+}
