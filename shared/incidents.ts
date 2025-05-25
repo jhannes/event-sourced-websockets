@@ -6,25 +6,24 @@ export interface IncidentCommand {
 }
 
 export type IncidentDelta =
-  | CreateIncidentDelta
-  | UpdateIncidentDelta
-  | AddPersonToIncident;
-
-interface CreateIncidentDelta {
-  delta: "CreateIncidentDelta";
-  info: IncidentInfo;
-}
-
-interface UpdateIncidentDelta {
-  delta: "UpdateIncidentDelta";
-  info: Partial<IncidentInfo>;
-}
-
-interface AddPersonToIncident {
-  delta: "AddPersonToIncident";
-  personId: string;
-  personInfo: InvolvedPersonInfo;
-}
+  | {
+      delta: "CreateIncidentDelta";
+      info: IncidentInfo;
+    }
+  | {
+      delta: "UpdateIncidentDelta";
+      info: Partial<IncidentInfo>;
+    }
+  | {
+      delta: "AddPersonToIncident";
+      personId: string;
+      personInfo: InvolvedPersonInfo;
+    }
+  | {
+      delta: "UpdatePersonInIncident";
+      personId: string;
+      personInfo: Partial<InvolvedPersonInfo>;
+    };
 
 export interface IncidentSnapshot {
   id: string;

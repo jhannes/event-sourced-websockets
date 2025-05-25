@@ -23,7 +23,6 @@ function InvolvedPersonRow({
   const { role, lastName, firstName } = personInfo;
 
   function handleChangeRole(role: string) {
-    /*
     sendCommand({
       incidentId,
       delta: {
@@ -32,7 +31,6 @@ function InvolvedPersonRow({
         personInfo: { role: role as InvolvedPersonRoleEnum },
       },
     });
-     */
   }
 
   return (

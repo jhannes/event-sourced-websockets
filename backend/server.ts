@@ -58,6 +58,25 @@ function handleMessageToServer(message: MessageToServer) {
     updateIncident(incidentId, (o) => ({
       persons: { ...o.persons, [personId]: { personInfo, updatedAt } },
     }));
+  } else if (delta.delta === "UpdatePersonInIncident") {
+    const { personId, personInfo } = delta;
+    updateIncident(incidentId, (o) => ({
+      persons: Object.fromEntries(
+        Object.entries(o.persons).map(([id, p]) => [
+          id,
+          id === personId
+            ? {
+                ...p,
+                personInfo: {
+                  ...p.personInfo,
+                  ...personInfo,
+                  updatedAt,
+                },
+              }
+            : p,
+        ]),
+      ),
+    }));
   } else {
     const _: never = delta;
     console.log("Unexpected delta", delta);
