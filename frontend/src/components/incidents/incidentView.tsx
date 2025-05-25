@@ -3,10 +3,49 @@ import {
   InvolvedPersonInfo,
   InvolvedPersonRoleEnum,
   InvolvedPersonRoleEnumValues,
+  InvolvedPersonSnapshot,
 } from "../../../../shared/incidents";
 import React, { FormEvent, useState } from "react";
 import { useIncidentsContext } from "./useIncidentsContext";
 import { v4 as uuidv4 } from "uuid";
+
+function InvolvedPersonRow({
+  person,
+  personId,
+  incidentId,
+}: {
+  incidentId: string;
+  personId: string;
+  person: InvolvedPersonSnapshot;
+}) {
+  const { sendCommand } = useIncidentsContext();
+  const { personInfo } = person;
+  const { role, lastName, firstName } = personInfo;
+
+  function handleChangeRole(role: string) {
+    /*
+    sendCommand({
+      incidentId,
+      delta: {
+        delta: "UpdatePersonInIncident",
+        personId,
+        personInfo: { role: role as InvolvedPersonRoleEnum },
+      },
+    });
+     */
+  }
+
+  return (
+    <div>
+      <select value={role} onChange={(e) => handleChangeRole(e.target.value)}>
+        {InvolvedPersonRoleEnumValues.map((r) => (
+          <option key={r}>{r}</option>
+        ))}
+      </select>
+      : {lastName}, {firstName}
+    </div>
+  );
+}
 
 export function IncidentView({ incident }: { incident: IncidentSnapshot }) {
   const {
@@ -25,8 +64,7 @@ export function IncidentView({ incident }: { incident: IncidentSnapshot }) {
       <ul>
         {Object.entries(persons).map(([k, v]) => (
           <li key={k}>
-            {v.personInfo.role}: {v.personInfo.lastName},{" "}
-            {v.personInfo.firstName}
+            <InvolvedPersonRow incidentId={id} personId={k} person={v} />
           </li>
         ))}
       </ul>
