@@ -1,12 +1,13 @@
 import express from "express";
 import { WebSocket, WebSocketServer } from "ws";
-import { MessageFromServer, MessageToServer } from "../shared/incidents";
+import {
+  IncidentSummary,
+  MessageFromServer,
+  MessageToServer,
+} from "../shared/incidents";
 
 let index = 0;
-const incidents = [
-  { title: "Fire from server" },
-  { title: "Traffic from server" },
-];
+const incidents: IncidentSummary[] = [];
 
 const app = express();
 const server = app.listen(3000);
@@ -25,10 +26,16 @@ function broadcastMessage(message: MessageFromServer) {
 }
 
 function handleMessageFromClient(messageToServer: MessageToServer) {
-  const { delta } = messageToServer;
+  const { delta, incidentId } = messageToServer;
   if (delta.type === "CreateIncident") {
     const { info } = delta;
-    incidents.push(info);
+    incidents.push({ incidentId, info });
+  } else if (delta.type === "UpdateIncident") {
+    const incident = incidents.find((o) => o.incidentId === incidentId)!;
+    incident.info = { ...incident.info, ...delta.info };
+  } else {
+    const message: never = delta;
+    console.log("Unexpected message", { message });
   }
   broadcastMessage({
     ...messageToServer,

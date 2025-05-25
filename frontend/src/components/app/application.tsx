@@ -6,19 +6,33 @@ import { useWebSocket } from "../../hooks/useWebSocket";
 import {
   Incident,
   IncidentCommand,
+  IncidentSummary,
   MessageFromServer,
 } from "../../../../shared/incidents";
 
 export function Application() {
-  const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [incidents, setIncidents] = useState<IncidentSummary[]>([]);
   function handleMessageFromServer(messageFromServer: MessageFromServer) {
     if (Array.isArray(messageFromServer)) {
       setIncidents(messageFromServer);
-    } else {
-      const {
-        delta: { info },
-      } = messageFromServer;
-      setIncidents((old) => [...old, info]);
+    } else if ("delta" in messageFromServer) {
+      const { delta, incidentId } = messageFromServer;
+      if (delta.type === "CreateIncident") {
+        const { info } = delta;
+        setIncidents((old) => [...old, { incidentId, info }]);
+      } else if (delta.type === "UpdateIncident") {
+        const { info } = delta;
+        setIncidents((old) =>
+          old.map((o) =>
+            o.incidentId === incidentId
+              ? { ...o, info: { ...o.info, ...info } }
+              : o,
+          ),
+        );
+      } else {
+        const message: never = delta;
+        console.log("Unexpected message", { message });
+      }
     }
   }
 
@@ -35,9 +49,9 @@ export function Application() {
     <div>
       <h1>Incidents</h1>
       <ul>
-        {incidents.map((i, index) => (
-          <li key={index}>
-            <IncidentRow incident={i} />
+        {incidents.map((i) => (
+          <li key={i.incidentId}>
+            <IncidentRow incident={i} sendCommand={sendCommand} />
           </li>
         ))}
       </ul>

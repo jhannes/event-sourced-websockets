@@ -1,8 +1,11 @@
+export type IncidentPriority = (typeof IncidentPriorityEnumValues)[number];
+
 export interface Incident {
   title: string;
+  priority?: IncidentPriority;
 }
 
-export type MessageFromServer = Incident[] | IncidentEvent;
+export type MessageFromServer = IncidentSummary[] | IncidentEvent;
 
 export type IncidentDelta =
   | {
@@ -11,7 +14,7 @@ export type IncidentDelta =
     }
   | {
       type: "UpdateIncident";
-      info: Incident;
+      info: Partial<Incident>;
     };
 
 export interface IncidentCommand {
@@ -27,3 +30,9 @@ export interface IncidentEvent extends IncidentCommand {
 }
 
 export type MessageToServer = IncidentCommand;
+export const IncidentPriorityEnumValues = ["HIGH", "MEDIUM", "LOW"];
+
+export interface IncidentSummary {
+  incidentId: string;
+  info: Incident;
+}

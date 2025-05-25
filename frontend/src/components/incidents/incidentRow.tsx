@@ -1,16 +1,41 @@
 import React from "react";
-import { Incident } from "../../../../shared/incidents";
+import {
+  IncidentCommand,
+  IncidentPriority,
+  IncidentPriorityEnumValues,
+  IncidentSummary,
+} from "../../../../shared/incidents";
 
-export function IncidentRow({ incident }: { incident: Incident }) {
+export function IncidentRow({
+  incident: {
+    incidentId,
+    info: { priority, title },
+  },
+  sendCommand,
+}: {
+  incident: IncidentSummary;
+  sendCommand: (command: Pick<IncidentCommand, "incidentId" | "delta">) => void;
+}) {
+  function handleChangePriority(value: string) {
+    const priority = value as IncidentPriority;
+    sendCommand({
+      incidentId,
+      delta: { type: "UpdateIncident", info: { priority } },
+    });
+  }
+
   return (
     <div>
-      <select>
+      <select
+        value={priority}
+        onChange={(event) => handleChangePriority(event.target.value)}
+      >
         <option></option>
-        {["HIGH", "MEDIUM", "LOW"].map((priority) => (
+        {IncidentPriorityEnumValues.map((priority) => (
           <option key={priority}>{priority}</option>
         ))}
       </select>{" "}
-      {incident.title}
+      {title}
     </div>
   );
 }
