@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext } from "react";
+import React, { ReactNode, useContext, useState } from "react";
 import {
   IncidentCommand,
   IncidentSnapshot,
@@ -6,7 +6,6 @@ import {
   MessageToServer,
 } from "../../../../shared/incidents";
 import { v4 as uuidv4 } from "uuid";
-import { useIncidents } from "../../hooks/useIncidents";
 import { useWebSocket } from "../../hooks/useWebSocket";
 
 export function IncidentsContext({ children }: { children: ReactNode }) {
@@ -32,7 +31,7 @@ const IncidentsContextInternal = React.createContext<{
   sendMessage: () => {},
 });
 
-export function incidentsContext() {
+export function useIncidentsContext() {
   const { incidents, sendMessage } = useContext(IncidentsContextInternal);
 
   function sendCommand(command: Pick<IncidentCommand, "incidentId" | "delta">) {
@@ -40,4 +39,33 @@ export function incidentsContext() {
   }
 
   return { sendCommand, incidents };
+}
+
+function useIncidents() {
+  const [incidents, setIncidents] = useState<IncidentSnapshot[]>([]);
+
+  function handleMessageFromServer(messageFromServer: MessageFromServer) {
+    if ("type" in messageFromServer) {
+      setIncidents(messageFromServer.incidents);
+    } else {
+      const { incidentId, clientTime: updatedAt, delta } = messageFromServer;
+      if (delta.delta === "CreateIncidentDelta") {
+        const incident = { id: incidentId, updatedAt, info: delta.info };
+        setIncidents((old) => [...old, incident]);
+      } else if (delta.delta === "UpdateIncidentDelta") {
+        setIncidents((old) =>
+          old.map((o) =>
+            incidentId !== o.id
+              ? o
+              : { ...o, updatedAt, info: { ...o.info, ...delta.info } },
+          ),
+        );
+      } else {
+        const _: never = delta;
+        console.log("Unexpected delta", delta);
+      }
+    }
+  }
+
+  return { incidents, handleMessageFromServer };
 }

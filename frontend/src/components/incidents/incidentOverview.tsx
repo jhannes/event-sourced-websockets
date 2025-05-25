@@ -3,10 +3,10 @@ import { IncidentRow } from "./incidentRow";
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { NewIncidentForm } from "./newIncidentForm";
-import { incidentsContext } from "./incidentsContext";
+import { useIncidentsContext } from "./useIncidentsContext";
 
 export function IncidentOverview() {
-  const { incidents } = incidentsContext();
+  const { incidents } = useIncidentsContext();
   return (
     <div>
       <h1>Incidents</h1>
@@ -23,7 +23,7 @@ export function IncidentOverview() {
 }
 
 function NewIncident() {
-  const { sendCommand } = incidentsContext();
+  const { sendCommand } = useIncidentsContext();
   const [incidentId, setIncidentId] = useState(uuidv4());
 
   function handleNewIncident(info: IncidentInfo) {

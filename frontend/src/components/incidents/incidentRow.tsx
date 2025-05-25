@@ -3,10 +3,11 @@ import {
   IncidentPriorityEnum,
   IncidentSnapshot,
 } from "../../../../shared/incidents";
-import { incidentsContext } from "./incidentsContext";
+import { useIncidentsContext } from "./useIncidentsContext";
+import { Link } from "react-router-dom";
 
 export function IncidentRow({ incident }: { incident: IncidentSnapshot }) {
-  const { sendCommand } = incidentsContext();
+  const { sendCommand } = useIncidentsContext();
   const {
     id: incidentId,
     info: { title, priority },
@@ -26,7 +27,7 @@ export function IncidentRow({ incident }: { incident: IncidentSnapshot }) {
         <option>MEDIUM</option>
         <option>LOW</option>
       </select>{" "}
-      {title}
+      <Link to={`/incidents/${incidentId}`}>{title}</Link>
     </div>
   );
 }
