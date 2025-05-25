@@ -1,3 +1,13 @@
+export type IncidentRequest =
+  | {
+      request: "IncidentSubscribeRequest";
+      incidentId: string;
+    }
+  | {
+      request: "IncidentUnsubscribeRequest";
+      incidentId: string;
+    };
+
 export interface IncidentCommand {
   id: string;
   incidentId: string;
@@ -25,10 +35,13 @@ export type IncidentDelta =
       personInfo: Partial<InvolvedPersonInfo>;
     };
 
-export interface IncidentSnapshot {
+export interface IncidentSummary {
   id: string;
   updatedAt: Date;
   info: IncidentInfo;
+}
+
+export interface IncidentSnapshot extends IncidentSummary {
   persons: Record<string, InvolvedPersonSnapshot>;
 }
 
@@ -37,7 +50,8 @@ export interface InvolvedPersonSnapshot {
   personInfo: InvolvedPersonInfo;
 }
 
-export type IncidentPriorityEnum = "HIGH" | "MEDIUM" | "LOW";
+export const IncidentPriorityEnumValues = ["HIGH", "MEDIUM", "LOW"] as const;
+export type IncidentPriorityEnum = (typeof IncidentPriorityEnumValues)[number];
 
 export interface IncidentInfo {
   title: string;
@@ -58,19 +72,22 @@ export interface InvolvedPersonInfo {
   role: InvolvedPersonRoleEnum;
 }
 
-export type MessageFromServer = IncidentEvent | IncidentSnapshotList;
+export type MessageFromServer =
+  | IncidentEvent
+  | IncidentSummaryList
+  | IncidentSnapshot;
 
 export interface IncidentEvent extends IncidentCommand {
   username: string;
   serverTime: Date;
 }
 
-interface IncidentSnapshotList {
-  type: "IncidentSnapshotList";
-  incidents: IncidentSnapshot[];
+interface IncidentSummaryList {
+  type: "IncidentSummaryList";
+  summaries: IncidentSummary[];
 }
 
-export type MessageToServer = IncidentCommand;
+export type MessageToServer = IncidentCommand | IncidentRequest;
 
 export function updateRecord<T>(
   record: Record<string, T>,

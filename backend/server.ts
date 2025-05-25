@@ -1,36 +1,40 @@
 import express from "express";
 import { WebSocket, WebSocketServer } from "ws";
 import {
+  IncidentCommand,
   IncidentSnapshot,
   MessageFromServer,
   MessageToServer,
   updateRecord,
 } from "../shared/incidents";
-import { v4 as uuidv4 } from "uuid";
 
-const incidents: IncidentSnapshot[] = [
-  {
-    id: uuidv4(),
-    info: { title: "Fire from server" },
-    updatedAt: new Date(),
-    persons: {},
-  },
-  {
-    id: uuidv4(),
-    info: { title: "Traffic from server" },
-    updatedAt: new Date(),
-    persons: {},
-  },
-];
+const incidents: Record<string, IncidentSnapshot> = {};
 
 const app = express();
 const server = app.listen(3000);
 
 const peers: WebSocket[] = [];
+const subscriptions: Map<WebSocket, Set<string>> = new Map();
 const wsServer = new WebSocketServer({ noServer: true });
 
 function broadcastMessage(message: MessageFromServer) {
   for (const peer of peers) {
+    if ("delta" in message) {
+      const {
+        delta: { delta },
+        incidentId,
+      } = message;
+      if (
+        delta === "AddPersonToIncident" &&
+        !subscriptions.get(peer)?.has(incidentId)
+      )
+        continue;
+      if (
+        delta === "UpdatePersonInIncident" &&
+        !subscriptions.get(peer)?.has(incidentId)
+      )
+        continue;
+    }
     peer.send(JSON.stringify(message));
   }
 }
@@ -39,16 +43,38 @@ function updateIncident(
   incidentId: string,
   fn: (old: IncidentSnapshot) => Partial<IncidentSnapshot>,
 ) {
-  const index = incidents.findIndex(({ id }) => id === incidentId)!;
-  incidents[index] = { ...incidents[index], ...fn(incidents[index]) };
+  incidents[incidentId] = {
+    ...incidents[incidentId],
+    ...fn(incidents[incidentId]),
+  };
 }
 
-function handleMessageToServer(message: MessageToServer) {
+function handleMessageToServer(socket: WebSocket, message: MessageToServer) {
+  if ("request" in message) {
+    if (message.request === "IncidentSubscribeRequest") {
+      const response: MessageFromServer = incidents[message.incidentId];
+      if (!subscriptions.has(socket)) subscriptions.set(socket, new Set());
+      if (!subscriptions.get(socket)?.has(message.incidentId)) {
+        subscriptions.get(socket)?.add(message.incidentId);
+        socket.send(JSON.stringify(response));
+      }
+    } else if (message.request === "IncidentUnsubscribeRequest") {
+      subscriptions.get(socket)?.delete(message.incidentId);
+    } else {
+      const _: never = message;
+      console.log("Unexpected message", message);
+    }
+  } else {
+    handleIncidentCommand(message);
+  }
+}
+
+function handleIncidentCommand(message: IncidentCommand) {
   const { incidentId, clientTime: updatedAt, delta } = message;
 
   if (delta.delta === "CreateIncidentDelta") {
     const { info } = delta;
-    incidents.push({ id: incidentId, updatedAt, info, persons: {} });
+    incidents[incidentId] = { id: incidentId, updatedAt, info, persons: {} };
   } else if (delta.delta === "UpdateIncidentDelta") {
     updateIncident(incidentId, (o) => ({
       updatedAt,
@@ -84,12 +110,16 @@ server.on("upgrade", (req, socket, head) => {
   wsServer.handleUpgrade(req, socket, head, (socket) => {
     peers.push(socket);
     const message: MessageFromServer = {
-      type: "IncidentSnapshotList",
-      incidents,
+      type: "IncidentSummaryList",
+      summaries: Object.values(incidents).map(({ id, info, updatedAt }) => ({
+        id,
+        info,
+        updatedAt,
+      })),
     };
     socket.send(JSON.stringify(message));
     socket.onmessage = (event) => {
-      handleMessageToServer(JSON.parse(event.data.toString()));
+      handleMessageToServer(socket, JSON.parse(event.data.toString()));
     };
   });
 });

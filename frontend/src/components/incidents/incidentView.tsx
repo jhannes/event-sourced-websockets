@@ -8,6 +8,7 @@ import {
 import React, { FormEvent, useState } from "react";
 import { useIncidentsContext } from "./useIncidentsContext";
 import { v4 as uuidv4 } from "uuid";
+import { Link } from "react-router-dom";
 
 function InvolvedPersonRow({
   person,
@@ -56,6 +57,10 @@ export function IncidentView({ incident }: { incident: IncidentSnapshot }) {
       <h1>
         {title} (priority: {priority})
       </h1>
+
+      <p>
+        <Link to={"/"}>See all</Link>
+      </p>
 
       <h2>Involved persons</h2>
 

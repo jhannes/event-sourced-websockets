@@ -1,13 +1,25 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useIncidentsContext } from "./useIncidentsContext";
 import { IncidentView } from "./incidentView";
 
+function useIncidentSnapshot(incidentId: string | undefined) {
+  const { sendMessage, snapshots } = useIncidentsContext();
+  useEffect(() => {
+    if (!incidentId) return;
+    sendMessage({ request: "IncidentSubscribeRequest", incidentId });
+    return () =>
+      sendMessage({ request: "IncidentUnsubscribeRequest", incidentId });
+  }, [incidentId, sendMessage]);
+  return useMemo(
+    () => (incidentId ? snapshots[incidentId] : undefined),
+    [snapshots],
+  );
+}
+
 export function SingleIncidentRoute() {
   const { id } = useParams();
-  const { incidents } = useIncidentsContext();
-  if (incidents.length === 0) return null;
-  const incident = incidents.find((o) => o.id === id);
+  const incident = useIncidentSnapshot(id);
   if (!incident)
     return (
       <>

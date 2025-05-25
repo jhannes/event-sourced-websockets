@@ -1,31 +1,37 @@
-import React, { ChangeEvent } from "react";
+import React from "react";
 import {
   IncidentPriorityEnum,
-  IncidentSnapshot,
+  IncidentPriorityEnumValues,
+  IncidentSummary,
 } from "../../../../shared/incidents";
 import { useIncidentsContext } from "./useIncidentsContext";
 import { Link } from "react-router-dom";
 
-export function IncidentRow({ incident }: { incident: IncidentSnapshot }) {
+export function IncidentRow({ incident }: { incident: IncidentSummary }) {
   const { sendCommand } = useIncidentsContext();
   const {
     id: incidentId,
     info: { title, priority },
   } = incident;
 
-  function handleChangePriority(event: ChangeEvent<HTMLSelectElement>) {
-    const priority = event.target.value as IncidentPriorityEnum;
-    const delta = "UpdateIncidentDelta";
-    sendCommand({ incidentId, delta: { delta, info: { priority } } });
+  function handleChangePriority(value: string) {
+    const priority = value as IncidentPriorityEnum;
+    sendCommand({
+      incidentId,
+      delta: { delta: "UpdateIncidentDelta", info: { priority } },
+    });
   }
 
   return (
     <div>
-      <select value={priority} onChange={handleChangePriority}>
+      <select
+        value={priority}
+        onChange={(e) => handleChangePriority(e.target.value)}
+      >
         <option></option>
-        <option>HIGH</option>
-        <option>MEDIUM</option>
-        <option>LOW</option>
+        {IncidentPriorityEnumValues.map((p) => (
+          <option key={p}>{p}</option>
+        ))}
       </select>{" "}
       <Link to={`/incidents/${incidentId}`}>{title}</Link>
     </div>
