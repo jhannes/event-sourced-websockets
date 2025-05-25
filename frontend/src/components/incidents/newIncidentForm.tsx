@@ -1,13 +1,10 @@
 import React, { FormEvent, useState } from "react";
-
-export interface Incident {
-  title: string;
-}
+import { IncidentInfo } from "../../../../shared/incidents";
 
 export function NewIncidentForm({
   onNewIncident,
 }: {
-  onNewIncident: (incident: Incident) => void;
+  onNewIncident: (incident: IncidentInfo) => void;
 }) {
   const [title, setTitle] = useState("");
 

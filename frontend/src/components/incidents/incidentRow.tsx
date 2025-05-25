@@ -1,7 +1,10 @@
-import { Incident } from "./newIncidentForm";
 import React from "react";
+import { IncidentSnapshot } from "../../../../shared/incidents";
 
-export function IncidentRow({ incident }: { incident: Incident }) {
+export function IncidentRow({ incident }: { incident: IncidentSnapshot }) {
+  const {
+    info: { title },
+  } = incident;
   return (
     <div>
       <select>
@@ -10,7 +13,7 @@ export function IncidentRow({ incident }: { incident: Incident }) {
         <option>LOW</option>
         <option></option>
       </select>{" "}
-      {incident.title}
+      {title}
     </div>
   );
 }

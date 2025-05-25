@@ -1,9 +1,23 @@
 import express from "express";
 import { WebSocket, WebSocketServer } from "ws";
+import {
+  IncidentSnapshot,
+  MessageFromServer,
+  MessageToServer,
+} from "../shared/incidents";
+import { v4 as uuidv4 } from "uuid";
 
-const incidents = [
-  { title: "Fire from server" },
-  { title: "Traffic from server" },
+const incidents: IncidentSnapshot[] = [
+  {
+    id: uuidv4(),
+    info: { title: "Fire from server" },
+    updatedAt: new Date(),
+  },
+  {
+    id: uuidv4(),
+    info: { title: "Traffic from server" },
+    updatedAt: new Date(),
+  },
 ];
 
 const app = express();
@@ -12,21 +26,35 @@ const server = app.listen(3000);
 const peers: WebSocket[] = [];
 const wsServer = new WebSocketServer({ noServer: true });
 
-function broadcastMessage(incident: unknown) {
+function broadcastMessage(message: MessageFromServer) {
   for (const peer of peers) {
-    peer.send(JSON.stringify(incident));
+    peer.send(JSON.stringify(message));
   }
 }
 
-function handleMessageToServer(incident: any) {
-  incidents.push(incident);
-  broadcastMessage(incident);
+function handleMessageToServer(message: MessageToServer) {
+  const {
+    incidentId,
+    clientTime,
+    delta: { info },
+  } = message;
+  incidents.push({ id: incidentId, updatedAt: clientTime, info });
+  const messageFromServer = {
+    ...message,
+    serverTime: new Date(),
+    username: "TODO",
+  };
+  broadcastMessage(messageFromServer);
 }
 
 server.on("upgrade", (req, socket, head) => {
   wsServer.handleUpgrade(req, socket, head, (socket) => {
     peers.push(socket);
-    socket.send(JSON.stringify(incidents));
+    const message: MessageFromServer = {
+      type: "IncidentSnapshotList",
+      incidents,
+    };
+    socket.send(JSON.stringify(message));
     socket.onmessage = (event) => {
       handleMessageToServer(JSON.parse(event.data.toString()));
     };
