@@ -1,0 +1,28 @@
+{
+  "name": "contract-first-event-sourcing-start",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "prettier --check .",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jhannes/contract-first-event-sourcing.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/jhannes/contract-first-event-sourcing/issues"
+  },
+  "homepage": "https://github.com/jhannes/contract-first-event-sourcing#readme",
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "husky": "^9.1.7",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3"
+  }
+}
