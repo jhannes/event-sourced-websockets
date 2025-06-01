@@ -32,6 +32,16 @@ export function IncidentDetails() {
 
       <h2>Involved persons</h2>
 
+      <ul>
+        {Object.keys(incident.persons).map((id) => {
+          const { firstName, lastName, role } = incident.persons[id];
+          return (
+            <li key={id}>
+              {role}: {lastName}, {firstName}
+            </li>
+          );
+        })}
+      </ul>
       <h2>New involved person</h2>
 
       <NewInvolvedPerson incidentId={incidentId} />

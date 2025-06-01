@@ -8,6 +8,19 @@ import {
 export function useIncidents() {
   const [incidents, setIncidents] = useState<IncidentSnapshot[]>([]);
 
+  function updateIncident(
+    event: IncidentEvent,
+    fn: (old: IncidentSnapshot) => Partial<IncidentSnapshot>,
+  ) {
+    setIncidents((old) => {
+      return old.map((o) =>
+        o.incidentId !== event.incidentId
+          ? o
+          : { ...o, ...fn(o), updatedAt: event.clientTime },
+      );
+    });
+  }
+
   function handleMessage(message: MessageFromServer) {
     if (Array.isArray(message)) {
       setIncidents(message);
@@ -25,15 +38,14 @@ export function useIncidents() {
         };
         setIncidents((old) => [...old, incident]);
       } else if (delta.type === "UpdateIncident") {
-        setIncidents((old) => {
-          return old.map((o) =>
-            o.incidentId !== event.incidentId
-              ? o
-              : { ...o, info: { ...o.info, ...delta.info }, updatedAt },
-          );
-        });
+        updateIncident(event, (old) => ({
+          info: { ...old.info, ...delta.info },
+        }));
       } else if (delta.type === "AddPersonToIncident") {
-        // TODO
+        const { personId, person } = delta;
+        updateIncident(event, (old) => ({
+          persons: { ...old.persons, [personId]: person },
+        }));
       } else {
         const unhandled: never = delta;
         console.log("Unhandled message", { unhandled });
