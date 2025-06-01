@@ -1,9 +1,7 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
-
-interface Incident {
-  summary: string;
-}
+import { NewIncidentForm } from "../incidents/newIncidentForm";
+import { Incident } from "../../../../shared/incidents";
 
 export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
@@ -12,6 +10,10 @@ export function Application() {
       setIncidents([{ summary: "Fire" }, { summary: "Traffic" }]);
     }, 2000);
   }, []);
+
+  function handleNewIncident(incident: Incident) {
+    setIncidents((old) => [...old, incident]);
+  }
 
   return (
     <>
@@ -22,16 +24,7 @@ export function Application() {
       ))}
 
       <h2>Create incident</h2>
-      <form>
-        <div>
-          <label>
-            Description: <input type="text" />
-          </label>
-        </div>
-        <div>
-          <button>Submit</button>
-        </div>
-      </form>
+      <NewIncidentForm onNewIncident={handleNewIncident} />
     </>
   );
 }
