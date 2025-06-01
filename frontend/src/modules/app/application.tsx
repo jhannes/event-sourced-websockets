@@ -3,10 +3,12 @@ import { useEffect, useState } from "react";
 import { NewIncidentForm } from "../incidents/newIncidentForm";
 import { Incident } from "../../../../shared/incidents";
 import { IncidentRow } from "../incidents/incidentRow";
+import { v4 as uuidv4 } from "uuid";
 
 export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [websocket, setWebsocket] = useState<WebSocket>();
+  const [id, setId] = useState(uuidv4());
   useEffect(() => {
     const ws = new WebSocket("/ws/incidents");
     ws.onmessage = (event) => {
@@ -20,8 +22,13 @@ export function Application() {
     setWebsocket(ws);
   }, []);
 
-  function handleNewIncident(incident: Incident) {
-    websocket?.send(JSON.stringify(incident));
+  function handleNewIncident(incident: Omit<Incident, "id">) {
+    websocket?.send(JSON.stringify({ ...incident, id }));
+    setId(uuidv4());
+  }
+
+  function handleChangePriority() {
+    // TODO: Websocket.send
   }
 
   return (
@@ -29,11 +36,15 @@ export function Application() {
       <h1>Incidents</h1>
 
       {incidents.map((i) => (
-        <IncidentRow incident={i} />
+        <IncidentRow
+          key={i.id}
+          incident={i}
+          onChangePriority={handleChangePriority}
+        />
       ))}
 
       <h2>Create incident</h2>
-      <NewIncidentForm onNewIncident={handleNewIncident} />
+      <NewIncidentForm key={id} onNewIncident={handleNewIncident} />
     </>
   );
 }

@@ -1,12 +1,26 @@
-import { Incident } from "../../../../shared/incidents";
+import {
+  Incident,
+  IncidentPriorityEnum,
+  IncidentPriorityValues,
+} from "../../../../shared/incidents";
 import * as React from "react";
 
-export function IncidentRow({ incident: { summary } }: { incident: Incident }) {
+export function IncidentRow({
+  incident: { id, summary, priority },
+  onChangePriority,
+}: {
+  incident: Incident;
+  onChangePriority(id: string, priority: IncidentPriorityEnum): void;
+}) {
+  function handleChange(priority: string) {
+    onChangePriority(id, priority as IncidentPriorityEnum);
+  }
+
   return (
     <li>
-      <select>
+      <select value={priority} onChange={(e) => handleChange(e.target.value)}>
         <option>(no priority</option>
-        {["HIGH", "MEDIUM", "LOW"].map((p) => (
+        {IncidentPriorityValues.map((p) => (
           <option key={p}>{p}</option>
         ))}
       </select>

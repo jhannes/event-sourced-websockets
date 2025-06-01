@@ -1,10 +1,11 @@
 import express from "express";
 import { WebSocket, WebSocketServer } from "ws";
 import { Incident } from "../shared/incidents";
+import { v4 as uuidv4 } from "uuid";
 
 const incidents: Incident[] = [
-  { summary: "Fire from server" },
-  { summary: "Traffic from server" },
+  { id: uuidv4(), summary: "Fire from server" },
+  { id: uuidv4(), summary: "Traffic from server" },
 ];
 
 const app = express();
