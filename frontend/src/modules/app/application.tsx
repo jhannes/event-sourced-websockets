@@ -1,20 +1,20 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { NewIncidentForm } from "../incidents/newIncidentForm";
 import {
   Incident,
+  IncidentDelta,
   IncidentEvent,
   IncidentPriorityEnum,
   IncidentSnapshot,
   MessageFromServer,
-  MessageToServer,
 } from "../../../../shared/incidents";
 import { IncidentRow } from "../incidents/incidentRow";
 import { v4 as uuidv4 } from "uuid";
+import { useWebSocket } from "../../hooks/useWebSocket";
 
 export function Application() {
   const [incidents, setIncidents] = useState<IncidentSnapshot[]>([]);
-  const [websocket, setWebsocket] = useState<WebSocket>();
   const [incidentId, setIncidentId] = useState(uuidv4());
 
   function handleMessage(message: MessageFromServer) {
@@ -42,25 +42,16 @@ export function Application() {
     }
   }
 
-  useEffect(() => {
-    const ws = new WebSocket("/ws/incidents");
-    ws.onmessage = (event) => {
-      handleMessage(JSON.parse(event.data));
-    };
-    setWebsocket(ws);
-  }, []);
+  const { sendMessage } = useWebSocket(handleMessage, "/ws/incidents");
 
-  function sendMessage(message: MessageToServer) {
-    websocket?.send(JSON.stringify(message));
+  function sendCommand(incidentId: string, delta: IncidentDelta) {
+    const clientTime = new Date();
+    const eventId = uuidv4();
+    sendMessage({ eventId, clientTime, incidentId, delta });
   }
 
   function handleNewIncident(info: Incident) {
-    sendMessage({
-      eventId: uuidv4(),
-      clientTime: new Date(),
-      incidentId,
-      delta: { type: "CreateIncident", info },
-    });
+    sendCommand(incidentId, { type: "CreateIncident", info });
     setIncidentId(uuidv4());
   }
 
@@ -68,12 +59,7 @@ export function Application() {
     incidentId: string,
     priority: IncidentPriorityEnum,
   ) {
-    sendMessage({
-      eventId: uuidv4(),
-      clientTime: new Date(),
-      incidentId,
-      delta: { type: "UpdateIncident", info: { priority } },
-    });
+    sendCommand(incidentId, { type: "UpdateIncident", info: { priority } });
   }
 
   return (
