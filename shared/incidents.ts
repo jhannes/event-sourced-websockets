@@ -11,6 +11,7 @@ export interface IncidentSnapshot {
   createdAt: Date;
   updatedAt: Date;
   info: Incident;
+  persons: Record<string, InvolvedPerson>;
 }
 
 export const InvolvedPersonRoleValues = [

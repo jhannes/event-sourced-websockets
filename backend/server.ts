@@ -20,21 +20,40 @@ function sendMessage(socket: WebSocket, message: MessageFromServer) {
   socket.send(JSON.stringify(message));
 }
 
+function updateIncident(
+  event: IncidentCommand,
+  fn: (old: IncidentSnapshot) => Partial<IncidentSnapshot>,
+) {
+  const index = incidents.findIndex((o) => o.incidentId === event.incidentId);
+
+  incidents[index] = {
+    ...incidents[index],
+    ...fn(incidents[index]),
+    updatedAt: event.clientTime,
+  };
+}
+
 function handleMessage(message: MessageToServer) {
   const command: IncidentCommand = message;
   const { delta, incidentId, clientTime: updatedAt } = command;
   if (delta.type === "CreateIncident") {
     const { info } = delta;
-    incidents.push({ incidentId, info, updatedAt, createdAt: updatedAt });
+    incidents.push({
+      incidentId,
+      updatedAt,
+      createdAt: updatedAt,
+      info,
+      persons: {},
+    });
   } else if (delta.type === "UpdateIncident") {
-    for (const o of incidents) {
-      if (o.incidentId === incidentId) {
-        o.info = { ...o.info, ...delta.info };
-        o.updatedAt = updatedAt;
-      }
-    }
+    updateIncident(command, (old) => ({
+      info: { ...old.info, ...delta.info },
+    }));
   } else if (delta.type === "AddPersonToIncident") {
-    // TODO
+    const { personId, person } = delta;
+    updateIncident(command, (old) => ({
+      persons: { ...old.persons, [personId]: person },
+    }));
   } else {
     const unhandled: never = delta;
     console.log("Unhandled message", { unhandled });

@@ -18,9 +18,10 @@ export function useIncidents() {
         const { info } = delta;
         const incident: IncidentSnapshot = {
           incidentId,
-          info,
           createdAt: updatedAt,
           updatedAt,
+          info,
+          persons: {},
         };
         setIncidents((old) => [...old, incident]);
       } else if (delta.type === "UpdateIncident") {
