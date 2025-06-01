@@ -26,6 +26,18 @@ function sendMessage(socket: WebSocket, message: MessageFromServer) {
 
 function handleMessage(message: MessageToServer) {
   const command: IncidentCommand = message;
+  const { delta, incidentId } = command;
+  if (delta.type === "CreateIncident") {
+    const { info } = delta;
+    incidents.push({ incidentId, info });
+  } else if (delta.type === "UpdateIncident") {
+    for (const o of incidents) {
+      if (o.incidentId === incidentId) o.info = { ...o.info, ...delta.info };
+    }
+  } else {
+    const unhandled: never = delta;
+    console.log("Unhandled message", { unhandled });
+  }
   const event = { ...command, serverTime: new Date() };
   for (const peer of peers) {
     sendMessage(peer, event);
