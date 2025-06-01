@@ -1,23 +1,24 @@
 import {
-  Incident,
   IncidentPriorityEnum,
   IncidentPriorityValues,
   IncidentSnapshot,
 } from "../../../../shared/incidents";
 import * as React from "react";
+import { useIncidentContext } from "./incidentContext";
 
 export function IncidentRow({
   incident: {
     incidentId,
     info: { summary, priority },
   },
-  onChangePriority,
 }: {
   incident: IncidentSnapshot;
-  onChangePriority(id: string, priority: IncidentPriorityEnum): void;
 }) {
+  const { sendCommand } = useIncidentContext();
+
   function handleChange(priority: string) {
-    onChangePriority(incidentId, priority as IncidentPriorityEnum);
+    const info = { priority: priority as IncidentPriorityEnum };
+    sendCommand(incidentId, { type: "UpdateIncident", info });
   }
 
   return (
