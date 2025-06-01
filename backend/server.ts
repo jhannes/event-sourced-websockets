@@ -6,12 +6,8 @@ import {
   MessageFromServer,
   MessageToServer,
 } from "../shared/incidents";
-import { v4 as uuidv4 } from "uuid";
 
-const incidents: IncidentSnapshot[] = [
-  { incidentId: uuidv4(), info: { summary: "Fire from server" } },
-  { incidentId: uuidv4(), info: { summary: "Traffic from server" } },
-];
+const incidents: IncidentSnapshot[] = [];
 
 const app = express();
 const server = app.listen(3000);
@@ -26,13 +22,16 @@ function sendMessage(socket: WebSocket, message: MessageFromServer) {
 
 function handleMessage(message: MessageToServer) {
   const command: IncidentCommand = message;
-  const { delta, incidentId } = command;
+  const { delta, incidentId, clientTime: updatedAt } = command;
   if (delta.type === "CreateIncident") {
     const { info } = delta;
-    incidents.push({ incidentId, info });
+    incidents.push({ incidentId, info, updatedAt, createdAt: updatedAt });
   } else if (delta.type === "UpdateIncident") {
     for (const o of incidents) {
-      if (o.incidentId === incidentId) o.info = { ...o.info, ...delta.info };
+      if (o.incidentId === incidentId) {
+        o.info = { ...o.info, ...delta.info };
+        o.updatedAt = updatedAt;
+      }
     }
   } else {
     const unhandled: never = delta;

@@ -8,6 +8,8 @@ export interface Incident {
 
 export interface IncidentSnapshot {
   incidentId: string;
+  createdAt: Date;
+  updatedAt: Date;
   info: Incident;
 }
 

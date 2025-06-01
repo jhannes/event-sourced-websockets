@@ -13,6 +13,10 @@ import { IncidentRow } from "../incidents/incidentRow";
 import { v4 as uuidv4 } from "uuid";
 import { useWebSocket } from "../../hooks/useWebSocket";
 
+function sortByUpdatedAt(a: IncidentSnapshot, b: IncidentSnapshot) {
+  return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+}
+
 export function Application() {
   const [incidents, setIncidents] = useState<IncidentSnapshot[]>([]);
   const [incidentId, setIncidentId] = useState(uuidv4());
@@ -22,19 +26,24 @@ export function Application() {
       setIncidents(message);
     } else {
       const event: IncidentEvent = message;
-      const { incidentId, delta } = event;
+      const { incidentId, delta, clientTime: updatedAt } = event;
       if (delta.type === "CreateIncident") {
         const { info } = delta;
-        const incident: IncidentSnapshot = { incidentId, info };
+        const incident: IncidentSnapshot = {
+          incidentId,
+          info,
+          createdAt: updatedAt,
+          updatedAt,
+        };
         setIncidents((old) => [...old, incident]);
       } else if (delta.type === "UpdateIncident") {
-        setIncidents((old) =>
-          old.map((o) =>
+        setIncidents((old) => {
+          return old.map((o) =>
             o.incidentId !== event.incidentId
               ? o
-              : { ...o, info: { ...o.info, ...delta.info } },
-          ),
-        );
+              : { ...o, info: { ...o.info, ...delta.info }, updatedAt },
+          );
+        });
       } else {
         const unhandled: never = delta;
         console.log("Unhandled message", { unhandled });
@@ -66,7 +75,7 @@ export function Application() {
     <>
       <h1>Incidents</h1>
 
-      {incidents.map((i) => (
+      {incidents.toSorted(sortByUpdatedAt).map((i) => (
         <IncidentRow
           key={i.incidentId}
           incident={i}
