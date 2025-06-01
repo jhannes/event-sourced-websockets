@@ -46,6 +46,14 @@ export function useIncidents() {
         updateIncident(event, (old) => ({
           persons: { ...old.persons, [personId]: person },
         }));
+      } else if (delta.type === "UpdatePersonInIncident") {
+        const { personId, person } = delta;
+        updateIncident(event, (old) => ({
+          persons: {
+            ...old.persons,
+            [personId]: { ...old.persons[personId], ...person },
+          },
+        }));
       } else {
         const unhandled: never = delta;
         console.log("Unhandled message", { unhandled });

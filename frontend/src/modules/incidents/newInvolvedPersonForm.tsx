@@ -1,9 +1,9 @@
 import {
   InvolvedPerson,
   InvolvedPersonRoleEnum,
-  InvolvedPersonRoleValues,
 } from "../../../../shared/incidents";
 import React, { FormEvent, useState } from "react";
+import { PersonRoleSelect } from "./personRoleSelect";
 
 export function NewInvolvedPersonForm({
   onSubmit,
@@ -42,16 +42,7 @@ export function NewInvolvedPersonForm({
       </div>
       <div>
         <label>
-          Role:{" "}
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value as InvolvedPersonRoleEnum)}
-          >
-            <option value={""}>(Not specified)</option>
-            {InvolvedPersonRoleValues.map((r) => (
-              <option key={r}>{r}</option>
-            ))}
-          </select>
+          Role: <PersonRoleSelect value={role} onChange={(r) => setRole(r)} />
         </label>
       </div>
       <div>

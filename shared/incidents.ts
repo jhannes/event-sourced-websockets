@@ -55,4 +55,9 @@ export type IncidentDelta =
       type: "AddPersonToIncident";
       personId: string;
       person: InvolvedPerson;
+    }
+  | {
+      type: "UpdatePersonInIncident";
+      personId: string;
+      person: Partial<InvolvedPerson>;
     };
