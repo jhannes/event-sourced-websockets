@@ -13,6 +13,19 @@ export interface IncidentSnapshot {
   info: Incident;
 }
 
+export const InvolvedPersonRoleValues = [
+  "WITNESS",
+  "SUSPECT",
+  "CALLER",
+] as const;
+export type InvolvedPersonRoleEnum = (typeof InvolvedPersonRoleValues)[number];
+
+export interface InvolvedPerson {
+  firstName: string;
+  lastName: string;
+  role: InvolvedPersonRoleEnum;
+}
+
 export type MessageFromServer = IncidentEvent | IncidentSnapshot[];
 
 export type MessageToServer = IncidentCommand;
@@ -36,4 +49,9 @@ export type IncidentDelta =
   | {
       type: "UpdateIncident";
       info: Partial<Incident>;
+    }
+  | {
+      type: "AddPersonToIncident";
+      personId: string;
+      person: InvolvedPerson;
     };

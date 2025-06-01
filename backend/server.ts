@@ -33,6 +33,8 @@ function handleMessage(message: MessageToServer) {
         o.updatedAt = updatedAt;
       }
     }
+  } else if (delta.type === "AddPersonToIncident") {
+    // TODO
   } else {
     const unhandled: never = delta;
     console.log("Unhandled message", { unhandled });

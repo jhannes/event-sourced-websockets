@@ -31,6 +31,8 @@ export function useIncidents() {
               : { ...o, info: { ...o.info, ...delta.info }, updatedAt },
           );
         });
+      } else if (delta.type === "AddPersonToIncident") {
+        // TODO
       } else {
         const unhandled: never = delta;
         console.log("Unhandled message", { unhandled });
