@@ -1,15 +1,16 @@
 import express from "express";
 import { WebSocket, WebSocketServer } from "ws";
 import {
-  Incident,
+  IncidentCommand,
+  IncidentSnapshot,
   MessageFromServer,
   MessageToServer,
 } from "../shared/incidents";
 import { v4 as uuidv4 } from "uuid";
 
-const incidents: Incident[] = [
-  { id: uuidv4(), summary: "Fire from server" },
-  { id: uuidv4(), summary: "Traffic from server" },
+const incidents: IncidentSnapshot[] = [
+  { incidentId: uuidv4(), info: { summary: "Fire from server" } },
+  { incidentId: uuidv4(), info: { summary: "Traffic from server" } },
 ];
 
 const app = express();
@@ -23,9 +24,11 @@ function sendMessage(socket: WebSocket, message: MessageFromServer) {
   socket.send(JSON.stringify(message));
 }
 
-function handleMessage(message: Incident) {
+function handleMessage(message: MessageToServer) {
+  const command: IncidentCommand = message;
+  const event = { ...command, serverTime: new Date() };
   for (const peer of peers) {
-    sendMessage(peer, message);
+    sendMessage(peer, event);
   }
 }
 

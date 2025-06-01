@@ -5,7 +5,7 @@ import { Incident } from "../../../../shared/incidents";
 export function NewIncidentForm({
   onNewIncident,
 }: {
-  onNewIncident: (incident: Omit<Incident, "id">) => void;
+  onNewIncident: (incident: Incident) => void;
 }) {
   const [summary, setSummary] = useState("");
 

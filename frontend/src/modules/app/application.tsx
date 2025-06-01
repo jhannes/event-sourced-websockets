@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import { NewIncidentForm } from "../incidents/newIncidentForm";
 import {
   Incident,
+  IncidentEvent,
+  IncidentPriorityEnum,
+  IncidentSnapshot,
   MessageFromServer,
   MessageToServer,
 } from "../../../../shared/incidents";
@@ -10,15 +13,32 @@ import { IncidentRow } from "../incidents/incidentRow";
 import { v4 as uuidv4 } from "uuid";
 
 export function Application() {
-  const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [incidents, setIncidents] = useState<IncidentSnapshot[]>([]);
   const [websocket, setWebsocket] = useState<WebSocket>();
-  const [id, setId] = useState(uuidv4());
+  const [incidentId, setIncidentId] = useState(uuidv4());
 
   function handleMessage(message: MessageFromServer) {
     if (Array.isArray(message)) {
       setIncidents(message);
     } else {
-      setIncidents((old) => [...old, message]);
+      const event: IncidentEvent = message;
+      const { incidentId, delta } = event;
+      if (delta.type === "CreateIncident") {
+        const { info } = delta;
+        const incident: IncidentSnapshot = { incidentId, info };
+        setIncidents((old) => [...old, incident]);
+      } else if (delta.type === "UpdateIncident") {
+        setIncidents((old) =>
+          old.map((o) =>
+            o.incidentId !== event.incidentId
+              ? o
+              : { ...o, info: { ...o.info, ...delta.info } },
+          ),
+        );
+      } else {
+        const unhandled: never = delta;
+        console.log("Unhandled message", { unhandled });
+      }
     }
   }
 
@@ -34,13 +54,26 @@ export function Application() {
     websocket?.send(JSON.stringify(message));
   }
 
-  function handleNewIncident(createIncident: Omit<Incident, "id">) {
-    sendMessage({ ...createIncident, id });
-    setId(uuidv4());
+  function handleNewIncident(info: Incident) {
+    sendMessage({
+      eventId: uuidv4(),
+      clientTime: new Date(),
+      incidentId,
+      delta: { type: "CreateIncident", info },
+    });
+    setIncidentId(uuidv4());
   }
 
-  function handleChangePriority() {
-    // TODO: Websocket.send
+  function handleChangePriority(
+    incidentId: string,
+    priority: IncidentPriorityEnum,
+  ) {
+    sendMessage({
+      eventId: uuidv4(),
+      clientTime: new Date(),
+      incidentId,
+      delta: { type: "UpdateIncident", info: { priority } },
+    });
   }
 
   return (
@@ -49,14 +82,14 @@ export function Application() {
 
       {incidents.map((i) => (
         <IncidentRow
-          key={i.id}
+          key={i.incidentId}
           incident={i}
           onChangePriority={handleChangePriority}
         />
       ))}
 
       <h2>Create incident</h2>
-      <NewIncidentForm key={id} onNewIncident={handleNewIncident} />
+      <NewIncidentForm key={incidentId} onNewIncident={handleNewIncident} />
     </>
   );
 }

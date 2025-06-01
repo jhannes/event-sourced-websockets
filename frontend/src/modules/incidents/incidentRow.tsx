@@ -2,18 +2,22 @@ import {
   Incident,
   IncidentPriorityEnum,
   IncidentPriorityValues,
+  IncidentSnapshot,
 } from "../../../../shared/incidents";
 import * as React from "react";
 
 export function IncidentRow({
-  incident: { id, summary, priority },
+  incident: {
+    incidentId,
+    info: { summary, priority },
+  },
   onChangePriority,
 }: {
-  incident: Incident;
+  incident: IncidentSnapshot;
   onChangePriority(id: string, priority: IncidentPriorityEnum): void;
 }) {
   function handleChange(priority: string) {
-    onChangePriority(id, priority as IncidentPriorityEnum);
+    onChangePriority(incidentId, priority as IncidentPriorityEnum);
   }
 
   return (
