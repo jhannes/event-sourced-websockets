@@ -1,7 +1,8 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { NewIncidentForm } from "../incidents/newIncidentForm";
-import { Incident } from "../incidents/incident";
+import { Incident, IncidentPriorityEnum } from "../incidents/incident";
+import { IncidentPrioritySelect } from "../incidents/incidentPrioritySelect";
 
 export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
@@ -23,12 +24,20 @@ export function Application() {
     websocket?.send(JSON.stringify(incident));
   }
 
+  function handleUpdatePriority(id: string, priority: IncidentPriorityEnum) {}
+
   return (
     <>
       <h1>Incidents</h1>
 
       {incidents.map((i) => (
-        <li>{i.summary}</li>
+        <li>
+          <IncidentPrioritySelect
+            value={i.priority}
+            onChange={(priority) => handleUpdatePriority(i.id, priority)}
+          />{" "}
+          {i.summary}
+        </li>
       ))}
 
       <h2>Create incident</h2>

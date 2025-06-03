@@ -1,6 +1,7 @@
 import * as React from "react";
 import { FormEvent, useState } from "react";
 import { Incident } from "./incident";
+import { v4 as uuidv4 } from "uuid";
 
 export function NewIncidentForm({
   onNewIncident,
@@ -11,7 +12,7 @@ export function NewIncidentForm({
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    onNewIncident({ summary });
+    onNewIncident({ id: uuidv4(), summary });
   }
 
   return (
