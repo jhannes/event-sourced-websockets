@@ -3,12 +3,13 @@ import { useEffect, useState } from "react";
 import { NewIncidentForm } from "../incidents/newIncidentForm";
 import { Incident } from "../incidents/incident";
 
-export const allIncidents = [{ summary: "Fire" }, { summary: "Traffic" }];
-
 export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
   useEffect(() => {
-    setTimeout(() => setIncidents(allIncidents), 2000);
+    const ws = new WebSocket("/ws/incidents");
+    ws.onmessage = (event) => {
+      setIncidents(JSON.parse(event.data));
+    };
   }, []);
 
   function handleNewIncident(incident: Incident) {
