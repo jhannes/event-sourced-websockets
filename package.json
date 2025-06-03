@@ -6,8 +6,9 @@
   "scripts": {
     "test": "tsc --noEmit && prettier --check .",
     "prepare": "husky",
-    "dev": "npm run dev:frontend",
-    "dev:frontend": "cd frontend && npm run dev"
+    "dev": "concurrently npm:dev:frontend npm:dev:backend",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev"
   },
   "repository": {
     "type": "git",
