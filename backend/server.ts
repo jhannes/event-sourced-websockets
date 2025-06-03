@@ -1,5 +1,5 @@
 import express from "express";
-import { WebSocketServer } from "ws";
+import { WebSocketServer, WebSocket } from "ws";
 
 const app = express();
 
@@ -10,8 +10,18 @@ const incidents = [
   { summary: "Fire on the server" },
   { summary: "Traffic on the server" },
 ];
+
+const peers = new Set<WebSocket>();
+
 server.on("upgrade", (req, socket, head) => {
   wsServer.handleUpgrade(req, socket, head, (socket) => {
+    peers.add(socket);
     socket.send(JSON.stringify(incidents));
+    socket.onclose = () => peers.delete(socket);
+    socket.onmessage = (event) => {
+      for (const peer of peers) {
+        peer.send(event.data);
+      }
+    };
   });
 });
