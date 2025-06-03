@@ -6,3 +6,7 @@ export interface Incident {
   summary: string;
   priority?: IncidentPriorityEnum;
 }
+
+export type MessageToServer = Incident;
+
+export type MessageFromServer = Incident | Incident[];

@@ -1,27 +1,40 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { NewIncidentForm } from "../incidents/newIncidentForm";
-import { Incident, IncidentPriorityEnum } from "../incidents/incident";
+import {
+  Incident,
+  IncidentPriorityEnum,
+  MessageFromServer,
+  MessageToServer,
+} from "../incidents/incident";
 import { IncidentPrioritySelect } from "../incidents/incidentPrioritySelect";
 
 export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [websocket, setWebsocket] = useState<WebSocket>();
+
+  function handleMessage(message: MessageFromServer) {
+    if (Array.isArray(message)) {
+      setIncidents(message);
+    } else {
+      setIncidents((old) => [...old, message]);
+    }
+  }
+
   useEffect(() => {
     const ws = new WebSocket("/ws/incidents");
     setWebsocket(ws);
     ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      if (Array.isArray(message)) {
-        setIncidents(message);
-      } else {
-        setIncidents((old) => [...old, message]);
-      }
+      handleMessage(JSON.parse(event.data) as MessageFromServer);
     };
   }, []);
 
+  function sendMessage(message: MessageToServer) {
+    websocket?.send(JSON.stringify(message));
+  }
+
   function handleNewIncident(incident: Incident) {
-    websocket?.send(JSON.stringify(incident));
+    sendMessage(incident);
   }
 
   function handleUpdatePriority(id: string, priority: IncidentPriorityEnum) {}
