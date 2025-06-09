@@ -1,7 +1,7 @@
 import * as React from "react";
 import { FormEvent, useState } from "react";
-import { Incident } from "./incident";
 import { v4 as uuidv4 } from "uuid";
+import { Incident } from "../../../../shared/incidents/incident";
 
 export function NewIncidentForm({
   onNewIncident,

@@ -1,5 +1,8 @@
 import React from "react";
-import { IncidentPriorityEnum, IncidentPriorityValues } from "./incident";
+import {
+  IncidentPriorityEnum,
+  IncidentPriorityValues,
+} from "../../../../shared/incidents/incident";
 
 export function IncidentPrioritySelect({
   value,

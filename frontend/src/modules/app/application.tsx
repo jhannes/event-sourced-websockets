@@ -1,13 +1,13 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { NewIncidentForm } from "../incidents/newIncidentForm";
+import { IncidentPrioritySelect } from "../incidents/incidentPrioritySelect";
 import {
   Incident,
   IncidentPriorityEnum,
   MessageFromServer,
   MessageToServer,
-} from "../incidents/incident";
-import { IncidentPrioritySelect } from "../incidents/incidentPrioritySelect";
+} from "../../../../shared/incidents/incident";
 
 export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
