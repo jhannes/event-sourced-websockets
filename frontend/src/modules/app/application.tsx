@@ -19,12 +19,17 @@ export function Application() {
     if (Array.isArray(message)) {
       setIncidents(message);
     } else if ("delta" in message) {
-      const {
-        incidentId,
-        serverTime: updatedAt,
-        delta: { incident },
-      } = message;
-      setIncidents((old) => [...old, { incidentId, updatedAt, incident }]);
+      const { incidentId, serverTime: updatedAt, delta } = message;
+      if (delta.type === "CreateIncident") {
+        const { incident } = delta;
+        setIncidents((old) => [...old, { incidentId, updatedAt, incident }]);
+      } else {
+        const unhandled: never = delta.type;
+        console.warn({ unhandled, delta });
+      }
+    } else {
+      const unhandled: never = message;
+      console.warn({ unhandled });
     }
   }
 
