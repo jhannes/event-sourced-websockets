@@ -24,7 +24,9 @@ export interface IncidentEvent extends IncidentCommand {
   // TODO: username, sequenceId
 }
 
-export type IncidentDelta = { type: "CreateIncident"; incident: Incident };
+export type IncidentDelta =
+  | { type: "CreateIncident"; incident: Incident }
+  | { type: "UpdateIncident"; incident: Partial<Incident> };
 
 export type MessageToServer = IncidentCommand;
 

@@ -23,9 +23,21 @@ export function Application() {
       if (delta.type === "CreateIncident") {
         const { incident } = delta;
         setIncidents((old) => [...old, { incidentId, updatedAt, incident }]);
+      } else if (delta.type === "UpdateIncident") {
+        setIncidents((old) =>
+          old.map((o) =>
+            o.incidentId !== incidentId
+              ? o
+              : {
+                  ...o,
+                  updatedAt,
+                  incident: { ...o.incident, ...delta.incident },
+                },
+          ),
+        );
       } else {
-        const unhandled: never = delta.type;
-        console.warn({ unhandled, delta });
+        const unhandled: never = delta;
+        console.warn({ unhandled });
       }
     } else {
       const unhandled: never = message;
@@ -57,7 +69,17 @@ export function Application() {
   function handleUpdatePriority(
     incidentId: string,
     priority: IncidentPriorityEnum,
-  ) {}
+  ) {
+    sendMessage({
+      eventId: uuidv4(),
+      clientTime: new Date(),
+      incidentId,
+      delta: {
+        type: "UpdateIncident",
+        incident: { priority },
+      },
+    });
+  }
 
   return (
     <>
