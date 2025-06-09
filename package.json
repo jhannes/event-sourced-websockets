@@ -8,7 +8,10 @@
     "dev:frontend": "cd frontend && npm run dev",
     "dev:backend": "cd backend && npm run dev",
     "test": "tsc --noEmit && prettier --check .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "postinstall": "npm run install:frontend && npm run install:backend",
+    "install:backend": "cd backend && npm install",
+    "install:frontend": "cd frontend && npm install"
   },
   "repository": {
     "type": "git",

@@ -1,18 +1,20 @@
-export type IncidentRequest =
-  | {
-      request: "IncidentSubscribeRequest";
-      incidentId: string;
-    }
-  | {
-      request: "IncidentUnsubscribeRequest";
-      incidentId: string;
-    };
+export type MessageToServer = IncidentCommand | IncidentRequest;
+
+export type MessageFromServer =
+  | IncidentEvent
+  | IncidentSummaryList
+  | IncidentSnapshot;
 
 export interface IncidentCommand {
   id: string;
   incidentId: string;
   clientTime: Date;
   delta: IncidentDelta;
+}
+
+export interface IncidentEvent extends IncidentCommand {
+  username: string;
+  serverTime: Date;
 }
 
 export type IncidentDelta =
@@ -72,22 +74,20 @@ export interface InvolvedPersonInfo {
   role: InvolvedPersonRoleEnum;
 }
 
-export type MessageFromServer =
-  | IncidentEvent
-  | IncidentSummaryList
-  | IncidentSnapshot;
-
-export interface IncidentEvent extends IncidentCommand {
-  username: string;
-  serverTime: Date;
-}
-
 interface IncidentSummaryList {
   type: "IncidentSummaryList";
   summaries: IncidentSummary[];
 }
 
-export type MessageToServer = IncidentCommand | IncidentRequest;
+export type IncidentRequest =
+  | {
+      request: "IncidentSubscribeRequest";
+      incidentId: string;
+    }
+  | {
+      request: "IncidentUnsubscribeRequest";
+      incidentId: string;
+    };
 
 export function updateRecord<T>(
   record: Record<string, T>,

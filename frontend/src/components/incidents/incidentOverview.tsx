@@ -1,9 +1,7 @@
-import { IncidentInfo } from "../../../../shared/incidents";
 import { IncidentRow } from "./incidentRow";
-import React, { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { NewIncidentForm } from "./newIncidentForm";
+import React from "react";
 import { useIncidentsContext } from "./useIncidentsContext";
+import { NewIncident } from "./newIncident";
 
 export function IncidentOverview() {
   const { incidents } = useIncidentsContext();
@@ -11,30 +9,13 @@ export function IncidentOverview() {
     <div>
       <h1>Incidents</h1>
       <ul>
-        {incidents.map((i, index) => (
-          <li key={index}>
+        {incidents.map((i) => (
+          <li key={i.id}>
             <IncidentRow incident={i} />
           </li>
         ))}
       </ul>
       <NewIncident />
     </div>
-  );
-}
-
-function NewIncident() {
-  const { sendCommand } = useIncidentsContext();
-  const [incidentId, setIncidentId] = useState(uuidv4());
-
-  function handleNewIncident(info: IncidentInfo) {
-    sendCommand({ incidentId, delta: { delta: "CreateIncidentDelta", info } });
-    setIncidentId(uuidv4());
-  }
-
-  return (
-    <>
-      <h2>New incident</h2>
-      <NewIncidentForm key={incidentId} onNewIncident={handleNewIncident} />
-    </>
   );
 }

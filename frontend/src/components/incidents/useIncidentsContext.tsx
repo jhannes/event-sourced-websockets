@@ -10,6 +10,10 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { useWebSocket } from "../../hooks/useWebSocket";
 
+function sortByUpdatedBy(a: IncidentSummary, b: IncidentSummary) {
+  return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+}
+
 export function IncidentsContext({ children }: { children: ReactNode }) {
   const { incidents, handleMessageFromServer, snapshots } = useIncidents();
 
@@ -44,7 +48,12 @@ export function useIncidentsContext() {
     sendMessage({ id: uuidv4(), clientTime: new Date(), ...command });
   }
 
-  return { sendCommand, incidents, sendMessage, snapshots };
+  return {
+    sendCommand,
+    incidents: incidents.toSorted(sortByUpdatedBy),
+    sendMessage,
+    snapshots,
+  };
 }
 
 function useIncidents() {
@@ -101,8 +110,8 @@ function useIncidents() {
           })),
         }));
       } else {
-        const _: never = delta;
-        console.log("Unexpected delta", delta);
+        const unexpected: never = delta;
+        console.log({ unexpected });
       }
     } else {
       const snapshot = messageFromServer;
