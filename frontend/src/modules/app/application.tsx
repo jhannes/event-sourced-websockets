@@ -5,19 +5,26 @@ import { IncidentPrioritySelect } from "../incidents/incidentPrioritySelect";
 import {
   Incident,
   IncidentPriorityEnum,
+  IncidentSnapshot,
   MessageFromServer,
   MessageToServer,
 } from "../../../../shared/incidents/incident";
+import { v4 as uuidv4 } from "uuid";
 
 export function Application() {
-  const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [incidents, setIncidents] = useState<IncidentSnapshot[]>([]);
   const [websocket, setWebsocket] = useState<WebSocket>();
 
   function handleMessage(message: MessageFromServer) {
     if (Array.isArray(message)) {
       setIncidents(message);
-    } else {
-      setIncidents((old) => [...old, message]);
+    } else if ("delta" in message) {
+      const {
+        incidentId,
+        serverTime: updatedAt,
+        delta: { incident },
+      } = message;
+      setIncidents((old) => [...old, { incidentId, updatedAt, incident }]);
     }
   }
 
@@ -33,23 +40,31 @@ export function Application() {
     websocket?.send(JSON.stringify(message));
   }
 
-  function handleNewIncident(incident: Incident) {
-    sendMessage(incident);
+  function handleNewIncident(incidentId: string, incident: Incident) {
+    sendMessage({
+      eventId: uuidv4(),
+      clientTime: new Date(),
+      incidentId,
+      delta: { type: "CreateIncident", incident },
+    });
   }
 
-  function handleUpdatePriority(id: string, priority: IncidentPriorityEnum) {}
+  function handleUpdatePriority(
+    incidentId: string,
+    priority: IncidentPriorityEnum,
+  ) {}
 
   return (
     <>
       <h1>Incidents</h1>
 
-      {incidents.map((i) => (
-        <li>
+      {incidents.map(({ incidentId, incident: { priority, summary } }) => (
+        <li key={incidentId}>
           <IncidentPrioritySelect
-            value={i.priority}
-            onChange={(priority) => handleUpdatePriority(i.id, priority)}
+            value={priority}
+            onChange={(priority) => handleUpdatePriority(incidentId, priority)}
           />{" "}
-          {i.summary}
+          {summary}
         </li>
       ))}
 

@@ -6,13 +6,13 @@ import { Incident } from "../../../../shared/incidents/incident";
 export function NewIncidentForm({
   onNewIncident,
 }: {
-  onNewIncident: (incident: Incident) => void;
+  onNewIncident: (incidentId: string, incident: Incident) => void;
 }) {
   const [summary, setSummary] = useState("");
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    onNewIncident({ id: uuidv4(), summary });
+    onNewIncident(uuidv4(), { summary });
   }
 
   return (
