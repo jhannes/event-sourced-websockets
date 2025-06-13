@@ -1,10 +1,23 @@
 import * as React from "react";
+import {
+  IncidentPriorityEnum,
+  IncidentPriorityValues,
+} from "../../../../shared/incidents/incident";
 
-export function IncidentPrioritySelect() {
+export function IncidentPrioritySelect({
+  value,
+  onChange,
+}: {
+  value: IncidentPriorityEnum | undefined;
+  onChange: (value: IncidentPriorityEnum) => void;
+}) {
   return (
-    <select>
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value as IncidentPriorityEnum)}
+    >
       <option></option>
-      {["HIGH", "MEDIUM", "LOW"].map((p) => (
+      {IncidentPriorityValues.map((p) => (
         <option key={p}>{p}</option>
       ))}
     </select>
