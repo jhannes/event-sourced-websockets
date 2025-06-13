@@ -37,7 +37,7 @@ function NewInvolvedPersonForm({
       </div>
       <div>
         <label>Role: </label>
-        <PersonRoleSelect value={role} onChange={setRole} />
+        <PersonRoleSelect value={role} onChange={setRole} includeBlank />
       </div>
       <div>
         <button disabled={!role || !firstName || !lastName}>Submit</button>
