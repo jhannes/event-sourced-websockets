@@ -2,15 +2,14 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import { NewIncidentForm } from "../incidents/newIncidentForm";
 import { Incident } from "../incidents/incident";
-import { IncidentPrioritySelect } from "./incidentPrioritySelect";
+import { IncidentPrioritySelect } from "../incidents/incidentPrioritySelect";
+
+const allIncidents = [{ summary: "Fire" }, { summary: "Traffic" }];
 
 export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
   useEffect(() => {
-    const ws = new WebSocket("/ws/incidents");
-    ws.onmessage = (event) => {
-      setIncidents(JSON.parse(event.data));
-    };
+    setTimeout(() => setIncidents(allIncidents), 1000);
   }, []);
 
   function handleNewIncident(incident: Incident) {
