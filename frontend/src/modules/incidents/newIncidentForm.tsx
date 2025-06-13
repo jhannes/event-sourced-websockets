@@ -1,6 +1,6 @@
 import * as React from "react";
 import { FormEvent, useState } from "react";
-import { Incident } from "./incident";
+import { Incident } from "../../../../shared/incident";
 
 export function NewIncidentForm({
   onNewIncident,
