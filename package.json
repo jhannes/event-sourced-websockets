@@ -8,7 +8,10 @@
     "prepare": "husky",
     "dev": "concurrently npm:dev:frontend npm:dev:backend",
     "dev:frontend": "cd frontend && npm run dev",
-    "dev:backend": "cd backend && npm run dev"
+    "dev:backend": "cd backend && npm run dev",
+    "postinstall": "npm run install:backend && npm run install:frontend",
+    "install:backend": "cd backend && npm install",
+    "install:frontend": "cd frontend && npm install"
   },
   "repository": {
     "type": "git",

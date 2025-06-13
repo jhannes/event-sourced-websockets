@@ -2,6 +2,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import { NewIncidentForm } from "../incidents/newIncidentForm";
 import { Incident } from "../incidents/incident";
+import { IncidentPrioritySelect } from "./incidentPrioritySelect";
 
 export function Application() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
@@ -21,7 +22,9 @@ export function Application() {
       <h1>Incidents</h1>
 
       {incidents.map((i) => (
-        <li>{i.summary}</li>
+        <li>
+          <IncidentPrioritySelect /> {i.summary}
+        </li>
       ))}
 
       <h2>Create incident</h2>
