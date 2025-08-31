@@ -4,13 +4,13 @@ import as.gnist.javazone.incident.generated.model.CreateIncidentDto;
 import as.gnist.javazone.incident.generated.model.IncidentCommandDto;
 import as.gnist.javazone.incident.generated.model.IncidentEventDto;
 import as.gnist.javazone.incident.generated.model.IncidentSnapshotDto;
+import as.gnist.javazone.incident.generated.model.IncidentSummaryDto;
 import as.gnist.javazone.incident.generated.model.IncidentSummaryListDto;
 import as.gnist.javazone.incident.generated.model.MessageToServerDto;
 import as.gnist.javazone.incident.generated.model.SampleModelData;
 import as.gnist.javazone.incident.generated.model.UpdateIncidentDto;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -43,10 +43,10 @@ public class IncidentReactor {
                     .setCreatedAt(command.getClientTime())
                     .setUpdatedAt(command.getClientTime())
                     .setInfo(create.getInfo()));
-            case UpdateIncidentDto update -> {
-                incidents.get(command.getIncidentId())
-                        .setUpdatedAt(command.getClientTime())
-                        .getInfo().putAll(update.getInfo());
+            case UpdateIncidentDto update -> incidents.get(command.getIncidentId())
+                    .setUpdatedAt(command.getClientTime())
+                    .getInfo().putAll(update.getInfo());
+            default -> {
             }
         }
     }
@@ -57,6 +57,9 @@ public class IncidentReactor {
 
     public void subscribe(IncidentListener listener) {
         listeners.add(listener);
-        listener.sendMessage(new IncidentSummaryListDto().setIncidents(incidents.values().stream().toList()));
+        listener.sendMessage(new IncidentSummaryListDto().setIncidents(incidents.values()
+                .stream()
+                .map(o -> new IncidentSummaryDto().putAll(o))
+                .toList()));
     }
 }

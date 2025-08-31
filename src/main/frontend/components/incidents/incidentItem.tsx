@@ -2,14 +2,15 @@ import React from "react";
 import {
   IncidentInfoDto,
   IncidentInfoDtoPriorityEnum,
-  IncidentSnapshotDto,
+  IncidentSummaryDto,
 } from "../../../../../target/generated-sources/openapi-typescript";
+import { Link } from "react-router-dom";
 
 export function IncidentItem({
   incident,
   onUpdate,
 }: {
-  incident: IncidentSnapshotDto;
+  incident: IncidentSummaryDto;
   onUpdate: (info: IncidentInfoDto) => void;
 }) {
   return (
@@ -25,7 +26,7 @@ export function IncidentItem({
         <option>MEDIUM</option>
         <option>LOW</option>
       </select>{" "}
-      {incident.info.summary}
+      <Link to={`/incidents/${incident.id}`}>{incident.info.summary}</Link>
     </li>
   );
 }

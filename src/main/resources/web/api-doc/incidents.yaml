@@ -11,9 +11,7 @@ paths:
           content:
             "application/json":
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/MessageFromServer"
+                $ref: "#/components/schemas/MessageFromServer"
 components:
   schemas:
     IncidentInfo:
@@ -27,6 +25,7 @@ components:
     MessageFromServer:
       oneOf:
         - $ref: "#/components/schemas/IncidentSummaryList"
+        - $ref: "#/components/schemas/IncidentSnapshot"
         - $ref: "#/components/schemas/IncidentEvent"
 
     MessageToServer:
@@ -36,7 +35,7 @@ components:
       discriminator:
         propertyName: type
 
-    IncidentSnapshot:
+    IncidentSummary:
       properties:
         id:
           type: string
@@ -49,14 +48,23 @@ components:
           format: date-time
         info:
           $ref: "#/components/schemas/IncidentInfo"
-      required: [id, info, createdAt, updatedAt]
+      required: [id, createdAt, updatedAt, info]
+
+    IncidentSnapshot:
+      allOf:
+        - $ref: "#/components/schemas/IncidentSummary"
+        - properties:
+            persons:
+              additionalProperties:
+                $ref: "#/components/schemas/PersonInfo"
+          required: [persons]
 
     IncidentSummaryList:
       properties:
         incidents:
           type: array
           items:
-            $ref: "#/components/schemas/IncidentSnapshot"
+            $ref: "#/components/schemas/IncidentSummary"
       required: [incidents]
 
     IncidentCommand:
@@ -64,15 +72,15 @@ components:
         eventId:
           type: string
           format: uuid
-        clientTime:
-          type: string
-          format: date-time
         incidentId:
           type: string
           format: uuid
+        clientTime:
+          type: string
+          format: date-time
         delta:
           $ref: "#/components/schemas/IncidentDelta"
-      required: [eventId, clientTime, incidentId, delta]
+      required: [eventId, incidentId, clientTime, delta]
 
     IncidentEvent:
       allOf:
@@ -81,11 +89,13 @@ components:
             serverTime:
               type: string
               format: date-time
+          required: [serverTime]
 
     IncidentDelta:
       oneOf:
         - $ref: "#/components/schemas/CreateIncident"
         - $ref: "#/components/schemas/UpdateIncident"
+        - $ref: "#/components/schemas/AddPersonToIncidentDelta"
       discriminator:
         propertyName: type
 
@@ -101,8 +111,27 @@ components:
           $ref: "#/components/schemas/IncidentInfo"
       required: [info]
 
+    AddPersonToIncidentDelta:
+      properties:
+        personId:
+          type: string
+          format: uuid
+        info:
+          $ref: "#/components/schemas/PersonInfo"
+      required: [personId, info]
+
     IncidentSubscribeRequest:
       properties:
         incidentId:
           type: string
-          format: uuid;
+          format: uuid
+      required: [incidentId]
+
+    PersonInfo:
+      properties:
+        givenName:
+          type: string
+        familyName:
+          type: string
+        role:
+          enum: [CALLER, WITNESS, SUSPECT]
