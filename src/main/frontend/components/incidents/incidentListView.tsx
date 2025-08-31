@@ -19,14 +19,13 @@ export function IncidentListView() {
       if ("incidents" in message) {
         setIncidents(message.incidents);
       } else {
-        if (message.delta.type === "CreateIncident") {
-          const incident: IncidentSnapshotDto = {
-            id: message.incidentId,
-            createdAt: message.clientTime,
-            updatedAt: message.clientTime,
-            info: message.delta.info,
-          };
-          setIncidents((old) => [...old, incident]);
+        const { delta, incidentId: id, clientTime: updatedAt } = message;
+        if (delta.type === "CreateIncident") {
+          const { info } = delta;
+          setIncidents((old) => [
+            ...old,
+            { id, createdAt: updatedAt, updatedAt, info },
+          ]);
         }
       }
     };
