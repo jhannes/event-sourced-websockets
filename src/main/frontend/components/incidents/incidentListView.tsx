@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {
-  DefaultApi,
-  IncidentDto,
-} from "../../../../../target/generated-sources/openapi-typescript";
+import { IncidentDto } from "../../../../../target/generated-sources/openapi-typescript";
 
 export function IncidentListView() {
   const [incidents, setIncidents] = useState<IncidentDto[]>([]);
   useEffect(() => {
-    const api = new DefaultApi();
-    api.apiIncidentsGet().then((incidents) => setIncidents(incidents));
+    const ws = new WebSocket("/ws/incidents");
+    ws.onmessage = (event) => {
+      setIncidents(JSON.parse(event.data));
+    };
   }, []);
 
   return (
