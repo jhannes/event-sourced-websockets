@@ -14,6 +14,17 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Incident"
+  /ws/incidents:
+    get:
+      responses:
+        200:
+          description: Web sockets incident event from server
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MessageFromServer"
 components:
   schemas:
     Incident:
@@ -21,3 +32,16 @@ components:
         summary:
           type: string
       required: [summary]
+
+    MessageFromServer:
+      oneOf:
+        - $ref: "#/components/schemas/IncidentSummaryList"
+        - $ref: "#/components/schemas/Incident"
+
+    IncidentSummaryList:
+      properties:
+        incidents:
+          type: array
+          items:
+            $ref: "#/components/schemas/Incident"
+      required: [incidents]

@@ -1,6 +1,7 @@
 package as.gnist.javazone;
 
 import as.gnist.javazone.incident.generated.model.IncidentDto;
+import as.gnist.javazone.incident.generated.model.IncidentSummaryListDto;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,11 +19,12 @@ public class IncidentReactor {
     public void handle(IncidentDto incident) {
         incidents.add(incident);
         for (var listener : listeners) {
-            listener.sendMessage(incidents);
+            listener.sendMessage(incident);
         }
     }
 
     public void subscribe(IncidentListener listener) {
         listeners.add(listener);
+        listener.sendMessage(new IncidentSummaryListDto().setIncidents(incidents));
     }
 }

@@ -1,14 +1,13 @@
 package as.gnist.javazone;
 
 import as.gnist.javazone.incident.generated.model.IncidentDto;
+import as.gnist.javazone.incident.generated.model.MessageFromServerDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.websocket.Endpoint;
 import jakarta.websocket.EndpointConfig;
 import jakarta.websocket.RemoteEndpoint;
 import jakarta.websocket.Session;
 import lombok.SneakyThrows;
-
-import java.util.List;
 
 public class IncidentsWsEndpoint extends Endpoint implements IncidentListener {
 
@@ -26,7 +25,6 @@ public class IncidentsWsEndpoint extends Endpoint implements IncidentListener {
         session.addMessageHandler(String.class, this::handleMessage);
         remote = session.getAsyncRemote();
         incidentReactor.subscribe(this);
-        remote.sendText(objectMapper.writeValueAsString(incidentReactor.getIncidents()));
     }
 
     @SneakyThrows
@@ -37,7 +35,7 @@ public class IncidentsWsEndpoint extends Endpoint implements IncidentListener {
 
     @SneakyThrows
     @Override
-    public void sendMessage(List<IncidentDto> incidents) {
-        remote.sendText(objectMapper.writeValueAsString(incidents));
+    public void sendMessage(MessageFromServerDto message) {
+        remote.sendText(objectMapper.writeValueAsString(message));
     }
 }
