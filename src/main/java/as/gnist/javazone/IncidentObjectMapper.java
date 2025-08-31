@@ -1,13 +1,12 @@
 package as.gnist.javazone;
 
 import as.gnist.javazone.incident.generated.model.IncidentDeltaDto;
-import as.gnist.javazone.incident.generated.model.MessageFromServerDto;
 import as.gnist.javazone.incident.generated.model.MessageToServerDto;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -22,6 +21,7 @@ public class IncidentObjectMapper extends ObjectMapper {
     public IncidentObjectMapper() {
         registerModule(new IncidentModule())
                 .registerModule(new JavaTimeModule())
+                .setSerializationInclusion(JsonInclude.Include.NON_ABSENT)
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 

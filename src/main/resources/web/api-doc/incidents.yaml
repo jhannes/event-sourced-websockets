@@ -20,7 +20,9 @@ components:
       properties:
         summary:
           type: string
-      required: [summary]
+        priority:
+          type: string
+          enum: [HIGH, MEDIUM, LOW]
 
     MessageFromServer:
       oneOf:

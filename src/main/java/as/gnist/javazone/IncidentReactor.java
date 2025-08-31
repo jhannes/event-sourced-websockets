@@ -18,7 +18,7 @@ public class IncidentReactor {
 
     private final SampleModelData sampleData = new SampleModelData(-1);
     private final ArrayList<IncidentSnapshotDto> incidents = new ArrayList<>(List.of(
-            sampleData.sampleIncidentSnapshotDto().setInfo(new IncidentInfoDto().setSummary("Fire")))
+            sampleData.sampleIncidentSnapshotDto().setInfo(sampleData.sampleIncidentInfoDto().setSummary("Fire")))
     );
     private final HashSet<IncidentListener> listeners = new HashSet<>();
 

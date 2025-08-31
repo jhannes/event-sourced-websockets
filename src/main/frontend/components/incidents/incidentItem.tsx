@@ -1,10 +1,25 @@
 import React from "react";
-import { IncidentSnapshotDto } from "../../../../../target/generated-sources/openapi-typescript";
+import {
+  IncidentInfoDto,
+  IncidentInfoDtoPriorityEnum,
+  IncidentSnapshotDto,
+} from "../../../../../target/generated-sources/openapi-typescript";
 
-export function IncidentItem({ incident }: { incident: IncidentSnapshotDto }) {
+export function IncidentItem({
+  incident,
+  onUpdate,
+}: {
+  incident: IncidentSnapshotDto;
+  onUpdate: (info: IncidentInfoDto) => void;
+}) {
   return (
     <li>
-      <select>
+      <select
+        onChange={(e) =>
+          onUpdate({ priority: e.target.value as IncidentInfoDtoPriorityEnum })
+        }
+        value={incident.info.priority}
+      >
         <option></option>
         <option>HIGH</option>
         <option>MEDIUM</option>

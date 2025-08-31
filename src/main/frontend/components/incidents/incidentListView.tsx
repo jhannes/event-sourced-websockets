@@ -3,6 +3,7 @@ import { NewIncidentForm } from "./newIncidentForm";
 import { IncidentItem } from "./incidentItem";
 import { v4 as uuid } from "uuid";
 import {
+  IncidentDeltaDto,
   IncidentInfoDto,
   IncidentSnapshotDto,
   MessageFromServerDto,
@@ -26,28 +27,55 @@ export function IncidentListView() {
             ...old,
             { id, createdAt: updatedAt, updatedAt, info },
           ]);
+        } else if (delta.type === "UpdateIncident") {
+          const { info } = delta;
+          setIncidents((old) =>
+            old.map((o) =>
+              o.id === id
+                ? { ...o, updatedAt, info: { ...o.info, ...info } }
+                : o,
+            ),
+          );
+        } else {
+          const unhandled: never = delta;
+          console.error("Unexpected message ", { unhandled });
         }
       }
     };
     setWebsocket(ws);
   }, []);
 
-  function handleNewIncident(info: IncidentInfoDto) {
-    const message: MessageToServerDto = {
+  function sendMessageToServer(message: MessageToServerDto) {
+    websocket?.send(JSON.stringify(message));
+  }
+
+  function sendCommandToServer(incidentId: string, delta: IncidentDeltaDto) {
+    sendMessageToServer({
       type: "IncidentCommand",
       eventId: uuid(),
-      incidentId: uuid(),
       clientTime: new Date(),
-      delta: { type: "CreateIncident", info },
-    };
-    websocket?.send(JSON.stringify(message));
+      incidentId,
+      delta,
+    });
+  }
+
+  function handleNewIncident(info: IncidentInfoDto) {
+    sendCommandToServer(uuid(), { type: "CreateIncident", info });
+  }
+
+  function handleUpdateIncident(id: string, info: IncidentInfoDto) {
+    sendCommandToServer(id, { type: "UpdateIncident", info });
   }
 
   return (
     <>
       <h2>Incidents</h2>
       {incidents.map((i) => (
-        <IncidentItem key={i.id} incident={i} />
+        <IncidentItem
+          key={i.id}
+          incident={i}
+          onUpdate={(info) => handleUpdateIncident(i.id, info)}
+        />
       ))}
       <h2>New incident</h2>
       <NewIncidentForm onNewIncident={handleNewIncident} />
