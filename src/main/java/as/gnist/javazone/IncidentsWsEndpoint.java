@@ -44,7 +44,7 @@ public class IncidentsWsEndpoint extends Endpoint implements IncidentListener {
 
     @SneakyThrows
     private void handleMessage(String message) {
-        incidentReactor.handle(objectMapper.readValue(message, MessageToServerDto.class));
+        incidentReactor.handle(objectMapper.readValue(message, MessageToServerDto.class), this);
     }
 
     @SneakyThrows

@@ -14,10 +14,10 @@ export function IncidentListView({
   sendMessageToServer,
 }: {
   incidents: IncidentSummaryDto[];
-  sendMessageToServer: (message: MessageToServerDto) => void;
+  sendMessageToServer?: (message: MessageToServerDto) => void;
 }) {
   function sendCommandToServer(incidentId: string, delta: IncidentDeltaDto) {
-    sendMessageToServer({
+    sendMessageToServer!({
       type: "IncidentCommand",
       eventId: uuid(),
       clientTime: new Date(),

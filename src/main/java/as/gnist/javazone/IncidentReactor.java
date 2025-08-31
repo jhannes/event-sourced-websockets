@@ -4,6 +4,7 @@ import as.gnist.javazone.incident.generated.model.CreateIncidentDto;
 import as.gnist.javazone.incident.generated.model.IncidentCommandDto;
 import as.gnist.javazone.incident.generated.model.IncidentEventDto;
 import as.gnist.javazone.incident.generated.model.IncidentSnapshotDto;
+import as.gnist.javazone.incident.generated.model.IncidentSubscribeRequestDto;
 import as.gnist.javazone.incident.generated.model.IncidentSummaryDto;
 import as.gnist.javazone.incident.generated.model.IncidentSummaryListDto;
 import as.gnist.javazone.incident.generated.model.MessageToServerDto;
@@ -26,13 +27,11 @@ public class IncidentReactor {
         addIncident(sampleData.sampleIncidentSnapshotDto().setInfo(sampleData.sampleIncidentInfoDto().setSummary("Fire")));
     }
 
-    public void handle(MessageToServerDto message) {
-        if (message instanceof IncidentCommandDto command) {
-            handleCommand(command);
-            var event = new IncidentEventDto().putAll(command).setServerTime(OffsetDateTime.now());
-            for (var listener : listeners) {
-                listener.sendMessage(event);
-            }
+    public void handle(MessageToServerDto message, IncidentListener listener) {
+        switch (message) {
+            case IncidentCommandDto command -> handleCommand(command);
+            case IncidentSubscribeRequestDto subscribe ->
+                    listener.sendMessage(incidents.get(subscribe.getIncidentId()));
         }
     }
 
@@ -48,6 +47,10 @@ public class IncidentReactor {
                     .getInfo().putAll(update.getInfo());
             default -> {
             }
+        }
+        var event = new IncidentEventDto().putAll(command).setServerTime(OffsetDateTime.now());
+        for (var listener : listeners) {
+            listener.sendMessage(event);
         }
     }
 
