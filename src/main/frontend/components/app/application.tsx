@@ -1,3 +1,4 @@
+import React from "react";
 import { IncidentListView } from "../incidents/incidentListView.js";
 
 export function Application() {

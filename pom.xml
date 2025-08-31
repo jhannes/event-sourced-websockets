@@ -56,13 +56,26 @@
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
-                        <id>generate-typescript</id>
+                        <id>generate-java</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
                             <generatorName>java-lombok</generatorName>
                             <packageName>as.gnist.javazone.incident.generated</packageName>
+                            <inputSpec>src/main/resources/web/api-doc/incidents.yaml</inputSpec>
+                            <modelNameSuffix>Dto</modelNameSuffix>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <id>generate-typescript</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <generatorName>typescript-fetch-api</generatorName>
+                            <output>target/generated-sources/openapi-typescript</output>
                             <inputSpec>src/main/resources/web/api-doc/incidents.yaml</inputSpec>
                             <modelNameSuffix>Dto</modelNameSuffix>
                         </configuration>

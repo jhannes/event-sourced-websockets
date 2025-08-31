@@ -1,15 +1,14 @@
-import { useEffect, useState } from "react";
-
-interface IncidentDto {
-  summary: string;
-}
+import React, { useEffect, useState } from "react";
+import {
+  DefaultApi,
+  IncidentDto,
+} from "../../../../../target/generated-sources/openapi-typescript";
 
 export function IncidentListView() {
   const [incidents, setIncidents] = useState<IncidentDto[]>([]);
   useEffect(() => {
-    setTimeout(() => {
-      setIncidents([{ summary: "Fire" }, { summary: "Traffic incident" }]);
-    }, 500);
+    const api = new DefaultApi();
+    api.apiIncidentsGet().then((incidents) => setIncidents(incidents));
   }, []);
 
   return (
