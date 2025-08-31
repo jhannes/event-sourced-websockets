@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { IncidentDto } from "../../../../../target/generated-sources/openapi-typescript";
+import { NewIncidentForm } from "./newIncidentForm";
 
 export function IncidentListView() {
   const [incidents, setIncidents] = useState<IncidentDto[]>([]);
@@ -10,6 +11,10 @@ export function IncidentListView() {
     };
   }, []);
 
+  function handleNewIncident(incident: IncidentDto) {
+    setIncidents((old) => [...old, incident]);
+  }
+
   return (
     <>
       <h2>Incidents</h2>
@@ -17,17 +22,7 @@ export function IncidentListView() {
         <li>{i.summary}</li>
       ))}
       <h2>New incident</h2>
-      <form>
-        <div>
-          <label>
-            <strong>Summary: </strong>
-            <input type="text" />
-          </label>
-        </div>
-        <div>
-          <button>Submit</button>
-        </div>
-      </form>
+      <NewIncidentForm onNewIncident={handleNewIncident} />
     </>
   );
 }
