@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   IncidentDto,
   IncidentSummaryListDto,
+  MessageFromServerDto,
 } from "../../../../../target/generated-sources/openapi-typescript";
 import { NewIncidentForm } from "./newIncidentForm";
 
@@ -11,8 +12,12 @@ export function IncidentListView() {
   useEffect(() => {
     const ws = new WebSocket("/ws/incidents");
     ws.onmessage = (event) => {
-      const message = JSON.parse(event.data) as IncidentSummaryListDto;
-      setIncidents(message.incidents);
+      const message = JSON.parse(event.data) as MessageFromServerDto;
+      if ("incidents" in message) {
+        setIncidents(message.incidents);
+      } else {
+        setIncidents((old) => [...old, message]);
+      }
     };
     setWebsocket(ws);
   }, []);
