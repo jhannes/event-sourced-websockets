@@ -38,8 +38,6 @@ public class IncidentServer {
     }
 
     private static ServletContextHandler createServletContextHandler() {
-        var handler = new ServletContextHandler("/api");
-        handler.addServlet(new ServletHolder(new IncidentApiServlet()), "/incidents/*");
-        return handler;
+        return new ServletContextHandler("/api");
     }
 }

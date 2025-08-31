@@ -3,17 +3,6 @@ info:
   title: Incident management
   version: 1.0.0
 paths:
-  /api/incidents:
-    get:
-      responses:
-        200:
-          description: Returns the current incidents
-          content:
-            "application/json":
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Incident"
   /ws/incidents:
     get:
       responses:
@@ -27,7 +16,7 @@ paths:
                   $ref: "#/components/schemas/MessageFromServer"
 components:
   schemas:
-    Incident:
+    IncidentInfo:
       properties:
         summary:
           type: string
@@ -36,12 +25,82 @@ components:
     MessageFromServer:
       oneOf:
         - $ref: "#/components/schemas/IncidentSummaryList"
-        - $ref: "#/components/schemas/Incident"
+        - $ref: "#/components/schemas/IncidentEvent"
+
+    MessageToServer:
+      oneOf:
+        - $ref: "#/components/schemas/IncidentCommand"
+        - $ref: "#/components/schemas/IncidentSubscribeRequest"
+      discriminator:
+        propertyName: type
+
+    IncidentSnapshot:
+      properties:
+        id:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        info:
+          $ref: "#/components/schemas/IncidentInfo"
+      required: [id, info, createdAt, updatedAt]
 
     IncidentSummaryList:
       properties:
         incidents:
           type: array
           items:
-            $ref: "#/components/schemas/Incident"
+            $ref: "#/components/schemas/IncidentSnapshot"
       required: [incidents]
+
+    IncidentCommand:
+      properties:
+        eventId:
+          type: string
+          format: uuid
+        clientTime:
+          type: string
+          format: date-time
+        incidentId:
+          type: string
+          format: uuid
+        delta:
+          $ref: "#/components/schemas/IncidentDelta"
+      required: [eventId, clientTime, incidentId, delta]
+
+    IncidentEvent:
+      allOf:
+        - $ref: "#/components/schemas/IncidentCommand"
+        - properties:
+            serverTime:
+              type: string
+              format: date-time
+
+    IncidentDelta:
+      oneOf:
+        - $ref: "#/components/schemas/CreateIncident"
+        - $ref: "#/components/schemas/UpdateIncident"
+      discriminator:
+        propertyName: type
+
+    CreateIncident:
+      properties:
+        info:
+          $ref: "#/components/schemas/IncidentInfo"
+      required: [info]
+
+    UpdateIncident:
+      properties:
+        info:
+          $ref: "#/components/schemas/IncidentInfo"
+      required: [info]
+
+    IncidentSubscribeRequest:
+      properties:
+        incidentId:
+          type: string
+          format: uuid;

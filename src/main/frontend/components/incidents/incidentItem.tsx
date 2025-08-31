@@ -1,7 +1,7 @@
 import React from "react";
-import { IncidentDto } from "../../../../../target/generated-sources/openapi-typescript";
+import { IncidentSnapshotDto } from "../../../../../target/generated-sources/openapi-typescript";
 
-export function IncidentItem({ incident }: { incident: IncidentDto }) {
+export function IncidentItem({ incident }: { incident: IncidentSnapshotDto }) {
   return (
     <li>
       <select>
@@ -10,7 +10,7 @@ export function IncidentItem({ incident }: { incident: IncidentDto }) {
         <option>MEDIUM</option>
         <option>LOW</option>
       </select>{" "}
-      {incident.summary}
+      {incident.info.summary}
     </li>
   );
 }

@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
-import {
-  IncidentDto,
-  MessageFromServerDto,
-} from "../../../../../target/generated-sources/openapi-typescript";
 import { NewIncidentForm } from "./newIncidentForm";
 import { IncidentItem } from "./incidentItem";
+import { v4 as uuid } from "uuid";
+import {
+  IncidentInfoDto,
+  IncidentSnapshotDto,
+  MessageFromServerDto,
+  MessageToServerDto,
+} from "../../../../../target/generated-sources/openapi-typescript";
 
 export function IncidentListView() {
-  const [incidents, setIncidents] = useState<IncidentDto[]>([]);
+  const [incidents, setIncidents] = useState<IncidentSnapshotDto[]>([]);
   const [websocket, setWebsocket] = useState<WebSocket>();
   useEffect(() => {
     const ws = new WebSocket("/ws/incidents");
@@ -16,21 +19,36 @@ export function IncidentListView() {
       if ("incidents" in message) {
         setIncidents(message.incidents);
       } else {
-        setIncidents((old) => [...old, message]);
+        if (message.delta.type === "CreateIncident") {
+          const incident: IncidentSnapshotDto = {
+            id: message.incidentId,
+            createdAt: message.clientTime,
+            updatedAt: message.clientTime,
+            info: message.delta.info,
+          };
+          setIncidents((old) => [...old, incident]);
+        }
       }
     };
     setWebsocket(ws);
   }, []);
 
-  function handleNewIncident(incident: IncidentDto) {
-    websocket?.send(JSON.stringify(incident));
+  function handleNewIncident(info: IncidentInfoDto) {
+    const message: MessageToServerDto = {
+      type: "IncidentCommand",
+      eventId: uuid(),
+      incidentId: uuid(),
+      clientTime: new Date(),
+      delta: { type: "CreateIncident", info },
+    };
+    websocket?.send(JSON.stringify(message));
   }
 
   return (
     <>
       <h2>Incidents</h2>
       {incidents.map((i) => (
-        <IncidentItem incident={i} />
+        <IncidentItem key={i.id} incident={i} />
       ))}
       <h2>New incident</h2>
       <NewIncidentForm onNewIncident={handleNewIncident} />

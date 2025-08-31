@@ -1,10 +1,10 @@
-import { IncidentDto } from "../../../../../target/generated-sources/openapi-typescript";
 import React, { FormEvent, useState } from "react";
+import { IncidentInfoDto } from "../../../../../target/generated-sources/openapi-typescript";
 
 export function NewIncidentForm({
   onNewIncident,
 }: {
-  onNewIncident: (value: IncidentDto) => void;
+  onNewIncident: (value: IncidentInfoDto) => void;
 }) {
   const [summary, setSummary] = useState("");
   function handleSubmit(event: FormEvent) {
