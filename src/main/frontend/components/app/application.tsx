@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import { IncidentListView } from "../incidents/incidentListView.js";
 import { Route, Routes } from "react-router-dom";
 import {
+  AddPersonToIncidentDeltaDto,
+  IncidentSnapshotDto,
   IncidentSummaryDto,
   MessageFromServerDto,
   MessageToServerDto,
@@ -20,6 +22,18 @@ export function Application() {
         : () => {},
     [websocket],
   );
+
+  function updateSnapshot(
+    o: IncidentSnapshotDto,
+    updatedAt: Date,
+    delta: AddPersonToIncidentDeltaDto,
+  ) {
+    return {
+      ...o,
+      updatedAt,
+      persons: { ...o.persons, [delta.personId]: delta.info },
+    };
+  }
 
   function handleMessageFromServer(message: MessageFromServerDto) {
     if ("incidents" in message) {
@@ -40,6 +54,13 @@ export function Application() {
           ),
         );
       } else if (delta.type === "AddPersonToIncidentDelta") {
+        setIncidents((old) =>
+          old.map((o) =>
+            o.id === id && "persons" in o
+              ? updateSnapshot(o as IncidentSnapshotDto, updatedAt, delta)
+              : o,
+          ),
+        );
       } else {
         const unhandled: never = delta;
         console.error("Unexpected delta ", { unhandled });
