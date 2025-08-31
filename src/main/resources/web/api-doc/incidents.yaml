@@ -1,0 +1,23 @@
+openapi: 3.0.3
+info:
+  title: Incident management
+  version: 1.0.0
+paths:
+  /api/incidents:
+    get:
+      responses:
+        200:
+          description: Returns the current incidents
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Incident"
+components:
+  schemas:
+    Incident:
+      properties:
+        summary:
+          type: string
+      required: [summary]

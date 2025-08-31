@@ -1,6 +1,9 @@
 package as.gnist.javazone;
 
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
+import org.eclipse.jetty.ee10.webapp.WebAppContext;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.util.resource.ResourceFactory;
 
 public class IncidentServer {
 
@@ -11,6 +14,10 @@ public class IncidentServer {
     }
 
     private void start() throws Exception {
+        var handler = new WebAppContext();
+        handler.setBaseResource(ResourceFactory.of(handler).newClassLoaderResource("/web"));
+        handler.addServlet(new ServletHolder(new IncidentApiServlet()), "/api/incidents/*");
+        server.setHandler(handler);
         server.start();
     }
 }

@@ -15,6 +15,60 @@
             <artifactId>logevents</artifactId>
             <version>0.5.8</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.19.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.34</version>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <release>23</release>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>7.12.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>io.github.jhannes.openapi</groupId>
+                        <artifactId>openapi-generator-typescript-fetch-api</artifactId>
+                        <version>0.6.1</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>io.github.jhannes.openapi</groupId>
+                        <artifactId>openapi-generator-java-lombok</artifactId>
+                        <version>0.3.2</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <id>generate-typescript</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <generatorName>java-lombok</generatorName>
+                            <packageName>as.gnist.javazone.incident.generated</packageName>
+                            <inputSpec>src/main/resources/web/api-doc/incidents.yaml</inputSpec>
+                            <modelNameSuffix>Dto</modelNameSuffix>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
