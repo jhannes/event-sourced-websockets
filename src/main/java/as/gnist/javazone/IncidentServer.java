@@ -2,22 +2,29 @@ package as.gnist.javazone;
 
 import jakarta.websocket.server.ServerEndpointConfig;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
-import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.ee10.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.util.resource.ResourceFactory;
 
 public class IncidentServer {
 
     private static final IncidentReactor incidentReactor = new IncidentReactor();
     private final Server server = new Server(8080);
+    private final ResourceFactory resourceFactory = ResourceFactory.of(server);
 
     public static void main(String[] args) throws Exception {
         new IncidentServer().start();
     }
 
     private void start() throws Exception {
-        server.setHandler(new ContextHandlerCollection(createServletContextHandler(), createWsHandler()));
+        server.setHandler(new ContextHandlerCollection(
+                new ContextHandler(swaggerUi(), "/api-doc/swagger-ui"),
+                new ContextHandler(apiDoc(), "/api-doc"),
+                createWsHandler())
+        );
         server.start();
     }
 
@@ -37,7 +44,11 @@ public class IncidentServer {
         return handler;
     }
 
-    private static ServletContextHandler createServletContextHandler() {
-        return new ServletContextHandler("/api");
+    private ResourceHandler apiDoc() {
+        return new ContentResourceHandler(ContentResourceHandler.getProjectResource("webapp/api-doc", resourceFactory));
+    }
+
+    private ResourceHandler swaggerUi() {
+        return ContentResourceHandler.getWebJarResource("swagger-ui", resourceFactory);
     }
 }

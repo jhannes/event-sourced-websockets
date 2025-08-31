@@ -8,12 +8,12 @@
         <dependency>
             <groupId>org.eclipse.jetty.ee10</groupId>
             <artifactId>jetty-ee10-webapp</artifactId>
-            <version>12.1.0</version>
+            <version>12.0.25</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.ee10.websocket</groupId>
             <artifactId>jetty-ee10-websocket-jakarta-server</artifactId>
-            <version>12.1.0</version>
+            <version>12.0.25</version>
         </dependency>
         <dependency>
             <groupId>org.logevents</groupId>
@@ -35,6 +35,11 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.38</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>swagger-ui</artifactId>
+            <version>5.18.2</version>
         </dependency>
     </dependencies>
 
