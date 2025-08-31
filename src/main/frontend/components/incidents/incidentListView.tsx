@@ -4,15 +4,17 @@ import { NewIncidentForm } from "./newIncidentForm";
 
 export function IncidentListView() {
   const [incidents, setIncidents] = useState<IncidentDto[]>([]);
+  const [websocket, setWebsocket] = useState<WebSocket>();
   useEffect(() => {
     const ws = new WebSocket("/ws/incidents");
     ws.onmessage = (event) => {
       setIncidents(JSON.parse(event.data));
     };
+    setWebsocket(ws);
   }, []);
 
   function handleNewIncident(incident: IncidentDto) {
-    setIncidents((old) => [...old, incident]);
+    websocket?.send(JSON.stringify(incident));
   }
 
   return (

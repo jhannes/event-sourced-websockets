@@ -1,8 +1,5 @@
 package as.gnist.javazone;
 
-import jakarta.servlet.ServletContext;
-import jakarta.websocket.DeploymentException;
-import jakarta.websocket.server.ServerContainer;
 import jakarta.websocket.server.ServerEndpointConfig;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
@@ -12,6 +9,7 @@ import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 
 public class IncidentServer {
 
+    private static final IncidentReactor incidentReactor = new IncidentReactor();
     private final Server server = new Server(8080);
 
     public static void main(String[] args) throws Exception {
@@ -25,8 +23,15 @@ public class IncidentServer {
 
     private static ServletContextHandler createWsHandler() {
         var handler = new ServletContextHandler("/ws");
-        handler.addServletContainerInitializer(new JakartaWebSocketServletContainerInitializer((servletContext, serverContainer) -> serverContainer.addEndpoint(ServerEndpointConfig.Builder
+        handler.addServletContainerInitializer(new JakartaWebSocketServletContainerInitializer((_, serverContainer) -> serverContainer.addEndpoint(ServerEndpointConfig.Builder
                 .create(IncidentsWsEndpoint.class, "/incidents")
+                        .configurator(new ServerEndpointConfig.Configurator() {
+                            @Override
+                            public <T> T getEndpointInstance(Class<T> endpointClass) {
+                                //noinspection unchecked
+                                return (T)new IncidentsWsEndpoint(incidentReactor);
+                            }
+                        })
                 .build()
         )));
         return handler;
