@@ -1,5 +1,6 @@
 package as.gnist.javazone;
 
+import as.gnist.javazone.incident.generated.model.AddPersonToIncidentDeltaDto;
 import as.gnist.javazone.incident.generated.model.CreateIncidentDto;
 import as.gnist.javazone.incident.generated.model.IncidentCommandDto;
 import as.gnist.javazone.incident.generated.model.IncidentEventDto;
@@ -45,8 +46,9 @@ public class IncidentReactor {
             case UpdateIncidentDto update -> incidents.get(command.getIncidentId())
                     .setUpdatedAt(command.getClientTime())
                     .getInfo().putAll(update.getInfo());
-            default -> {
-            }
+            case AddPersonToIncidentDeltaDto addPerson -> incidents.get(command.getIncidentId())
+                    .getPersons()
+                    .put(addPerson.getPersonId().toString(), addPerson.getInfo());
         }
         var event = new IncidentEventDto().putAll(command).setServerTime(OffsetDateTime.now());
         for (var listener : listeners) {
