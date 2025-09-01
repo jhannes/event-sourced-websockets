@@ -1,0 +1,97 @@
+openapi: 3.0.3
+info:
+  title: Incident Management
+  version: 1.0.0
+paths:
+  /ws/incidents:
+    get:
+      responses:
+        200:
+          description: messages from server
+
+components:
+  schemas:
+    MessageFromServer:
+      oneOf:
+        - $ref: "#/components/schemas/IncidentSummaryList"
+        - $ref: "#/components/schemas/IncidentEvent"
+
+    MessageToServer:
+      oneOf:
+        - $ref: "#/components/schemas/IncidentCommand"
+      discriminator:
+        propertyName: type
+
+    IncidentCommand:
+      properties:
+        eventId:
+          type: string
+          format: uuid
+        incidentId:
+          type: string
+          format: uuid
+        clientTime:
+          type: string
+          format: date-time
+        delta:
+          $ref: "#/components/schemas/IncidentDelta"
+      required: [eventId, incidentId, clientTime, delta]
+
+    IncidentEvent:
+      allOf:
+        - $ref: "#/components/schemas/IncidentCommand"
+        - properties:
+            sequenceId:
+              type: integer
+              format: int64
+          required: [sequenceId]
+
+    IncidentDelta:
+      oneOf:
+        - $ref: "#/components/schemas/CreateIncidentDelta"
+        - $ref: "#/components/schemas/UpdateIncidentDelta"
+      discriminator:
+        propertyName: type
+
+    CreateIncidentDelta:
+      properties:
+        info:
+          $ref: "#/components/schemas/IncidentInfo"
+      required: [info]
+
+    UpdateIncidentDelta:
+      properties:
+        info:
+          $ref: "#/components/schemas/IncidentInfo"
+      required: [info]
+
+    IncidentSummaryList:
+      properties:
+        incidents:
+          type: array
+          items:
+            $ref: "#/components/schemas/IncidentSnapshot"
+      required: [incidents]
+
+    IncidentSnapshot:
+      properties:
+        id:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        info:
+          $ref: "#/components/schemas/IncidentInfo"
+      required: [id, createdAt, updatedAt, info]
+
+    IncidentInfo:
+      properties:
+        description:
+          type: string
+        priority:
+          type: string
+          enum: [HIGH, MEDIUM, LOW]
