@@ -9,6 +9,7 @@ export function NewIncidentForm() {
         <label>
           <strong>Description: </strong>
           <input
+            autoFocus
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
