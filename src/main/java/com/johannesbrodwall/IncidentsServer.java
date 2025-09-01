@@ -22,13 +22,13 @@ import org.glassfish.jersey.servlet.ServletContainer;
 
 import java.net.URI;
 
-public class EventSourcingServer extends Server {
+public class IncidentsServer extends Server {
 
     private final ResourceFactory resourceFactory = ResourceFactory.of(this);
     private final IncidentReactor incidentReactor = new IncidentReactor();
 
     @SneakyThrows
-    public EventSourcingServer(int port, OpenIdClientConfiguration environment) {
+    public IncidentsServer(int port, OpenIdClientConfiguration environment) {
         super(port);
         setHandler(new OpenidAuthorizationHandler(environment,
                 new ContextHandlerCollection(
@@ -82,7 +82,7 @@ public class EventSourcingServer extends Server {
 
     @SneakyThrows
     public static void main(String[] args) {
-        new EventSourcingServer(9080, new ApplicationEnvironment()).start();
+        new IncidentsServer(9080, new ApplicationEnvironment()).start();
     }
 
     @SneakyThrows

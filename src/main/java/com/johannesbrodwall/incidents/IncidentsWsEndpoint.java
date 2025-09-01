@@ -2,7 +2,6 @@ package com.johannesbrodwall.incidents;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.johannesbrodwall.app.ApplicationObjectMapper;
-import com.johannesbrodwall.incidents.model.IncidentSummaryListDto;
 import com.johannesbrodwall.incidents.model.UnauthenticatedErrorSignalDto;
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.Endpoint;
@@ -25,12 +24,12 @@ import java.security.Principal;
 public class IncidentsWsEndpoint extends Endpoint implements IncidentListener {
 
     private static final ObjectMapper mapper = new ApplicationObjectMapper();
-    private final IncidentReactor incidents;
+    private final IncidentReactor incidentReactor;
     private RemoteEndpoint.Async remote;
     private Principal userPrincipal;
 
     public IncidentsWsEndpoint(IncidentReactor incidentReactor) {
-        incidents = incidentReactor;
+        this.incidentReactor = incidentReactor;
     }
 
     @Override
@@ -39,8 +38,6 @@ public class IncidentsWsEndpoint extends Endpoint implements IncidentListener {
         userPrincipal = session.getUserPrincipal();
         if (userPrincipal != null) {
             session.addMessageHandler(String.class, this::handleMessage);
-            sendMessage(new IncidentSummaryListDto()
-                    .setSummaries(incidents.getSummaries(null)));
         } else {
             sendMessage(new UnauthenticatedErrorSignalDto());
         }
@@ -50,9 +47,9 @@ public class IncidentsWsEndpoint extends Endpoint implements IncidentListener {
     private void handleMessage(String s) {
         var message = mapper.readValue(s, MessageToServerDto.class);
         switch (message) {
-            case IncidentSummarySubscribeRequestDto subscribe -> incidents.subscribe(this, subscribe);
-            case IncidentSubscribeRequestDto subscribe -> sendMessage(incidents.snapshot(subscribe.getIncidentId()));
-            case IncidentCommandDto command -> incidents.processCommand(command, userPrincipal);
+            case IncidentSummarySubscribeRequestDto subscribe -> incidentReactor.subscribe(this, subscribe);
+            case IncidentSubscribeRequestDto subscribe -> sendMessage(incidentReactor.snapshot(subscribe.getIncidentId()));
+            case IncidentCommandDto command -> incidentReactor.processCommand(command, userPrincipal);
         }
     }
 
@@ -65,7 +62,7 @@ public class IncidentsWsEndpoint extends Endpoint implements IncidentListener {
 
     @Override
     public void onClose(Session session, CloseReason closeReason) {
-        incidents.unsubscribe(this);
+        incidentReactor.unsubscribe(this);
     }
 
     @Override

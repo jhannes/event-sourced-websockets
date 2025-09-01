@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.johannesbrodwall</groupId>
-    <artifactId>contract-first-event-sourcing</artifactId>
+    <artifactId>event-sourced-websockets</artifactId>
     <version>latest</version>
 
     <dependencies>
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.34</version>
+            <version>1.18.38</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -81,7 +81,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.34</version>
+                            <version>1.18.38</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
@@ -91,7 +91,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.5.0</version>
                 <configuration>
-                    <mainClass>com.johannesbrodwall.EventSourcingServer</mainClass>
+                    <mainClass>com.johannesbrodwall.IncidentsServer</mainClass>
                     <workingDirectory>target</workingDirectory>
                 </configuration>
             </plugin>
@@ -135,7 +135,7 @@
                         <image>openjdk:25</image>
                     </from>
                     <container>
-                        <mainClass>com.johannesbrodwall.EventSourcingServer</mainClass>
+                        <mainClass>com.johannesbrodwall.IncidentsServer</mainClass>
                         <ports>9080</ports>
                     </container>
                 </configuration>

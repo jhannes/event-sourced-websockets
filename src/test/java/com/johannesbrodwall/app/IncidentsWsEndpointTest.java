@@ -1,6 +1,6 @@
 package com.johannesbrodwall.app;
 
-import com.johannesbrodwall.EventSourcingServer;
+import com.johannesbrodwall.IncidentsServer;
 import com.johannesbrodwall.auth.OpenidConnectMockServer;
 import com.johannesbrodwall.incidents.model.MessageToServerDto;
 import com.johannesbrodwall.incidents.model.UnauthenticatedErrorSignalDto;
@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @LifeCycleExtension
 public class IncidentsWsEndpointTest {
     private final OpenidConnectMockServer loginServer = new OpenidConnectMockServer(0);
-    private final EventSourcingServer server = new EventSourcingServer(0, loginServer.getClientConfiguration());
+    private final IncidentsServer server = new IncidentsServer(0, loginServer.getClientConfiguration());
 
     private final SampleModelData sampleData = new SampleModelData(0);
 
