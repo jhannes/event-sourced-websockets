@@ -1,6 +1,6 @@
-package com.johannesbrodwall.app;
+package as.gnist.app;
 
-import com.johannesbrodwall.auth.OpenIdClientConfiguration;
+import as.gnist.auth.OpenIdClientConfiguration;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

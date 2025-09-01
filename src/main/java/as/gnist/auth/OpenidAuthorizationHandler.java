@@ -1,8 +1,8 @@
-package com.johannesbrodwall.auth;
+package as.gnist.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.johannesbrodwall.openid.model.DiscoveryDocumentDto;
-import com.johannesbrodwall.openid.model.UserinfoDto;
+import as.gnist.openid.model.DiscoveryDocumentDto;
+import as.gnist.openid.model.UserinfoDto;
 import jakarta.ws.rs.InternalServerErrorException;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

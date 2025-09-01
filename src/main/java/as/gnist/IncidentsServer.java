@@ -1,12 +1,12 @@
-package com.johannesbrodwall;
+package as.gnist;
 
-import com.johannesbrodwall.app.ApiConfig;
-import com.johannesbrodwall.app.ApplicationEnvironment;
-import com.johannesbrodwall.auth.OpenIdClientConfiguration;
-import com.johannesbrodwall.auth.OpenidAuthorizationHandler;
-import com.johannesbrodwall.incidents.IncidentReactor;
-import com.johannesbrodwall.incidents.IncidentsWsEndpoint;
-import com.johannesbrodwall.infra.ContentResourceHandler;
+import as.gnist.app.ApiConfig;
+import as.gnist.app.ApplicationEnvironment;
+import as.gnist.auth.OpenIdClientConfiguration;
+import as.gnist.auth.OpenidAuthorizationHandler;
+import as.gnist.incidents.IncidentReactor;
+import as.gnist.incidents.IncidentsWsEndpoint;
+import as.gnist.infra.ContentResourceHandler;
 import jakarta.websocket.server.ServerEndpointConfig;
 import lombok.SneakyThrows;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;

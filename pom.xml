@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.johannesbrodwall</groupId>
+    <groupId>as.gnist</groupId>
     <artifactId>event-sourced-websockets</artifactId>
     <version>latest</version>
 
@@ -91,7 +91,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.5.0</version>
                 <configuration>
-                    <mainClass>com.johannesbrodwall.IncidentsServer</mainClass>
+                    <mainClass>as.gnist.IncidentsServer</mainClass>
                     <workingDirectory>target</workingDirectory>
                 </configuration>
             </plugin>
@@ -135,7 +135,7 @@
                         <image>openjdk:25</image>
                     </from>
                     <container>
-                        <mainClass>com.johannesbrodwall.IncidentsServer</mainClass>
+                        <mainClass>as.gnist.IncidentsServer</mainClass>
                         <ports>9080</ports>
                     </container>
                 </configuration>
@@ -178,7 +178,7 @@
                         </goals>
                         <configuration>
                             <generatorName>java-lombok</generatorName>
-                            <packageName>com.johannesbrodwall.incidents</packageName>
+                            <packageName>as.gnist.incidents</packageName>
                             <output>target/generated-sources/openapi-java</output>
                         </configuration>
                     </execution>
@@ -189,7 +189,7 @@
                         </goals>
                         <configuration>
                             <generatorName>java-lombok</generatorName>
-                            <packageName>com.johannesbrodwall.openid</packageName>
+                            <packageName>as.gnist.openid</packageName>
                             <output>target/generated-sources/openid-configuration</output>
                             <inputSpec>src/main/resources/webapp/api-doc/openid-configuration.yaml</inputSpec>
                         </configuration>

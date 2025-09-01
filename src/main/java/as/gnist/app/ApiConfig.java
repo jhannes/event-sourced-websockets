@@ -1,7 +1,7 @@
-package com.johannesbrodwall.app;
+package as.gnist.app;
 
-import com.johannesbrodwall.auth.LoginController;
-import com.johannesbrodwall.auth.OpenIdClientConfiguration;
+import as.gnist.auth.LoginController;
+import as.gnist.auth.OpenIdClientConfiguration;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 

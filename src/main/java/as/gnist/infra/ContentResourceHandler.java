@@ -1,4 +1,4 @@
-package com.johannesbrodwall.infra;
+package as.gnist.infra;
 
 import lombok.SneakyThrows;
 import org.eclipse.jetty.http.HttpMethod;

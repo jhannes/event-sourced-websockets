@@ -1,16 +1,16 @@
-package com.johannesbrodwall.incidents;
+package as.gnist.incidents;
 
-import com.johannesbrodwall.incidents.model.AddPersonToIncidentDeltaDto;
-import com.johannesbrodwall.incidents.model.CreateIncidentDeltaDto;
-import com.johannesbrodwall.incidents.model.IncidentCommandDto;
-import com.johannesbrodwall.incidents.model.IncidentEventDto;
-import com.johannesbrodwall.incidents.model.IncidentInfoDto;
-import com.johannesbrodwall.incidents.model.IncidentSnapshotDto;
-import com.johannesbrodwall.incidents.model.IncidentSummaryDto;
-import com.johannesbrodwall.incidents.model.IncidentSummaryListDto;
-import com.johannesbrodwall.incidents.model.IncidentSummarySubscribeRequestDto;
-import com.johannesbrodwall.incidents.model.UpdateIncidentDeltaDto;
-import com.johannesbrodwall.incidents.model.UpdatePersonInIncidentDeltaDto;
+import as.gnist.incidents.model.AddPersonToIncidentDeltaDto;
+import as.gnist.incidents.model.CreateIncidentDeltaDto;
+import as.gnist.incidents.model.IncidentCommandDto;
+import as.gnist.incidents.model.IncidentEventDto;
+import as.gnist.incidents.model.IncidentInfoDto;
+import as.gnist.incidents.model.IncidentSnapshotDto;
+import as.gnist.incidents.model.IncidentSummaryDto;
+import as.gnist.incidents.model.IncidentSummaryListDto;
+import as.gnist.incidents.model.IncidentSummarySubscribeRequestDto;
+import as.gnist.incidents.model.UpdateIncidentDeltaDto;
+import as.gnist.incidents.model.UpdatePersonInIncidentDeltaDto;
 
 import java.security.Principal;
 import java.util.Collections;

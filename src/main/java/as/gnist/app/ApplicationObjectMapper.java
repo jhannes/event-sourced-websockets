@@ -1,4 +1,4 @@
-package com.johannesbrodwall.app;
+package as.gnist.app;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
@@ -10,13 +10,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.johannesbrodwall.incidents.model.IncidentDeltaDto;
-import com.johannesbrodwall.incidents.model.IncidentEventDto;
-import com.johannesbrodwall.incidents.model.IncidentSnapshotDto;
-import com.johannesbrodwall.incidents.model.IncidentSummaryListDto;
-import com.johannesbrodwall.incidents.model.MessageFromServerDto;
-import com.johannesbrodwall.incidents.model.MessageToServerDto;
-import com.johannesbrodwall.incidents.model.SignalFromServerDto;
+import as.gnist.incidents.model.IncidentDeltaDto;
+import as.gnist.incidents.model.IncidentEventDto;
+import as.gnist.incidents.model.IncidentSnapshotDto;
+import as.gnist.incidents.model.IncidentSummaryListDto;
+import as.gnist.incidents.model.MessageFromServerDto;
+import as.gnist.incidents.model.MessageToServerDto;
+import as.gnist.incidents.model.SignalFromServerDto;
 
 import java.io.IOException;
 import java.util.function.Function;

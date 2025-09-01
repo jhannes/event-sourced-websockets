@@ -1,16 +1,16 @@
-package com.johannesbrodwall.auth;
+package as.gnist.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.johannesbrodwall.openid.api.DiscoveryApi;
-import com.johannesbrodwall.openid.api.IdentityClientApi;
-import com.johannesbrodwall.openid.model.DiscoveryDocumentDto;
-import com.johannesbrodwall.openid.model.GrantTypeDto;
-import com.johannesbrodwall.openid.model.JwksDocumentDto;
-import com.johannesbrodwall.openid.model.JwtPayloadDto;
-import com.johannesbrodwall.openid.model.OauthErrorDto;
-import com.johannesbrodwall.openid.model.ResponseTypeDto;
-import com.johannesbrodwall.openid.model.TokenResponseDto;
-import com.johannesbrodwall.openid.model.UserinfoDto;
+import as.gnist.openid.api.DiscoveryApi;
+import as.gnist.openid.api.IdentityClientApi;
+import as.gnist.openid.model.DiscoveryDocumentDto;
+import as.gnist.openid.model.GrantTypeDto;
+import as.gnist.openid.model.JwksDocumentDto;
+import as.gnist.openid.model.JwtPayloadDto;
+import as.gnist.openid.model.OauthErrorDto;
+import as.gnist.openid.model.ResponseTypeDto;
+import as.gnist.openid.model.TokenResponseDto;
+import as.gnist.openid.model.UserinfoDto;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.FormParam;

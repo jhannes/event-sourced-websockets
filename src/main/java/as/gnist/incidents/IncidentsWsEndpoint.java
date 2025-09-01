@@ -1,8 +1,8 @@
-package com.johannesbrodwall.incidents;
+package as.gnist.incidents;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.johannesbrodwall.app.ApplicationObjectMapper;
-import com.johannesbrodwall.incidents.model.UnauthenticatedErrorSignalDto;
+import as.gnist.app.ApplicationObjectMapper;
+import as.gnist.incidents.model.UnauthenticatedErrorSignalDto;
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.Endpoint;
 import jakarta.websocket.EndpointConfig;
@@ -11,11 +11,11 @@ import jakarta.websocket.Session;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jetty.websocket.core.exception.WebSocketTimeoutException;
-import com.johannesbrodwall.incidents.model.IncidentCommandDto;
-import com.johannesbrodwall.incidents.model.IncidentSubscribeRequestDto;
-import com.johannesbrodwall.incidents.model.IncidentSummarySubscribeRequestDto;
-import com.johannesbrodwall.incidents.model.MessageFromServerDto;
-import com.johannesbrodwall.incidents.model.MessageToServerDto;
+import as.gnist.incidents.model.IncidentCommandDto;
+import as.gnist.incidents.model.IncidentSubscribeRequestDto;
+import as.gnist.incidents.model.IncidentSummarySubscribeRequestDto;
+import as.gnist.incidents.model.MessageFromServerDto;
+import as.gnist.incidents.model.MessageToServerDto;
 
 import java.nio.channels.ClosedChannelException;
 import java.security.Principal;

@@ -1,4 +1,4 @@
-package com.johannesbrodwall.infra;
+package as.gnist.infra;
 
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.junit.jupiter.api.extension.AfterEachCallback;

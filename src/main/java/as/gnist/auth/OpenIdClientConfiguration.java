@@ -1,4 +1,4 @@
-package com.johannesbrodwall.auth;
+package as.gnist.auth;
 
 import java.net.URI;
 
