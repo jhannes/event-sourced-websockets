@@ -1,6 +1,6 @@
-package as.gnist.javazone;
+package no.gnistconsulting.javazone;
 
-import as.gnist.javazone.infrastructure.ContentResourceHandler;
+import no.gnistconsulting.javazone.infrastructure.ContentResourceHandler;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;

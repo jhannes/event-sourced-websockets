@@ -1,4 +1,4 @@
-package as.gnist.javazone.infrastructure;
+package no.gnistconsulting.javazone.infrastructure;
 
 import lombok.SneakyThrows;
 import org.eclipse.jetty.http.HttpMethod;

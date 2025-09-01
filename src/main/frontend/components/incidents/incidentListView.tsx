@@ -1,13 +1,5 @@
 import React from "react";
 import { NewIncidentForm } from "./newIncidentForm";
-import { IncidentItem } from "./incidentItem";
-import { v4 as uuid } from "uuid";
-import {
-  IncidentDeltaDto,
-  IncidentInfoDto,
-  IncidentSummaryDto,
-  MessageToServerDto,
-} from "../../../../../target/generated-sources/openapi-typescript";
 
 export function IncidentListView({}: {}) {
   return (
