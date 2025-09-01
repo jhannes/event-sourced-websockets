@@ -9,14 +9,14 @@ import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.util.resource.ResourceFactory;
 
-public class IncidentServer {
+public class IncidentsServer {
 
     private static final IncidentReactor incidentReactor = new IncidentReactor();
     private final Server server = new Server(8080);
     private final ResourceFactory resourceFactory = ResourceFactory.of(server);
 
     public static void main(String[] args) throws Exception {
-        new IncidentServer().start();
+        new IncidentsServer().start();
     }
 
     private void start() throws Exception {
