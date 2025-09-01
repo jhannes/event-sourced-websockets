@@ -1,7 +1,5 @@
 package as.gnist.javazone;
 
-import as.gnist.javazone.incident.generated.model.IncidentDeltaDto;
-import as.gnist.javazone.incident.generated.model.MessageToServerDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -27,8 +25,6 @@ public class IncidentObjectMapper extends ObjectMapper {
 
     private static class IncidentModule extends SimpleModule {
         {
-            addDeserializer(MessageToServerDto.class, subtypeDeserializer(o -> MessageToServerDto.getType(o.get("type").asText())));
-            addDeserializer(IncidentDeltaDto.class, subtypeDeserializer(o -> IncidentDeltaDto.getType(o.get("type").asText())));
         }
     }
 

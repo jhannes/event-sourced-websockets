@@ -1,4 +1,4 @@
-package as.gnist.javazone;
+package as.gnist.javazone.infrastructure;
 
 import lombok.SneakyThrows;
 import org.eclipse.jetty.http.HttpMethod;
@@ -14,12 +14,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-class ContentResourceHandler extends ResourceHandler {
+public class ContentResourceHandler extends ResourceHandler {
     public ContentResourceHandler(Resource baseResource) {
         setBaseResource(baseResource);
     }
 
-    static ResourceHandler newResourceHandler(Resource baseResource) {
+    public static ResourceHandler newResourceHandler(Resource baseResource) {
         var contentHandler = new ResourceHandler();
         contentHandler.setBaseResource(baseResource);
         return contentHandler;

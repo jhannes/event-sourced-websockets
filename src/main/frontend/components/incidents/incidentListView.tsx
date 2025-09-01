@@ -9,43 +9,13 @@ import {
   MessageToServerDto,
 } from "../../../../../target/generated-sources/openapi-typescript";
 
-export function IncidentListView({
-  incidents,
-  sendMessageToServer,
-}: {
-  incidents: IncidentSummaryDto[];
-  sendMessageToServer?: (message: MessageToServerDto) => void;
-}) {
-  function sendCommandToServer(incidentId: string, delta: IncidentDeltaDto) {
-    sendMessageToServer!({
-      type: "IncidentCommand",
-      eventId: uuid(),
-      clientTime: new Date(),
-      incidentId,
-      delta,
-    });
-  }
-
-  function handleNewIncident(info: IncidentInfoDto) {
-    sendCommandToServer(uuid(), { type: "CreateIncident", info });
-  }
-
-  function handleUpdateIncident(id: string, info: IncidentInfoDto) {
-    sendCommandToServer(id, { type: "UpdateIncident", info });
-  }
-
+export function IncidentListView({}: {}) {
   return (
     <>
       <h2>Incidents</h2>
-      {incidents.map((i) => (
-        <IncidentItem
-          key={i.id}
-          incident={i}
-          onUpdate={(info) => handleUpdateIncident(i.id, info)}
-        />
-      ))}
+      {/* TODO: List incidents */}
       <h2>New incident</h2>
-      <NewIncidentForm onNewIncident={handleNewIncident} />
+      <NewIncidentForm />
     </>
   );
 }

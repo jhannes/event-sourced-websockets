@@ -1,27 +1,21 @@
-import React, { FormEvent, useState } from "react";
-import { IncidentInfoDto } from "../../../../../target/generated-sources/openapi-typescript";
+import React, { useState } from "react";
 
-export function NewIncidentForm({
-  onNewIncident,
-}: {
-  onNewIncident: (value: IncidentInfoDto) => void;
-}) {
-  const [summary, setSummary] = useState("");
-  function handleSubmit(event: FormEvent) {
-    event.preventDefault();
-    onNewIncident({ summary });
-  }
+export function NewIncidentForm() {
+  const [description, setDescription] = useState("");
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form>
       <div>
         <label>
-          <strong>Summary: </strong>
-          <input value={summary} onChange={(e) => setSummary(e.target.value)} />
+          <strong>Description: </strong>
+          <input
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
         </label>
       </div>
       <div>
-        <button>Submit</button>
+        <button>Submit {description}</button>
       </div>
     </form>
   );
