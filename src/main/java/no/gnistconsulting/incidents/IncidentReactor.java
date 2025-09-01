@@ -1,16 +1,16 @@
-package as.gnist.incidents;
+package no.gnistconsulting.incidents;
 
-import as.gnist.incidents.model.AddPersonToIncidentDeltaDto;
-import as.gnist.incidents.model.CreateIncidentDeltaDto;
-import as.gnist.incidents.model.IncidentCommandDto;
-import as.gnist.incidents.model.IncidentEventDto;
-import as.gnist.incidents.model.IncidentInfoDto;
-import as.gnist.incidents.model.IncidentSnapshotDto;
-import as.gnist.incidents.model.IncidentSummaryDto;
-import as.gnist.incidents.model.IncidentSummaryListDto;
-import as.gnist.incidents.model.IncidentSummarySubscribeRequestDto;
-import as.gnist.incidents.model.UpdateIncidentDeltaDto;
-import as.gnist.incidents.model.UpdatePersonInIncidentDeltaDto;
+import no.gnistconsulting.incidents.model.AddPersonToIncidentDeltaDto;
+import no.gnistconsulting.incidents.model.CreateIncidentDeltaDto;
+import no.gnistconsulting.incidents.model.IncidentCommandDto;
+import no.gnistconsulting.incidents.model.IncidentEventDto;
+import no.gnistconsulting.incidents.model.IncidentInfoDto;
+import no.gnistconsulting.incidents.model.IncidentSnapshotDto;
+import no.gnistconsulting.incidents.model.IncidentSummaryDto;
+import no.gnistconsulting.incidents.model.IncidentSummaryListDto;
+import no.gnistconsulting.incidents.model.IncidentSummarySubscribeRequestDto;
+import no.gnistconsulting.incidents.model.UpdateIncidentDeltaDto;
+import no.gnistconsulting.incidents.model.UpdatePersonInIncidentDeltaDto;
 
 import java.security.Principal;
 import java.util.Collections;

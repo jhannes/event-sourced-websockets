@@ -1,11 +1,11 @@
-package as.gnist.auth;
+package no.gnistconsulting.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import as.gnist.openid.model.DiscoveryDocumentDto;
-import as.gnist.openid.model.UserinfoDto;
 import jakarta.ws.rs.InternalServerErrorException;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import no.gnistconsulting.openid.model.DiscoveryDocumentDto;
+import no.gnistconsulting.openid.model.UserinfoDto;
 import org.eclipse.jetty.security.AuthenticationState;
 import org.eclipse.jetty.security.UserPrincipal;
 import org.eclipse.jetty.security.authentication.LoginAuthenticator;

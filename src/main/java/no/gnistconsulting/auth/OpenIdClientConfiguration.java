@@ -1,4 +1,4 @@
-package as.gnist.auth;
+package no.gnistconsulting.auth;
 
 import java.net.URI;
 

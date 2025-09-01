@@ -1,8 +1,6 @@
-package as.gnist.incidents;
+package no.gnistconsulting.incidents;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import as.gnist.app.ApplicationObjectMapper;
-import as.gnist.incidents.model.UnauthenticatedErrorSignalDto;
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.Endpoint;
 import jakarta.websocket.EndpointConfig;
@@ -10,12 +8,14 @@ import jakarta.websocket.RemoteEndpoint;
 import jakarta.websocket.Session;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import no.gnistconsulting.app.ApplicationObjectMapper;
+import no.gnistconsulting.incidents.model.IncidentCommandDto;
+import no.gnistconsulting.incidents.model.IncidentSubscribeRequestDto;
+import no.gnistconsulting.incidents.model.IncidentSummarySubscribeRequestDto;
+import no.gnistconsulting.incidents.model.MessageFromServerDto;
+import no.gnistconsulting.incidents.model.MessageToServerDto;
+import no.gnistconsulting.incidents.model.UnauthenticatedErrorSignalDto;
 import org.eclipse.jetty.websocket.core.exception.WebSocketTimeoutException;
-import as.gnist.incidents.model.IncidentCommandDto;
-import as.gnist.incidents.model.IncidentSubscribeRequestDto;
-import as.gnist.incidents.model.IncidentSummarySubscribeRequestDto;
-import as.gnist.incidents.model.MessageFromServerDto;
-import as.gnist.incidents.model.MessageToServerDto;
 
 import java.nio.channels.ClosedChannelException;
 import java.security.Principal;

@@ -1,29 +1,29 @@
-package as.gnist.app;
+package no.gnistconsulting.app;
 
-import as.gnist.IncidentsServer;
-import as.gnist.auth.OpenidConnectMockServer;
-import as.gnist.incidents.model.MessageToServerDto;
-import as.gnist.incidents.model.UnauthenticatedErrorSignalDto;
-import as.gnist.infra.LifeCycleExtension;
-import as.gnist.infra.WsClient;
-import as.gnist.openid.model.JwtPayloadDto;
 import jakarta.websocket.ClientEndpointConfig;
+import no.gnistconsulting.IncidentsServer;
+import no.gnistconsulting.auth.OpenidConnectMockServer;
+import no.gnistconsulting.incidents.model.CreateIncidentDeltaDto;
+import no.gnistconsulting.incidents.model.IncidentEventDto;
+import no.gnistconsulting.incidents.model.IncidentSummaryDto;
+import no.gnistconsulting.incidents.model.IncidentSummaryListDto;
+import no.gnistconsulting.incidents.model.IncidentSummarySubscribeRequestDto;
+import no.gnistconsulting.incidents.model.MessageFromServerDto;
+import no.gnistconsulting.incidents.model.MessageToServerDto;
+import no.gnistconsulting.incidents.model.SampleModelData;
+import no.gnistconsulting.incidents.model.UnauthenticatedErrorSignalDto;
+import no.gnistconsulting.incidents.model.UpdateIncidentDeltaDto;
+import no.gnistconsulting.infra.LifeCycleExtension;
+import no.gnistconsulting.infra.WsClient;
+import no.gnistconsulting.openid.model.JwtPayloadDto;
 import org.junit.jupiter.api.Test;
-import as.gnist.incidents.model.CreateIncidentDeltaDto;
-import as.gnist.incidents.model.IncidentEventDto;
-import as.gnist.incidents.model.IncidentSummaryDto;
-import as.gnist.incidents.model.IncidentSummaryListDto;
-import as.gnist.incidents.model.IncidentSummarySubscribeRequestDto;
-import as.gnist.incidents.model.MessageFromServerDto;
-import as.gnist.incidents.model.SampleModelData;
-import as.gnist.incidents.model.UpdateIncidentDeltaDto;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static as.gnist.auth.OpenidConnectMockServer.base64Json;
+import static no.gnistconsulting.auth.OpenidConnectMockServer.base64Json;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @LifeCycleExtension

@@ -10,10 +10,10 @@ interaction between a React/TypeScript frontend and a Jetty/Java backend
 3. `npm run dev`
 4. Import the project into IntelliJ
 5. Run `auth.as.gnist.OpenidConnectMockServer` (located under `src/test/java`)
-6. Run `as.gnist.IncidentsServer`
+6. Run `no.gnistconsulting.IncidentsServer`
 7. Go to http://localhost:5173
 8. Use two browser windows (or two browsers) to see real time interaction
 
 Alternatively, you can run `mvn package jib:build` to generate a docker image
-and run it with `docker run event-sourced-websockets`
-(this requires OpenIdConnectMockServer to be started)
+and run it with `docker run --network=host event-sourced-websockets`
+(this requires OpenIdConnectMockServer to be started and only works on Linux)

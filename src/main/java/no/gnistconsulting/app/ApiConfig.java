@@ -1,7 +1,7 @@
-package as.gnist.app;
+package no.gnistconsulting.app;
 
-import as.gnist.auth.LoginController;
-import as.gnist.auth.OpenIdClientConfiguration;
+import no.gnistconsulting.auth.LoginController;
+import no.gnistconsulting.auth.OpenIdClientConfiguration;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 

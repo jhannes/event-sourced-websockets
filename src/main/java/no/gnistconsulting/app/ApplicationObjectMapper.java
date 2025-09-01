@@ -1,4 +1,4 @@
-package as.gnist.app;
+package no.gnistconsulting.app;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
@@ -10,13 +10,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import as.gnist.incidents.model.IncidentDeltaDto;
-import as.gnist.incidents.model.IncidentEventDto;
-import as.gnist.incidents.model.IncidentSnapshotDto;
-import as.gnist.incidents.model.IncidentSummaryListDto;
-import as.gnist.incidents.model.MessageFromServerDto;
-import as.gnist.incidents.model.MessageToServerDto;
-import as.gnist.incidents.model.SignalFromServerDto;
+import no.gnistconsulting.incidents.model.IncidentDeltaDto;
+import no.gnistconsulting.incidents.model.IncidentEventDto;
+import no.gnistconsulting.incidents.model.IncidentSnapshotDto;
+import no.gnistconsulting.incidents.model.IncidentSummaryListDto;
+import no.gnistconsulting.incidents.model.MessageFromServerDto;
+import no.gnistconsulting.incidents.model.MessageToServerDto;
+import no.gnistconsulting.incidents.model.SignalFromServerDto;
 
 import java.io.IOException;
 import java.util.function.Function;

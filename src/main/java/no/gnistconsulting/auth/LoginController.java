@@ -1,12 +1,6 @@
-package as.gnist.auth;
+package no.gnistconsulting.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import as.gnist.openid.api.IdentityProviderApi;
-import as.gnist.openid.model.DiscoveryDocumentDto;
-import as.gnist.openid.model.GrantTypeDto;
-import as.gnist.openid.model.OauthErrorDto;
-import as.gnist.openid.model.ResponseTypeDto;
-import as.gnist.openid.model.TokenResponseDto;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.InternalServerErrorException;
@@ -18,6 +12,12 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import no.gnistconsulting.openid.api.IdentityProviderApi;
+import no.gnistconsulting.openid.model.DiscoveryDocumentDto;
+import no.gnistconsulting.openid.model.GrantTypeDto;
+import no.gnistconsulting.openid.model.OauthErrorDto;
+import no.gnistconsulting.openid.model.ResponseTypeDto;
+import no.gnistconsulting.openid.model.TokenResponseDto;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

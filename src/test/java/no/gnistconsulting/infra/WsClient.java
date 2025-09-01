@@ -1,4 +1,4 @@
-package as.gnist.infra;
+package no.gnistconsulting.infra;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.websocket.ClientEndpointConfig;

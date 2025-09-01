@@ -1,8 +1,8 @@
-package as.gnist.app;
+package no.gnistconsulting.app;
 
-import as.gnist.auth.OpenIdClientConfiguration;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import no.gnistconsulting.auth.OpenIdClientConfiguration;
 
 import java.net.URI;
 

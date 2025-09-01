@@ -1,14 +1,14 @@
-package as.gnist;
+package no.gnistconsulting;
 
-import as.gnist.app.ApiConfig;
-import as.gnist.app.ApplicationEnvironment;
-import as.gnist.auth.OpenIdClientConfiguration;
-import as.gnist.auth.OpenidAuthorizationHandler;
-import as.gnist.incidents.IncidentReactor;
-import as.gnist.incidents.IncidentsWsEndpoint;
-import as.gnist.infra.ContentResourceHandler;
 import jakarta.websocket.server.ServerEndpointConfig;
 import lombok.SneakyThrows;
+import no.gnistconsulting.app.ApiConfig;
+import no.gnistconsulting.app.ApplicationEnvironment;
+import no.gnistconsulting.auth.OpenIdClientConfiguration;
+import no.gnistconsulting.auth.OpenidAuthorizationHandler;
+import no.gnistconsulting.incidents.IncidentReactor;
+import no.gnistconsulting.incidents.IncidentsWsEndpoint;
+import no.gnistconsulting.infra.ContentResourceHandler;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.ee10.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
