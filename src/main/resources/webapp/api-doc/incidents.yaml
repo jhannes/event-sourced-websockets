@@ -1,0 +1,97 @@
+openapi: 3.0.3
+info:
+  title: Incident WebSocket API
+  version: 1.0.0
+paths:
+  /ws/incidents:
+    get:
+      responses:
+        200:
+          description: Messages from server
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/MessageFromServer"
+
+components:
+  schemas:
+    MessageFromServer:
+      oneOf:
+        - $ref: "#/components/schemas/IncidentSnapshotList"
+        - $ref: "#/components/schemas/IncidentEvent"
+
+    MessageToServer:
+      oneOf:
+        - $ref: "#/components/schemas/IncidentCommand"
+      discriminator:
+        propertyName: type
+
+    IncidentCommand:
+      properties:
+        eventId:
+          type: string
+          format: uuid
+        incidentId:
+          type: string
+          format: uuid
+        clientTime:
+          type: string
+          format: date-time
+        delta:
+          $ref: "#/components/schemas/IncidentDelta"
+      required: [eventId, incidentId, clientTime, delta]
+
+    IncidentEvent:
+      allOf:
+        - $ref: "#/components/schemas/IncidentCommand"
+        - properties:
+            sequenceId:
+              type: integer
+              format: int64
+          required: [sequenceId]
+
+    IncidentDelta:
+      oneOf:
+        - $ref: "#/components/schemas/CreateIncidentDelta"
+        - $ref: "#/components/schemas/UpdateIncidentDelta"
+      discriminator:
+        propertyName: type
+
+    CreateIncidentDelta:
+      properties:
+        info:
+          $ref: "#/components/schemas/Incident"
+      required: [info]
+
+    UpdateIncidentDelta:
+      properties:
+        info:
+          $ref: "#/components/schemas/Incident"
+      required: [info]
+
+    IncidentSnapshotList:
+      properties:
+        incidents:
+          type: array
+          items:
+            $ref: "#/components/schemas/IncidentSnapshot"
+      required: [incidents]
+
+    IncidentSnapshot:
+      properties:
+        id:
+          type: string
+          format: uuid
+        updatedAt:
+          type: string
+          format: date-time
+        info:
+          $ref: "#/components/schemas/Incident"
+      required: [id, updatedAt, info]
+
+    Incident:
+      properties:
+        description:
+          type: string
+        priority:
+          enum: [HIGH, MEDIUM, LOW]
