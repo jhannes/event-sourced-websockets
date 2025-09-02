@@ -4,15 +4,19 @@
 
 1. Introduction to [real time web applications](https://www.aftenposten.no/norge/i/Jbwj6R/nytt-digitalt-verktoey-skal-revolusjonere-leteaksjoner-dette-vil-redde-mange-liv)
 2. Demonstration of the [outcome](https://github.com/jhannes/event-sourced-websockets/tree/demo/java)
+3. Live programming with three acts:
+   - Connecting client and server
+   - Defining a communication structure
+   - Adding new deltas
 
 ## Live programming
 
 1. Create `IncidentDto` in frontend and register
 2. Create `src/main/resources/webapp/api-doc/incidents.yaml`
    - Critical part: `openapi: 3.0.3`
-3. Add plugin `openapi-generator-maven-plugin` (version `7.12.0`) with dependency `openapi-generator-typescript-fetch-api`
+3. Add plugin `openapi-generator-maven-plugin` (version `7.12.0`) with dependency `openapi-generator-typescript-fetch-api` (version `0.6.1`)
 4. Replace `IncidentDto` with generated `IncidentDto`
-5. Extend code generation with `openapi-generator-java-lombok`
+5. Extend code generation with `openapi-generator-java-lombok` (version `0.3.2`)
 6. Add `jetty-ee10-websocket-jakarta-server` dependency
 7. Configure web sockets with Jetty:
    ```jshelllanguage

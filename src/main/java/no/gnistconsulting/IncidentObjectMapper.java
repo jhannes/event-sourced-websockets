@@ -1,4 +1,4 @@
-package no.gnistconsulting.javazone;
+package no.gnistconsulting;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JacksonException;
@@ -31,7 +31,7 @@ public class IncidentObjectMapper extends ObjectMapper {
     private static <T> JsonDeserializer<T> subtypeDeserializer(Function<ObjectNode, Class<? extends T>> resolver) {
         return new JsonDeserializer<>() {
             @Override
-            public T deserialize(JsonParser parser, DeserializationContext context) throws IOException, JacksonException {
+            public T deserialize(JsonParser parser, DeserializationContext context) throws IOException {
                 var mapper = (ObjectMapper) parser.getCodec();
                 ObjectNode o = mapper.readTree(parser);
                 return mapper.treeToValue(o, resolver.apply(o));
