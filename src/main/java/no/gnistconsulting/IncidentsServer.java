@@ -1,6 +1,6 @@
-package no.gnistconsulting.javazone;
+package no.gnistconsulting;
 
-import no.gnistconsulting.javazone.infrastructure.ContentResourceHandler;
+import no.gnistconsulting.infrastructure.ContentResourceHandler;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
@@ -26,7 +26,7 @@ public class IncidentsServer {
         server.start();
     }
 
-    private static ServletContextHandler createWsHandler() {
+    private ServletContextHandler createWsHandler() {
         var handler = new ServletContextHandler("/ws");
         return handler;
     }
