@@ -14,6 +14,8 @@ it imperative that they see each other's notes without delay.
 ### Java
 
 - [Java demonstration](https://github.com/jhannes/contract-first-event-sourcing/tree/demo/java)
+- [Starting point](https://github.com/jhannes/contract-first-event-sourcing/tree/start/java)
+- [JavaZone 2025](https://github.com/jhannes/contract-first-event-sourcing/tree/presentation/javazone-2025)
 - [Performance PIT](https://github.com/jhannes/contract-first-event-sourcing/tree/pit-foredrag) - demonstration for the
   Norwegian Police IT service
 
