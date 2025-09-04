@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.openapitools.client.model.IncidentDeltaDto;
+import org.openapitools.client.model.MessageToServerDto;
 
 import java.io.IOException;
 import java.util.function.Function;
@@ -24,6 +26,8 @@ public class IncidentObjectMapper extends ObjectMapper {
 
     private static class IncidentModule extends SimpleModule {
         {
+            addDeserializer(MessageToServerDto.class, subtypeDeserializer(o -> MessageToServerDto.getType(o.get("type").asText())));
+            addDeserializer(IncidentDeltaDto.class, subtypeDeserializer(o -> IncidentDeltaDto.getType(o.get("type").asText())));
         }
     }
 

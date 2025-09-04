@@ -11,6 +11,11 @@
             <version>12.0.25</version>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.jetty.ee10.websocket</groupId>
+            <artifactId>jetty-ee10-websocket-jakarta-server</artifactId>
+            <version>12.0.25</version>
+        </dependency>
+        <dependency>
             <groupId>org.logevents</groupId>
             <artifactId>logevents</artifactId>
             <version>0.5.8</version>
@@ -47,6 +52,52 @@
                     <release>23</release>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>7.12.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>io.github.jhannes.openapi</groupId>
+                        <artifactId>openapi-generator-typescript-fetch-api</artifactId>
+                        <version>0.6.1</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>io.github.jhannes.openapi</groupId>
+                        <artifactId>openapi-generator-java-lombok</artifactId>
+                        <version>0.3.2</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>typescript</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>src/main/resources/webapp/api-doc/incidents.yaml</inputSpec>
+                            <generatorName>typescript-fetch-api</generatorName>
+                            <modelNameSuffix>Dto</modelNameSuffix>
+                            <output>target/generated-sources/typescript</output>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>java</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>src/main/resources/webapp/api-doc/incidents.yaml</inputSpec>
+                            <generatorName>java-lombok</generatorName>
+                            <modelNameSuffix>Dto</modelNameSuffix>
+                            <output>target/generated-sources/java</output>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 </project>
