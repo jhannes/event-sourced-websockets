@@ -9,6 +9,10 @@ This application is a simplified version of an incident management application t
 example to public safety answering points. In this setting, several responders many be observing the same incident and
 it imperative that they see each other's notes without delay.
 
+## Video from JavaZone 2025
+
+https://vimeo.com/1115478006
+
 ## Versions
 
 ### Java
